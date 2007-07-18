@@ -1,0 +1,721 @@
+\section{/home/bene/projects/sl811/usbstack/host/sl811hs.h File Reference}
+\label{sl811hs_8h}\index{/home/bene/projects/sl811/usbstack/host/sl811hs.h@{/home/bene/projects/sl811/usbstack/host/sl811hs.h}}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf SL811\_\-IDX\_\-ADDR}~(0x00)
+\item 
+\#define {\bf SL811\_\-IDX\_\-DATA}~(0x01)
+\item 
+\#define {\bf SL811\_\-PORTSIZE}~(0x02)
+\item 
+\#define {\bf SL811\_\-E0BASE}~(0x00)
+\item 
+\#define {\bf SL811\_\-E0CTRL}~(0x00)
+\item 
+\#define {\bf SL811\_\-E0ADDR}~(0x01)
+\item 
+\#define {\bf SL811\_\-E0LEN}~(0x02)
+\item 
+\#define {\bf SL811\_\-E0STAT}~(0x03)
+\item 
+\#define {\bf SL811\_\-E0PID}~SL811\_\-E0STAT
+\item 
+\#define {\bf SL811\_\-E0CONT}~(0x04)
+\item 
+\#define {\bf SL811\_\-E0DEV}~SL811\_\-E0CONT
+\item 
+\#define {\bf SL811\_\-E1BASE}~(0x08)
+\item 
+\#define {\bf SL811\_\-E1CTRL}~(SL811\_\-E1BASE + SL811\_\-E0CTRL)
+\item 
+\#define {\bf SL811\_\-E1ADDR}~(SL811\_\-E1BASE + SL811\_\-E0ADDR)
+\item 
+\#define {\bf SL811\_\-E1LEN}~(SL811\_\-E1BASE + SL811\_\-E0LEN)
+\item 
+\#define {\bf SL811\_\-E1STAT}~(SL811\_\-E1BASE + SL811\_\-E0STAT)
+\item 
+\#define {\bf SL811\_\-E1PID}~(SL811\_\-E1BASE + SL811\_\-E0PID)
+\item 
+\#define {\bf SL811\_\-E1CONT}~(SL811\_\-E1BASE + SL811\_\-E0CONT)
+\item 
+\#define {\bf SL811\_\-E1DEV}~(SL811\_\-E1BASE + SL811\_\-E0DEV)
+\item 
+\#define {\bf SL811\_\-CTRL}~(0x05)
+\item 
+\#define {\bf SL811\_\-IER}~(0x06)
+\item 
+\#define {\bf SL811\_\-ISR}~(0x0d)
+\item 
+\#define {\bf SL811\_\-DATA}~(0x0e)
+\item 
+\#define {\bf SL811\_\-REV}~SL811\_\-DATA
+\item 
+\#define {\bf SL811\_\-CSOF}~(0x0f)
+\item 
+\#define {\bf SL811\_\-MEM}~(0x10)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-ARM}~(0x01)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-ENABLE}~(0x02)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-DIRECTION}~(0x04)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-ISO}~(0x10)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-SOF}~(0x20)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-DATATOGGLE}~(0x40)
+\item 
+\#define {\bf SL811\_\-EPCTRL\_\-PREAMBLE}~(0x80)
+\item 
+\#define {\bf SL811\_\-EPPID\_\-PIDMASK}~(0xf0)
+\item 
+\#define {\bf SL811\_\-EPPID\_\-EPMASK}~(0x0f)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-ACK}~(0x01)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-ERROR}~(0x02)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-TIMEOUT}~(0x04)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-SEQUENCE}~(0x08)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-SETUP}~(0x10)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-OVERFLOW}~(0x20)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-NAK}~(0x40)
+\item 
+\#define {\bf SL811\_\-EPSTAT\_\-STALL}~(0x80)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-ENABLESOF}~(0x01)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-EOF2}~(0x04)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-RESETENGINE}~(0x08)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-JKSTATE}~(0x10)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-LOWSPEED}~(0x20)
+\item 
+\#define {\bf SL811\_\-CTRL\_\-SUSPEND}~(0x40)
+\item 
+\#define {\bf SL811\_\-IER\_\-USBA}~(0x01)
+\item 
+\#define {\bf SL811\_\-IER\_\-USBB}~(0x02)
+\item 
+\#define {\bf SL811\_\-IER\_\-BABBLE}~(0x04)
+\item 
+\#define {\bf SL811\_\-IER\_\-SOFTIMER}~(0x10)
+\item 
+\#define {\bf SL811\_\-IER\_\-INSERT}~(0x20)
+\item 
+\#define {\bf SL811\_\-IER\_\-RESET}~(0x40)
+\item 
+\#define {\bf SL811\_\-ISR\_\-USBA}~(0x01)
+\item 
+\#define {\bf SL811\_\-ISR\_\-USBB}~(0x02)
+\item 
+\#define {\bf SL811\_\-ISR\_\-BABBLE}~(0x04)
+\item 
+\#define {\bf SL811\_\-ISR\_\-SOFTIMER}~(0x10)
+\item 
+\#define {\bf SL811\_\-ISR\_\-INSERT}~(0x20)
+\item 
+\#define {\bf SL811\_\-ISR\_\-RESET}~(0x40)
+\item 
+\#define {\bf SL811\_\-ISR\_\-DATA}~(0x80)
+\item 
+\#define {\bf SL811\_\-REV\_\-USBA}~(0x01)
+\item 
+\#define {\bf SL811\_\-REV\_\-USBB}~(0x02)
+\item 
+\#define {\bf SL811\_\-REV\_\-REVMASK}~(0xf0)
+\item 
+\#define {\bf SL811\_\-REV\_\-REVSL811H}~(0x00)
+\item 
+\#define {\bf SL811\_\-REV\_\-REVSL811HS}~(0x10)
+\item 
+\#define {\bf SL811\_\-CSOF\_\-SOFMASK}~(0x3f)
+\item 
+\#define {\bf SL811\_\-CSOF\_\-POLARITY}~(0x40)
+\item 
+\#define {\bf SL811\_\-CSOF\_\-MASTER}~(0x80)
+\item 
+\#define {\bf c\-Mem\-Start}~0x10
+\item 
+\#define {\bf ubuf\-A}~0x80
+\item 
+\#define {\bf ubuf\-B}~0xc0
+\item 
+\#define {\bf uxfer\-Len}~0x40
+\item 
+\#define {\bf s\-Mem\-Size}~0xc0
+\item 
+\#define {\bf c\-Mem\-End}~256
+\item 
+\#define {\bf EP0Buf}~0x40
+\item 
+\#define {\bf EP0Len}~0x40
+\item 
+\#define {\bf DATA0\_\-WR}~0x07
+\item 
+\#define {\bf DATA1\_\-WR}~0x47
+\item 
+\#define {\bf ZDATA0\_\-WR}~0x05
+\item 
+\#define {\bf ZDATA1\_\-WR}~0x45
+\item 
+\#define {\bf DATA0\_\-RD}~0x03
+\item 
+\#define {\bf DATA1\_\-RD}~0x43
+\item 
+\#define {\bf PID\_\-SOF}~0x50
+\item 
+\#define {\bf PID\_\-SETUP}~0xd0
+\item 
+\#define {\bf PID\_\-IN}~0x90
+\item 
+\#define {\bf PID\_\-OUT}~0x10
+\item 
+\#define {\bf PID\_\-PRE}~0xc0
+\item 
+\#define {\bf PID\_\-NAK}~0xa0
+\item 
+\#define {\bf PID\_\-STALL}~0xe0
+\item 
+\#define {\bf PID\_\-DATA0}~0x30
+\item 
+\#define {\bf PID\_\-DATA1}~0xb0
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf sl811\_\-init} ()
+\item 
+void {\bf sl811\_\-reset} ()
+\item 
+void {\bf sl811\_\-write} (u8 addr, u8 data)
+\item 
+u8 {\bf sl811\_\-read} (u8 addr)
+\item 
+void {\bf sl811\_\-write\_\-burst} (u8 data)
+\item 
+u8 {\bf sl811\_\-read\_\-burst} ()
+\item 
+void {\bf sl811\_\-write\_\-buf} (u8 addr, unsigned char $\ast$buffer, u8 size)
+\item 
+void {\bf sl811\_\-read\_\-buf} (u8 addr, unsigned char $\ast$buffer, u8 size)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{sl811hs.h@{sl811hs.h}!cMemEnd@{cMemEnd}}
+\index{cMemEnd@{cMemEnd}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define c\-Mem\-End~256}\label{sl811hs_8h_79a7a43afc66ba0d46275dde691882d5}
+
+
+\index{sl811hs.h@{sl811hs.h}!cMemStart@{cMemStart}}
+\index{cMemStart@{cMemStart}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define c\-Mem\-Start~0x10}\label{sl811hs_8h_a245e3bdb64c63f87c6deeaf82eaf86d}
+
+
+\index{sl811hs.h@{sl811hs.h}!DATA0_RD@{DATA0\_\-RD}}
+\index{DATA0_RD@{DATA0\_\-RD}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define DATA0\_\-RD~0x03}\label{sl811hs_8h_6c4c8fa3e20c1884cd69d11761bda6e4}
+
+
+\index{sl811hs.h@{sl811hs.h}!DATA0_WR@{DATA0\_\-WR}}
+\index{DATA0_WR@{DATA0\_\-WR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define DATA0\_\-WR~0x07}\label{sl811hs_8h_cd5cce61fed5c4b3660b1d518189cb92}
+
+
+\index{sl811hs.h@{sl811hs.h}!DATA1_RD@{DATA1\_\-RD}}
+\index{DATA1_RD@{DATA1\_\-RD}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define DATA1\_\-RD~0x43}\label{sl811hs_8h_0826b2bd2c7661aa24ba26eb617ad22c}
+
+
+\index{sl811hs.h@{sl811hs.h}!DATA1_WR@{DATA1\_\-WR}}
+\index{DATA1_WR@{DATA1\_\-WR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define DATA1\_\-WR~0x47}\label{sl811hs_8h_6376ccb6a74be702758d041fc67c1449}
+
+
+\index{sl811hs.h@{sl811hs.h}!EP0Buf@{EP0Buf}}
+\index{EP0Buf@{EP0Buf}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define EP0Buf~0x40}\label{sl811hs_8h_907e18d84c708af11a06721afcd0c37f}
+
+
+\index{sl811hs.h@{sl811hs.h}!EP0Len@{EP0Len}}
+\index{EP0Len@{EP0Len}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define EP0Len~0x40}\label{sl811hs_8h_1c5ef9314835a82128d9416cdecbcabc}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_DATA0@{PID\_\-DATA0}}
+\index{PID_DATA0@{PID\_\-DATA0}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-DATA0~0x30}\label{sl811hs_8h_52c6e71c87133a4cae4e00b4394e75fd}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_DATA1@{PID\_\-DATA1}}
+\index{PID_DATA1@{PID\_\-DATA1}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-DATA1~0xb0}\label{sl811hs_8h_f6a832351a609fccdf8d6914c59de862}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_IN@{PID\_\-IN}}
+\index{PID_IN@{PID\_\-IN}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-IN~0x90}\label{sl811hs_8h_3be42af9535e8271a6472f25a081b5d2}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_NAK@{PID\_\-NAK}}
+\index{PID_NAK@{PID\_\-NAK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-NAK~0xa0}\label{sl811hs_8h_52933fa701cadb337d23f910887da15b}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_OUT@{PID\_\-OUT}}
+\index{PID_OUT@{PID\_\-OUT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-OUT~0x10}\label{sl811hs_8h_a343b884e93bb18c6744597ead317d3a}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_PRE@{PID\_\-PRE}}
+\index{PID_PRE@{PID\_\-PRE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-PRE~0xc0}\label{sl811hs_8h_b20d5afc7d5e1f0ffb303a078707a927}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_SETUP@{PID\_\-SETUP}}
+\index{PID_SETUP@{PID\_\-SETUP}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-SETUP~0xd0}\label{sl811hs_8h_81a58e0f945c2faf7cd8a63aa876c9b9}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_SOF@{PID\_\-SOF}}
+\index{PID_SOF@{PID\_\-SOF}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-SOF~0x50}\label{sl811hs_8h_6cb656efd215f825bc36b036bd9532c0}
+
+
+\index{sl811hs.h@{sl811hs.h}!PID_STALL@{PID\_\-STALL}}
+\index{PID_STALL@{PID\_\-STALL}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define PID\_\-STALL~0xe0}\label{sl811hs_8h_4834b4024d3990a67f884c7884c99cd7}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CSOF@{SL811\_\-CSOF}}
+\index{SL811_CSOF@{SL811\_\-CSOF}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CSOF~(0x0f)}\label{sl811hs_8h_4ac9d88c87044dca82d40aa3d912c2c5}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CSOF_MASTER@{SL811\_\-CSOF\_\-MASTER}}
+\index{SL811_CSOF_MASTER@{SL811\_\-CSOF\_\-MASTER}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CSOF\_\-MASTER~(0x80)}\label{sl811hs_8h_2a27ba473897719be295c80dfaf77865}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CSOF_POLARITY@{SL811\_\-CSOF\_\-POLARITY}}
+\index{SL811_CSOF_POLARITY@{SL811\_\-CSOF\_\-POLARITY}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CSOF\_\-POLARITY~(0x40)}\label{sl811hs_8h_735dcb27bc3e57d568f53e561c980b77}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CSOF_SOFMASK@{SL811\_\-CSOF\_\-SOFMASK}}
+\index{SL811_CSOF_SOFMASK@{SL811\_\-CSOF\_\-SOFMASK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CSOF\_\-SOFMASK~(0x3f)}\label{sl811hs_8h_4f43f39fe62af5720775feeefa1b1507}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL@{SL811\_\-CTRL}}
+\index{SL811_CTRL@{SL811\_\-CTRL}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL~(0x05)}\label{sl811hs_8h_ef036cc0419f0a7c22a0dce9b670489d}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_ENABLESOF@{SL811\_\-CTRL\_\-ENABLESOF}}
+\index{SL811_CTRL_ENABLESOF@{SL811\_\-CTRL\_\-ENABLESOF}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-ENABLESOF~(0x01)}\label{sl811hs_8h_af86b967c2920f1affede025dd54c1ca}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_EOF2@{SL811\_\-CTRL\_\-EOF2}}
+\index{SL811_CTRL_EOF2@{SL811\_\-CTRL\_\-EOF2}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-EOF2~(0x04)}\label{sl811hs_8h_991f6df9094e53b70d13691f53300cc5}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_JKSTATE@{SL811\_\-CTRL\_\-JKSTATE}}
+\index{SL811_CTRL_JKSTATE@{SL811\_\-CTRL\_\-JKSTATE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-JKSTATE~(0x10)}\label{sl811hs_8h_f65319645d2e842ab080557dae13e3f3}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_LOWSPEED@{SL811\_\-CTRL\_\-LOWSPEED}}
+\index{SL811_CTRL_LOWSPEED@{SL811\_\-CTRL\_\-LOWSPEED}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-LOWSPEED~(0x20)}\label{sl811hs_8h_737c7d0ba3859926256a53e8e11baa4c}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_RESETENGINE@{SL811\_\-CTRL\_\-RESETENGINE}}
+\index{SL811_CTRL_RESETENGINE@{SL811\_\-CTRL\_\-RESETENGINE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-RESETENGINE~(0x08)}\label{sl811hs_8h_73bdc73d6121afaad389199cbe7f13b0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_CTRL_SUSPEND@{SL811\_\-CTRL\_\-SUSPEND}}
+\index{SL811_CTRL_SUSPEND@{SL811\_\-CTRL\_\-SUSPEND}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-CTRL\_\-SUSPEND~(0x40)}\label{sl811hs_8h_8c65e01deb056ae1cfe81bbe5fbaa265}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_DATA@{SL811\_\-DATA}}
+\index{SL811_DATA@{SL811\_\-DATA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-DATA~(0x0e)}\label{sl811hs_8h_a6339fb82f9e0b9a21198cc00d20c641}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0ADDR@{SL811\_\-E0ADDR}}
+\index{SL811_E0ADDR@{SL811\_\-E0ADDR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0ADDR~(0x01)}\label{sl811hs_8h_d2bcbad6ee7640149ddadb2f2bd39837}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0BASE@{SL811\_\-E0BASE}}
+\index{SL811_E0BASE@{SL811\_\-E0BASE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0BASE~(0x00)}\label{sl811hs_8h_ee3b4f2da21f795104bbe9193ab3a2a9}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0CONT@{SL811\_\-E0CONT}}
+\index{SL811_E0CONT@{SL811\_\-E0CONT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0CONT~(0x04)}\label{sl811hs_8h_bbf71408606001fe4b280fa25ca84f4a}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0CTRL@{SL811\_\-E0CTRL}}
+\index{SL811_E0CTRL@{SL811\_\-E0CTRL}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0CTRL~(0x00)}\label{sl811hs_8h_4442a208870a107c8225d183652b28d0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0DEV@{SL811\_\-E0DEV}}
+\index{SL811_E0DEV@{SL811\_\-E0DEV}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0DEV~SL811\_\-E0CONT}\label{sl811hs_8h_a64fbecc6a1e3d5ecb55b26fb8f7d44f}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0LEN@{SL811\_\-E0LEN}}
+\index{SL811_E0LEN@{SL811\_\-E0LEN}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0LEN~(0x02)}\label{sl811hs_8h_0b43a50827ca2dfabe4311f62083931a}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0PID@{SL811\_\-E0PID}}
+\index{SL811_E0PID@{SL811\_\-E0PID}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0PID~SL811\_\-E0STAT}\label{sl811hs_8h_88e43473f0c10f92cd9a737075dc25b0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E0STAT@{SL811\_\-E0STAT}}
+\index{SL811_E0STAT@{SL811\_\-E0STAT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E0STAT~(0x03)}\label{sl811hs_8h_bc9772265eb11707f05306ac4581f89f}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1ADDR@{SL811\_\-E1ADDR}}
+\index{SL811_E1ADDR@{SL811\_\-E1ADDR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1ADDR~(SL811\_\-E1BASE + SL811\_\-E0ADDR)}\label{sl811hs_8h_445239526f2b617d6370fd5e785f6a22}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1BASE@{SL811\_\-E1BASE}}
+\index{SL811_E1BASE@{SL811\_\-E1BASE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1BASE~(0x08)}\label{sl811hs_8h_29acb40cf9178c048abfa0c332bcf1c1}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1CONT@{SL811\_\-E1CONT}}
+\index{SL811_E1CONT@{SL811\_\-E1CONT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1CONT~(SL811\_\-E1BASE + SL811\_\-E0CONT)}\label{sl811hs_8h_cc4dc8760d3a84251d94c24a87de0fdd}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1CTRL@{SL811\_\-E1CTRL}}
+\index{SL811_E1CTRL@{SL811\_\-E1CTRL}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1CTRL~(SL811\_\-E1BASE + SL811\_\-E0CTRL)}\label{sl811hs_8h_632635639cb55722306091a6d3978b4a}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1DEV@{SL811\_\-E1DEV}}
+\index{SL811_E1DEV@{SL811\_\-E1DEV}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1DEV~(SL811\_\-E1BASE + SL811\_\-E0DEV)}\label{sl811hs_8h_10596ebb8159720646ce12126c67350d}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1LEN@{SL811\_\-E1LEN}}
+\index{SL811_E1LEN@{SL811\_\-E1LEN}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1LEN~(SL811\_\-E1BASE + SL811\_\-E0LEN)}\label{sl811hs_8h_67f5f19331a730d55e39dd3d8cec34ce}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1PID@{SL811\_\-E1PID}}
+\index{SL811_E1PID@{SL811\_\-E1PID}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1PID~(SL811\_\-E1BASE + SL811\_\-E0PID)}\label{sl811hs_8h_e68e84a097f788a4b5adbf830b3a9bcb}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_E1STAT@{SL811\_\-E1STAT}}
+\index{SL811_E1STAT@{SL811\_\-E1STAT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-E1STAT~(SL811\_\-E1BASE + SL811\_\-E0STAT)}\label{sl811hs_8h_9ab7152bfc9125c336bd6e2a8f861b88}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_ARM@{SL811\_\-EPCTRL\_\-ARM}}
+\index{SL811_EPCTRL_ARM@{SL811\_\-EPCTRL\_\-ARM}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-ARM~(0x01)}\label{sl811hs_8h_039e987a5ec4b96c06a205ed5e3f6180}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_DATATOGGLE@{SL811\_\-EPCTRL\_\-DATATOGGLE}}
+\index{SL811_EPCTRL_DATATOGGLE@{SL811\_\-EPCTRL\_\-DATATOGGLE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-DATATOGGLE~(0x40)}\label{sl811hs_8h_94f5450169d5742f3411187436502363}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_DIRECTION@{SL811\_\-EPCTRL\_\-DIRECTION}}
+\index{SL811_EPCTRL_DIRECTION@{SL811\_\-EPCTRL\_\-DIRECTION}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-DIRECTION~(0x04)}\label{sl811hs_8h_1bb9f893803b46e0ff7c461835850e5b}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_ENABLE@{SL811\_\-EPCTRL\_\-ENABLE}}
+\index{SL811_EPCTRL_ENABLE@{SL811\_\-EPCTRL\_\-ENABLE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-ENABLE~(0x02)}\label{sl811hs_8h_cdc5cbd929286530700e34f3e5a7dfc5}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_ISO@{SL811\_\-EPCTRL\_\-ISO}}
+\index{SL811_EPCTRL_ISO@{SL811\_\-EPCTRL\_\-ISO}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-ISO~(0x10)}\label{sl811hs_8h_4fa0606279507063d6b0af435aa55c51}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_PREAMBLE@{SL811\_\-EPCTRL\_\-PREAMBLE}}
+\index{SL811_EPCTRL_PREAMBLE@{SL811\_\-EPCTRL\_\-PREAMBLE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-PREAMBLE~(0x80)}\label{sl811hs_8h_343054b0d6be70e6c768dffc4e1d81a1}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPCTRL_SOF@{SL811\_\-EPCTRL\_\-SOF}}
+\index{SL811_EPCTRL_SOF@{SL811\_\-EPCTRL\_\-SOF}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPCTRL\_\-SOF~(0x20)}\label{sl811hs_8h_d70d661d09dfc289198f5004a3c51109}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPPID_EPMASK@{SL811\_\-EPPID\_\-EPMASK}}
+\index{SL811_EPPID_EPMASK@{SL811\_\-EPPID\_\-EPMASK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPPID\_\-EPMASK~(0x0f)}\label{sl811hs_8h_519800104b056bede670a61fbbd8ccd0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPPID_PIDMASK@{SL811\_\-EPPID\_\-PIDMASK}}
+\index{SL811_EPPID_PIDMASK@{SL811\_\-EPPID\_\-PIDMASK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPPID\_\-PIDMASK~(0xf0)}\label{sl811hs_8h_9aa9775d2ede35d1b4f373049cc98f89}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_ACK@{SL811\_\-EPSTAT\_\-ACK}}
+\index{SL811_EPSTAT_ACK@{SL811\_\-EPSTAT\_\-ACK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-ACK~(0x01)}\label{sl811hs_8h_f2806d7be2d98cf37a36d0b475f129da}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_ERROR@{SL811\_\-EPSTAT\_\-ERROR}}
+\index{SL811_EPSTAT_ERROR@{SL811\_\-EPSTAT\_\-ERROR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-ERROR~(0x02)}\label{sl811hs_8h_e082a8033ebe8b2b6c3364a0583f4109}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_NAK@{SL811\_\-EPSTAT\_\-NAK}}
+\index{SL811_EPSTAT_NAK@{SL811\_\-EPSTAT\_\-NAK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-NAK~(0x40)}\label{sl811hs_8h_8a30deae0cf2a25c7b22e73319abe24c}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_OVERFLOW@{SL811\_\-EPSTAT\_\-OVERFLOW}}
+\index{SL811_EPSTAT_OVERFLOW@{SL811\_\-EPSTAT\_\-OVERFLOW}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-OVERFLOW~(0x20)}\label{sl811hs_8h_831262c6fa0272e31ffe48cb1859f3ae}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_SEQUENCE@{SL811\_\-EPSTAT\_\-SEQUENCE}}
+\index{SL811_EPSTAT_SEQUENCE@{SL811\_\-EPSTAT\_\-SEQUENCE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-SEQUENCE~(0x08)}\label{sl811hs_8h_94649b56604b069c7d7856704ab27ded}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_SETUP@{SL811\_\-EPSTAT\_\-SETUP}}
+\index{SL811_EPSTAT_SETUP@{SL811\_\-EPSTAT\_\-SETUP}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-SETUP~(0x10)}\label{sl811hs_8h_d79bf81331e170689dcd90b52bc400fb}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_STALL@{SL811\_\-EPSTAT\_\-STALL}}
+\index{SL811_EPSTAT_STALL@{SL811\_\-EPSTAT\_\-STALL}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-STALL~(0x80)}\label{sl811hs_8h_2843e1a9b5b853797ea98030781d1629}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_EPSTAT_TIMEOUT@{SL811\_\-EPSTAT\_\-TIMEOUT}}
+\index{SL811_EPSTAT_TIMEOUT@{SL811\_\-EPSTAT\_\-TIMEOUT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-EPSTAT\_\-TIMEOUT~(0x04)}\label{sl811hs_8h_c660cde7b3b43835d341b7064554f3a6}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IDX_ADDR@{SL811\_\-IDX\_\-ADDR}}
+\index{SL811_IDX_ADDR@{SL811\_\-IDX\_\-ADDR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IDX\_\-ADDR~(0x00)}\label{sl811hs_8h_30ac806c0bb67cb5f7202ff75b139d43}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IDX_DATA@{SL811\_\-IDX\_\-DATA}}
+\index{SL811_IDX_DATA@{SL811\_\-IDX\_\-DATA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IDX\_\-DATA~(0x01)}\label{sl811hs_8h_6283965282e57130e91d208d0c62d50c}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER@{SL811\_\-IER}}
+\index{SL811_IER@{SL811\_\-IER}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER~(0x06)}\label{sl811hs_8h_1fdc4af7a9e1b54a878f642ba29b223e}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_BABBLE@{SL811\_\-IER\_\-BABBLE}}
+\index{SL811_IER_BABBLE@{SL811\_\-IER\_\-BABBLE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-BABBLE~(0x04)}\label{sl811hs_8h_d78f0187be78214a761b60e90b93564b}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_INSERT@{SL811\_\-IER\_\-INSERT}}
+\index{SL811_IER_INSERT@{SL811\_\-IER\_\-INSERT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-INSERT~(0x20)}\label{sl811hs_8h_6060c9bec555f1ca6367d63e30cc0ddb}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_RESET@{SL811\_\-IER\_\-RESET}}
+\index{SL811_IER_RESET@{SL811\_\-IER\_\-RESET}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-RESET~(0x40)}\label{sl811hs_8h_2ab6d1b25806621d1d51ea858dad2d9d}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_SOFTIMER@{SL811\_\-IER\_\-SOFTIMER}}
+\index{SL811_IER_SOFTIMER@{SL811\_\-IER\_\-SOFTIMER}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-SOFTIMER~(0x10)}\label{sl811hs_8h_47705a5a69a187d3e45565021396fd17}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_USBA@{SL811\_\-IER\_\-USBA}}
+\index{SL811_IER_USBA@{SL811\_\-IER\_\-USBA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-USBA~(0x01)}\label{sl811hs_8h_0402a6cab18bad43cd6781ec435a8924}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_IER_USBB@{SL811\_\-IER\_\-USBB}}
+\index{SL811_IER_USBB@{SL811\_\-IER\_\-USBB}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-IER\_\-USBB~(0x02)}\label{sl811hs_8h_8355625b31f5c9a12912deab38031d6a}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR@{SL811\_\-ISR}}
+\index{SL811_ISR@{SL811\_\-ISR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR~(0x0d)}\label{sl811hs_8h_c8ded6ccec42dd0eb4cb68037dd3f3c0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_BABBLE@{SL811\_\-ISR\_\-BABBLE}}
+\index{SL811_ISR_BABBLE@{SL811\_\-ISR\_\-BABBLE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-BABBLE~(0x04)}\label{sl811hs_8h_def6785325218c264f224d0c5034d958}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_DATA@{SL811\_\-ISR\_\-DATA}}
+\index{SL811_ISR_DATA@{SL811\_\-ISR\_\-DATA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-DATA~(0x80)}\label{sl811hs_8h_ffebfe605206eacf73bdeb4a27c115af}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_INSERT@{SL811\_\-ISR\_\-INSERT}}
+\index{SL811_ISR_INSERT@{SL811\_\-ISR\_\-INSERT}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-INSERT~(0x20)}\label{sl811hs_8h_6345c4e632c5047b2e0f6f0d27d6d484}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_RESET@{SL811\_\-ISR\_\-RESET}}
+\index{SL811_ISR_RESET@{SL811\_\-ISR\_\-RESET}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-RESET~(0x40)}\label{sl811hs_8h_55e80e0944fa26f24a264cb8f217fa73}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_SOFTIMER@{SL811\_\-ISR\_\-SOFTIMER}}
+\index{SL811_ISR_SOFTIMER@{SL811\_\-ISR\_\-SOFTIMER}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-SOFTIMER~(0x10)}\label{sl811hs_8h_2c35f72c4f20d68ce395c01265c9b9db}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_USBA@{SL811\_\-ISR\_\-USBA}}
+\index{SL811_ISR_USBA@{SL811\_\-ISR\_\-USBA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-USBA~(0x01)}\label{sl811hs_8h_ba92d26930a9a7c05db109ec0f33898f}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_ISR_USBB@{SL811\_\-ISR\_\-USBB}}
+\index{SL811_ISR_USBB@{SL811\_\-ISR\_\-USBB}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-ISR\_\-USBB~(0x02)}\label{sl811hs_8h_dff2ff75f706c8f2a906b62577ae0d77}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_MEM@{SL811\_\-MEM}}
+\index{SL811_MEM@{SL811\_\-MEM}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-MEM~(0x10)}\label{sl811hs_8h_83da09abe00001aed944d9f115db586e}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_PORTSIZE@{SL811\_\-PORTSIZE}}
+\index{SL811_PORTSIZE@{SL811\_\-PORTSIZE}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-PORTSIZE~(0x02)}\label{sl811hs_8h_4277cb392c5fa43d2fc1e21817b4b4b0}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV@{SL811\_\-REV}}
+\index{SL811_REV@{SL811\_\-REV}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV~SL811\_\-DATA}\label{sl811hs_8h_847931b06371140bc8ac25758b911fcb}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV_REVMASK@{SL811\_\-REV\_\-REVMASK}}
+\index{SL811_REV_REVMASK@{SL811\_\-REV\_\-REVMASK}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV\_\-REVMASK~(0xf0)}\label{sl811hs_8h_9b85a864b725a8aaf1710f1051815e33}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV_REVSL811H@{SL811\_\-REV\_\-REVSL811H}}
+\index{SL811_REV_REVSL811H@{SL811\_\-REV\_\-REVSL811H}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV\_\-REVSL811H~(0x00)}\label{sl811hs_8h_c6b3374984d361a0db1eabecd12e122f}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV_REVSL811HS@{SL811\_\-REV\_\-REVSL811HS}}
+\index{SL811_REV_REVSL811HS@{SL811\_\-REV\_\-REVSL811HS}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV\_\-REVSL811HS~(0x10)}\label{sl811hs_8h_593ca96c18416f5213b54fc936706a84}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV_USBA@{SL811\_\-REV\_\-USBA}}
+\index{SL811_REV_USBA@{SL811\_\-REV\_\-USBA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV\_\-USBA~(0x01)}\label{sl811hs_8h_be47819b3323b305f56d393fb65d9afb}
+
+
+\index{sl811hs.h@{sl811hs.h}!SL811_REV_USBB@{SL811\_\-REV\_\-USBB}}
+\index{SL811_REV_USBB@{SL811\_\-REV\_\-USBB}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SL811\_\-REV\_\-USBB~(0x02)}\label{sl811hs_8h_629f9113356e446ed8f0dcef25aae3b8}
+
+
+\index{sl811hs.h@{sl811hs.h}!sMemSize@{sMemSize}}
+\index{sMemSize@{sMemSize}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define s\-Mem\-Size~0xc0}\label{sl811hs_8h_20f849acb8c589110cbae684630b0e05}
+
+
+\index{sl811hs.h@{sl811hs.h}!ubufA@{ubufA}}
+\index{ubufA@{ubufA}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define ubuf\-A~0x80}\label{sl811hs_8h_c32d689bd67fa343ef077c0942e3ebd9}
+
+
+\index{sl811hs.h@{sl811hs.h}!ubufB@{ubufB}}
+\index{ubufB@{ubufB}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define ubuf\-B~0xc0}\label{sl811hs_8h_64c0902e809f6faa4f3873291b44b1c9}
+
+
+\index{sl811hs.h@{sl811hs.h}!uxferLen@{uxferLen}}
+\index{uxferLen@{uxferLen}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define uxfer\-Len~0x40}\label{sl811hs_8h_07d1653ecc11539fa169f4bf92eee2e1}
+
+
+\index{sl811hs.h@{sl811hs.h}!ZDATA0_WR@{ZDATA0\_\-WR}}
+\index{ZDATA0_WR@{ZDATA0\_\-WR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define ZDATA0\_\-WR~0x05}\label{sl811hs_8h_c9e59d2b5a4cc444c20ced93cf7400f8}
+
+
+\index{sl811hs.h@{sl811hs.h}!ZDATA1_WR@{ZDATA1\_\-WR}}
+\index{ZDATA1_WR@{ZDATA1\_\-WR}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define ZDATA1\_\-WR~0x45}\label{sl811hs_8h_5a63f0c7abd7664edf5e4be766e9c949}
+
+
+
+
+\subsection{Function Documentation}
+\index{sl811hs.h@{sl811hs.h}!sl811_init@{sl811\_\-init}}
+\index{sl811_init@{sl811\_\-init}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-init ()}\label{sl811hs_8h_eae264b5f2fd8d3e95282e4c5355cc1a}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_read@{sl811\_\-read}}
+\index{sl811_read@{sl811\_\-read}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 sl811\_\-read (u8 {\em addr})}\label{sl811hs_8h_0b97872a888859174992d6f4f650149d}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_read_buf@{sl811\_\-read\_\-buf}}
+\index{sl811_read_buf@{sl811\_\-read\_\-buf}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-read\_\-buf (u8 {\em addr}, unsigned char $\ast$ {\em buffer}, u8 {\em size})}\label{sl811hs_8h_3605b3873fac287643f117bd4cfd8135}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_read_burst@{sl811\_\-read\_\-burst}}
+\index{sl811_read_burst@{sl811\_\-read\_\-burst}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 sl811\_\-read\_\-burst ()}\label{sl811hs_8h_55f4316ec4f711679f95598d9f2dd04f}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_reset@{sl811\_\-reset}}
+\index{sl811_reset@{sl811\_\-reset}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-reset ()}\label{sl811hs_8h_957be3b87be7fdedbd000a3e2ef14d7a}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_write@{sl811\_\-write}}
+\index{sl811_write@{sl811\_\-write}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-write (u8 {\em addr}, u8 {\em data})}\label{sl811hs_8h_4168bcb0bb6784199ca19edea2fb38ae}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_write_buf@{sl811\_\-write\_\-buf}}
+\index{sl811_write_buf@{sl811\_\-write\_\-buf}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-write\_\-buf (u8 {\em addr}, unsigned char $\ast$ {\em buffer}, u8 {\em size})}\label{sl811hs_8h_e019488dbd21999060d3244eaa7c0316}
+
+
+\index{sl811hs.h@{sl811hs.h}!sl811_write_burst@{sl811\_\-write\_\-burst}}
+\index{sl811_write_burst@{sl811\_\-write\_\-burst}!sl811hs.h@{sl811hs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-write\_\-burst (u8 {\em data})}\label{sl811hs_8h_f674fb4ab8b8d3a94ebec3f6cf4bc179}
+
+

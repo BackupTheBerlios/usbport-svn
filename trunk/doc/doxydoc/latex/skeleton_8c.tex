@@ -1,0 +1,89 @@
+\section{/home/bene/projects/sl811/usbstack/drivers/skeleton.c File Reference}
+\label{skeleton_8c}\index{/home/bene/projects/sl811/usbstack/drivers/skeleton.c@{/home/bene/projects/sl811/usbstack/drivers/skeleton.c}}
+{\tt \#include $<$core/core.h$>$}\par
+{\tt \#include $<$core/usb.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf MAX\_\-DEVICES}~;
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-skeleton\_\-init} ()
+\item 
+void {\bf usb\_\-skeleton\_\-probe} ()
+\item 
+void {\bf usb\_\-skeleton\_\-unprobe} ({\bf usb\_\-device} $\ast$dev)
+\item 
+void {\bf usb\_\-skeleton\_\-check} ()
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf devices} [MAX\_\-DEVICES]
+\item 
+u8 {\bf devices\_\-in\_\-use}
+\item 
+{\bf usb\_\-driver} {\bf skeleton}
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{skeleton.c@{skeleton.c}!MAX_DEVICES@{MAX\_\-DEVICES}}
+\index{MAX_DEVICES@{MAX\_\-DEVICES}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define MAX\_\-DEVICES~;}\label{skeleton_8c_4e132cfaa78353e3af1474a86b2dd535}
+
+
+
+
+\subsection{Function Documentation}
+\index{skeleton.c@{skeleton.c}!usb_skeleton_check@{usb\_\-skeleton\_\-check}}
+\index{usb_skeleton_check@{usb\_\-skeleton\_\-check}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-skeleton\_\-check ()}\label{skeleton_8c_4fa5b43f288817fd0374f6594bb2292e}
+
+
+\index{skeleton.c@{skeleton.c}!usb_skeleton_init@{usb\_\-skeleton\_\-init}}
+\index{usb_skeleton_init@{usb\_\-skeleton\_\-init}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-skeleton\_\-init ()}\label{skeleton_8c_b6185b4f6021ce59a60336dd28e0a4f6}
+
+
+\index{skeleton.c@{skeleton.c}!usb_skeleton_probe@{usb\_\-skeleton\_\-probe}}
+\index{usb_skeleton_probe@{usb\_\-skeleton\_\-probe}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-skeleton\_\-probe ()}\label{skeleton_8c_584a2bcb5389e061c1c71e49ec41f7b7}
+
+
+\index{skeleton.c@{skeleton.c}!usb_skeleton_unprobe@{usb\_\-skeleton\_\-unprobe}}
+\index{usb_skeleton_unprobe@{usb\_\-skeleton\_\-unprobe}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-skeleton\_\-unprobe ({\bf usb\_\-device} $\ast$ {\em dev})}\label{skeleton_8c_1c81a3b9a65cccb0e17a4525797670e6}
+
+
+
+
+\subsection{Variable Documentation}
+\index{skeleton.c@{skeleton.c}!devices@{devices}}
+\index{devices@{devices}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ {\bf devices}[MAX\_\-DEVICES]}\label{skeleton_8c_20e31b9efc609f8b0aa5dbd4f2709708}
+
+
+\index{skeleton.c@{skeleton.c}!devices_in_use@{devices\_\-in\_\-use}}
+\index{devices_in_use@{devices\_\-in\_\-use}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 {\bf devices\_\-in\_\-use}}\label{skeleton_8c_d64afe69017d377365c18164cd5639ff}
+
+
+\index{skeleton.c@{skeleton.c}!skeleton@{skeleton}}
+\index{skeleton@{skeleton}!skeleton.c@{skeleton.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-driver} {\bf skeleton}}\label{skeleton_8c_0d3e5c6db9f69478761aecbc55ab9643}
+
+
+\textbf{Initial value:}
+
+\begin{Code}\begin{verbatim} {
+  .name    = "skeleton",
+  .probe   = usb_skeleton_probe,
+  .unprobe = usb_skeleton_unprobe,
+  .check   = usb_skeleton_check,
+  .data    = NULL
+}
+\end{verbatim}\end{Code}

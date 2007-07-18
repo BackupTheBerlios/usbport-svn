@@ -1,0 +1,589 @@
+
+\chapter{Implementierung des USB-Host-Stack}
+
+Nach den im vorherigen Kapitel beschriebenen Komponenten
+und deren Aufgaben im USB-Host-Stack soll auf 
+die Implementierung des gesamten USB-Systems eingegangen werden.
+Erklärt wird unter anderem die Verzeichnisstruktur, die API für die Anwendungen, die Treiber und 
+die Host-Controller und die Struktur des Algorithmus
+zur Aufteilung von I/O-Requests in Transfer-Deskriptoren.
+Im Unterkapitel \glqq{}Integration in ein eigenes Projekt\grqq{}(Seite \pageref{integration}) wird gezeigt,
+was bei der Integration des USB-Stacks in eine eigene Anwendung wichtig ist.
+
+\section{Eigenschaften}
+\index{USB-Stack}
+Der USB-Stack soll flexibel auf den verschiedensten Prozessorarchitekturen
+einsetzbar sein. Da der gesamte Quelltext mit allen Treibern, Modulen und Bibliotheken
+für ein Embedded System zu groß wäre und das meiste für ein Projekt auch überflüssig 
+ist, wurde der Stack so aufgebaut, dass nur die absolut notwendigen Teile
+herausgenommen und miteinander verknüpft werden können. 
+\newline\newline
+Es wurde immer versucht, einen Kompromiss zwischen Einfachheit und Umfang des Codes
+zu schaffen. Beispielsweise sind die USB-Geräte-Treiber dynamisch in
+den Stack eingebunden, da hier mehrere Treiber gleichzeitig existieren können. Die
+Host-Controller-Treiber wiederum werden statisch bei der Compilierung fest
+in das Programm integriert, da ein Embedded System mit einem einzigen Host-Controller
+auskommt und dadurch wieder weniger Arbeitsspeicher und Programmcode für die Verwaltung
+der Host-Controller-Treiberstrukturen benötigt wird.
+\newline\newline
+Die wichtigsten Eigenschaften des USB-Stacks sind:
+\begin{enumerate}
+\item Niedriger RAM Verbrauch (ca. 200 Byte)
+\item Kleine Codegröße (ab 4 KB)
+\item Die Module und Treiber sind flexibel kombinierbar
+\item Fertige Klassen-, Gerätetreiber und Bibliotheken für USB-Geräte
+\item Hub-, Massenspeicher-, HID-Treiber
+\item uclibusb für USB-Geräte-Bibliotheken (Beispiel für FT232)
+\item Einfache Host-Controller-Schnittstelle 
+\item Bereits auf kleinen 8 Bit-Prozessoren einsetzbar
+\item Alle Quelltexte sind in C geschrieben
+\end{enumerate}
+Im nächsten Abschnitt wird auf die Unterteilung der einzelnen Module eingegangen.
+
+\section{Modulübersicht} \label{kap:moduluebersicht}
+\index{Module}
+Durch eine geschickte Trennung der Quelltexteinheiten ist es möglich,
+einen Stack mit den nur absolut notwendigen Teilen zusammenzustellen.
+In Abbildung \ref{module_c} wird gezeigt, wie die einzelnen Module 
+aufeinander aufbauen und voneinander abhängig sind.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=11cm]{images/module_c}
+\caption{C-Module des USB-Stacks}
+\label{module_c}
+}
+\end{figure}
+\index{Host-Controller-Treiber}
+\index{Klassentreiber}
+\index{Gerätetreiber}
+Auf der untersten Ebene des USB-Stacks befindet sich der Host-Controller-Treiber (z.B. \textbf{sl811hs-hcd.c} für den
+Host-Controller SL811HS von Cypress,
+der im Rahmen dieser Diplomarbeit entwickelt worden ist.),
+welcher die Funktionen aus der Header-Datei \textbf{host.h} anbieten muss.
+Über diese Funktionen kann der USB-Stack Anfragen absenden und empfangen.
+Im Host-Controller-Treiber (HCD) müssen zudem die Funktionen für
+den Root-Hub integriert sein.
+In der Datei \textbf{core.c} befinden sich alle Funktionen für die Verwaltung
+und Steuerung des Busses (Treiber bzw. Geräte an- und abmelden, etc.).
+Die Kommunikationsfunktionen für USB-Geräte bietet der USB-Stack in der Datei \textbf{usb.c} an.
+\newline\newline
+Neben den Funktionen für die direkte Kommunikation existieren
+noch Treiber. Die Treiber können in zwei Gruppen
+aufgeteilt werden, die Klassen- und Gerätetreiber. Für Geräte,
+bei denen
+kein eigener Treiber benötigt wird, gibt es die Möglichkeit,
+eine Bibliothek anzubieten, welche im Ordner \textbf{uclibusb} - angelehnt
+an das Konzept des bekannten Projektes libusb \cite{libusb} - gesammelt werden.
+
+\section{Verzeichnisstruktur}
+\index{Verzeichnisse}
+Für den USB Stack wurde folgende Verzeichnisstruktur angelegt:
+
+\begin{itemize} 
+\item \textbf{arch} Beispielimplementierungen für verschiedene Mikrocontroller
+\item \textbf{boards} Schaltplan, Platinenlayout, etc. für die Evaluationsschaltung
+\item \textbf{core} USB-Kern-Funktionen
+\item \textbf{drivers} USB-Treiber (Geräte und Klassen)
+\item \textbf{host} Host-Controller-Treiber 
+%\item \textbf{hwmon} Hardware Monitor für USB Host Controller 
+\item \textbf{lib} Zusatzfunktionen, Typendefinitionen, etc.
+\item \textbf{uclibusb} USB-Bibliotheken für USB-Geräte
+\item \textbf{usbspec} Datentypen und -formate der USB-Spezifikation
+\item \textbf{doc} Doxygen Dokumentation und die Diplomarbeit als Beschreibung
+\end{itemize}
+
+
+\section{Überblick der Schnittstellen}
+\index{API}
+Die Softwareschnittstellen des USB-Stacks sind
+in drei Gruppen aufgeteilt (Abbildung \ref{api}). 
+In der untersten Gruppe, sind die Funktionen definiert, die ein Host-Controller-Treiber
+zur Verfügung stellen muss. Die Zweite drüber liegende Gruppe bildet das USB-Bustreiber-Interface (USBDI), welches
+Funktionen für die Kommunikation der Geräte- und
+Treiberverwaltung anbietet. In der obersten Gruppe ist schließlich
+die Schnittstelle eines USB-Geräte- bzw. USB-Klassen-Treibers beschrieben.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/api}
+\caption{USB-Stack-Schnittstellen}
+\label{api}
+}
+\end{figure}
+\subsection{HCDI (Host-Controller-Treiber-Schnittstelle)}
+\index{Host-Controller-Treiber}
+%Im Gegensatz zu einem USB-Geräte-Treiber gibt es keine Datenstruktur für
+%einen Host-Treiber, die dem USB-Stack übergeben werden muss.
+Wie in der Modulübersicht (Abschnitt \ref{kap:moduluebersicht}) bereits erwähnt,
+ist ein einziger Host-Controller für die Anbindung mehrerer USB-Geräte ausreichend.
+Deswegen wird der Treiber statisch mit in das Programm gelinkt. Damit
+der USB-Stack auf den Host-Controller über den Treiber zugreifen kann,
+müssen die folgenden zwei Funktionen exakt so angeboten werden.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+void hcdi\_init() & Host-Controller initieren\\ \hline
+u8 hcdi\_enqueue(usb\_transfer\_descriptor *td) & Transfer-Deskriptor übertragen \\ \hline
+%u8 hcdi\_dequeue(usb\_transfer\_descriptor *td) & Übertragung abbrechen \\ \hline
+\end{tabular}
+\caption{HCDI - Host-Controller-Treiber-Interface [host.h]}
+\label{usb_device_add}
+\end{table}
+\index{host.h}
+Die Initialisierungsfunktion wird vom Kern direkt nach dem Starten aufgerufen.
+In ihr können Host-Controller spezifische Register entsprechend
+beschrieben werden, so dass sich der Baustein ebenfalls
+in einem initialisierten Zustand befindet
+und mit der Arbeit beginnen kann. Hier fallen meistens Arbeiten
+wie Interruptmasken setzen, Reset-Prozesse auslösen, etc. an.
+Für die Datenübertragung wie in Kapitel \ref{kap:datenuebertragung} auf Seite \pageref{kap:datenuebertragung} beschrieben
+muss die Funktion \textit{hcdi\_enqueue} implementiert werden.
+Als Parameter erhält sie Zeiger auf Transfer-Deskriptoren. Für die Erkennung von neuen Geräten ist der entsprechende
+Root-Hub-Treiber zuständig. Mehr dazu in Kapitel \ref{{kap:roothub}} auf Seite \pageref{kap:roothub}.
+
+
+\subsection{USBDI (USB-Bustreiber-Schnittstelle)}
+\label{kap:usbdi}
+\index{USB-Geräte-Treiber}
+\index{USBDI}
+\index{USB-Bustreiber-Schnittstelle}
+Die Struktur der USBDI-API ist ähnlich der des GNU/Linux Kernels \cite{kernel}
+und der Bibliothek libusb \cite{libusb}. Für den Entwickler hat 
+das zum Einen den Vorteil, dass er sich, wenn er sich mit einer der beiden Schnittstellen bereits
+auskennt, leichter in den USB-Stack einarbeiten kann. Zum Anderen
+können Bibliotheken auf einem PC entwickelt werden und anschließend
+mit kleinen Anpassungen in den USB-Stack integriert werden.
+\newline\newline
+\textbf{Kommunikation mit Geräten}
+\newline\newline
+Bevor auf ein USB-Gerät zugegriffen werden kann, wird
+ein Zeiger vom Typ \textit{usb\_device} (siehe Listing \ref{lst:usb_dev_struct}) auf das Gerät benötigt.
+\lstset{language=C}
+\begin{lstlisting}[caption={USB-Geräte-Datenstruktur, core.h},label={lst:usb_dev_struct},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+typedef struct usb_device_t usb_device;
+struct usb_device_t {
+  /* Geräteinfos */
+  u8  address;	     
+  u8  fullspeed;
+  /* USB Geräte Desriptor */
+  u8  bMaxPacketSize0;
+  u8  bDeviceClass;
+  u8  bDeviceSubClass;
+  u8  bDeviceProtocoll;
+  u32 idVendor;
+  u32 idProduct;
+  u32 bcdDevice;
+  u8  bNumConfigurations;
+  /* Ende USB Geräte Desriptor */
+
+  /* Endpunkte */
+  u8 epSize[16];
+  u8 epTogl[16];
+
+  /* Zeiger auf nächstes Gerät im Stack */
+  usb_device *next;
+};
+\end{lstlisting}
+
+Dieser Zeiger ist kein explizites \glqq{}Handle\grqq{} auf das Gerät,
+sondern ein direkter Verweis auf die Gerätedatenstruktur.
+Mit Hilfe der Funktionen \textit{usb\_open()} und \textit{usb\_open\_class()} (siehe Tabelle \ref{usb_device_add_open})
+kann solch ein Zeiger ermittelt werden.
+Kann das Gerät nicht gefunden werden oder ist es bereits von einem anderen Treiber bzw. Prozess
+reserviert, so erhält man eine \textit{NULL} 
+als Rückgabewert. 
+Weiterhin besteht noch die Möglichkeit, in den internen Gerätelisten des USB-Kerns
+selbst nach dem Gerät zu suchen. Mehr dazu in Kapitel 6.
+\newline\newline
+Wurde das gewünschte Gerät gefunden, können mit den Funktionen aus der Tabelle \ref{usb_uebertragung}
+Daten versendet und empfangen werden. 
+Wird die Verbindung zu einem Gerät nicht mehr benötigt, reicht ein Aufruf der Funktion \textit{usb\_close},
+um das Gerät wieder für andere Anwendungen oder Treiber freizugeben.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+usb\_open(u32 vendor\_id, u32 product\_id) & Gerät mit Hersteller- und Produkt-ID finden\\ \hline
+usb\_open\_class(u8 class) & Gerät mit Klassencode finden\\ \hline
+usb\_close(usb\_device *dev)  & Verbindung mit einem Gerät beenden\\ \hline
+\end{tabular}
+\caption{USBDI - Verbindung zum Gerät aufbauen [usb.h]}
+\label{usb_device_add_open}
+\end{table}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion \\ \hline
+usb\_control\_msg(usb\_device *dev, char *buf, u8 size, u8 timeout) \\ \hline
+usb\_control\_msg(usb\_device *dev, char *buf, u8 size, u8 timeout) \\ \hline
+usb\_bulk\_write(usb\_device *dev, u8 ep, char *buf, u8 size, u8 timeout) \\ \hline
+usb\_int\_read(usb\_device *dev, u8 ep, char *buf, u8 size, u8 timeout) \\ \hline
+usb\_int\_write(usb\_device *dev, u8 ep, char *buf, u8 size, u8 timeout)  \\ \hline
+usb\_isochron\_read(usb\_device *dev, u8 ep, char *buf, u8 size, u8 timeout)  \\ \hline
+usb\_isochron\_write(usb\_device *dev, u8 ep, char *buf, u8 size, u8 timeout) \\ \hline
+\end{tabular}
+\caption{USBDI - Kommunikation mit Gerät [usb.h]}
+\label{usb_uebertragung}
+\end{table}
+\index{usb.h}
+Daten können mit den Funktionen aus der Tabelle \ref{usb_uebertragung} übertragen werden.
+Was die Parameter der Funktionen bedeuten, wird wie folgt beschrieben:
+
+\begin{itemize}
+\item \textbf{usb\_device *dev} Zeiger auf das Gerät
+\item \textbf{u8 ep} Endpunkt für die Kommunikation
+\item \textbf{char *buf} Speicher für zu sendende oder zu empfangende Daten
+\item \textbf{u8 size} Anzahl der zu sendenden oder zu empfangenden Daten (in Byte)
+\item \textbf{u8 timeout} Abbruchszeit bei fehlerhafter Übertragung (in Millisekunden)
+\end{itemize}
+
+Beim Control-Transfer muss im Gegensatz zu den anderen Transferarten keine Endpunktadresse angegeben werden, da nur
+der Endpunkt 0 den Control Transfer unterstützt. Ebenfalls gibt es keine seperaten
+\glqq{}write\grqq{} und \glqq{}read\grqq{} Funktionen, da über den Endpunkt 0 als Einziges die Daten bidirektional
+übertragen werden können.
+\newline\newline
+%Die vollständige API-Dokumentation befindet sich im Anhang B.
+\newpage
+\textbf{Geräteverwaltung}
+\index{Geräteverwaltung}
+\newline\newline
+Ein weiterer wichtiger Bestandteil des USB Stacks ist die Geräteverwaltung.
+Neue Geräte müssen enumeriert, Datenstrukturen angelegt und
+abgesteckte Geräte wieder entfernt werden.
+Für diese Aufgaben bietet der USB-Stack die Funktionen aus der Tabelle \ref{usb_device_add_2} an.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+usb\_device * usb\_add\_device() & Neues Gerät anmelden\\ \hline 
+void usb\_remove\_device(usb\_device *dev) & Gerät abmelden\\ \hline 
+\end{tabular}
+\caption{Gerät an- und abmelden [core.h]}
+\label{usb_device_add_2}
+\end{table}
+\index{core.h}
+Diese Funktionen sollten nur von Hub- und Root-Hub-Treibern aus aufgerufen werden,
+da nur sie den Status eines Ports überwachen können. Erkennt der Hub eine entsprechende
+Änderung (An- und Abstecken von Geräten) an einem Port, kann dies
+dem USB-Stack über die Funktion mitgeteilt werden.
+\newline\newline
+\textbf{Treiberverwaltung}
+\index{Treiberverwaltung}
+\newline\newline
+Die Treiberverwaltung bietet die Möglichkeit, Treiber
+dynamisch während der Laufzeit registrieren und wieder entfernen zu können (siehe Tabelle \ref{usb_device_add}).
+Wird ein neues Gerät angesteckt, durchläuft der USB-Stack die Treiberliste,
+und ruft von jedem Treiber eine Funktion auf, damit überprüft werden kann,
+ob das neue Gerät von dem Treiber ansteuerbar ist.
+Ein Treiber wird durch die Datenstruktur \textit{usb\_driver *driver} (siehe Listing \ref{lst:usb_driver}) im System repräsentiert.
+Welche Parameter diese Struktur genau enthält und für welche Aufgaben sie da sind,
+wird im nächsten Unterkapitel beschrieben.
+
+\label{kap:usbdi_driver}
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+u8 usb\_register\_driver(usb\_driver *driver) & Treiber anmelden\\ \hline 
+u8 usb\_unregister\_driver(usb\_driver *driver) & Treiber abmelden\\ \hline 
+\end{tabular}
+\caption{An- und Abmeldung von Treibern [core.h]}
+\label{usb_device_add}
+\end{table}
+
+\subsection{Klassen- und Gerätetreiber-Interface}
+\index{Klassentreiber}
+\index{Gerätetreiber}
+
+Um USB-Geräte-Treiber am USB-Stack anmelden zu können, wird eine
+Instanz der Datenstruktur \textit{usb\_driver} benötigt.
+In der Datenstruktur wird der Name des Treibers,
+der Zeiger \textit{probe}, der die Adresse zur \glqq{}Prüf-Funktion\grqq{} für neu erkannte Geräte beinhaltet und
+der Zeiger \textit{check}, der eine Adresse zu einer Funktion für periodische Verwaltungs- und Steuerungsaufgaben enthält (siehe Tabelle \ref{usb_device_add_driver}),
+angegeben.
+Mehr zu den Aufgaben dieser Funktionen ist in Kapitel 6 beschrieben.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={USB-Treiber-Datenstruktur, core.h},label={lst:usb_driver},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+usb_driver <treibername> = {
+  .name   = "<treibername>",
+  .probe  = usb_<treibername>_probe,
+  .check  = usb_<treibername>_check,
+  .data   = NULL
+};
+\end{lstlisting}
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+void usb\_$<$treibername$>$\_init() & Treiber initialisieren \\ \hline
+void usb\_$<$treibername$>$\_probe() & Prüfen ob Treiber für neues Gerät da ist  \\ \hline
+void usb\_$<$treibername$>$\_check() & Treiberverwaltung und -steuerung\\ \hline
+\end{tabular}
+\caption{Geräte-, und Klassentreiber-Interface}
+\label{usb_device_add_driver}
+\end{table}
+
+
+\section{Realisierung der Host-Kommunikation}
+
+Die Grundlage für diesen Abschnitt bildet das Kapitel \ref{kap:datenuebertragung} auf Seite \pageref{kap:datenuebertragung}.
+Dort sind die Strategien der Datenübertragung mit dem Host-Controller
+beschrieben. In den folgenden Abschnitten wird daher nur auf die Implementierung
+der Softwarestruktur für diese Strategien eingegangen.
+
+\subsection{I/O-Request-Paket (IRP)}
+\index{I/O-Request-Paket}
+Ein IRP (siehe Listing \ref{irp_usb_2}) enthält die kompletten Informationen für eine USB-Nachricht, wie
+die Geräteadresse, den Endpunkt, die Übertragungsart, die Anzahl der zu empfangenden
+oder zu sendenden Bytes und einen Zeiger auf einen Speicher für die Daten.
+Der Zeiger \textit{usb\_transfer\_descriptor *head} zeigt auf den ersten Transfer-Deskriptor 
+des aktuellen IRP's.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={IRP-Datenstruktur, core.h},label={irp_usb_2},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+typedef struct usb_irp_t usb_irp;
+struct usb_irp_t {
+  usb_device * dev;   /* Zeiger auf Gerätestruktur */
+  u8 endpoint;	      /* Endpunkt + Richtung (Bit 7) */
+  u8 epsize;	      /* Endpunktgrösse */
+  
+  u8 type;	      /* Transferart */
+  char * buffer;      /* Speicher für Übertragung */
+  u16 len;	      /* Anzahl der zu übertragenden Daten */
+
+  usb_transfer_descriptor *head;  /* Zeiger auf ersten TD */
+  u16 timeout;	      /* Abbruch nach x ms bei Fehlerfall */
+};
+\end{lstlisting}
+\index{core.h}
+\subsection{Transfer-Deskriptoren (TD)}
+\index{Transfer-Deskriptor}
+Ein Transfer-Deskriptor (siehe Listing \ref{usb_td_2}) bildet ein einzelnes USB-Paket ab. Gemeinsame Transfer-Deskriptoren
+eines I/O-Request-Paketes sind über die Zeiger \textbf{usb\_transfer\_descriptor *next}
+verkettet. Dadurch kann signalisiert werden, wenn ein kompletter I/O-Request abgearbeitet ist,
+und zwar genau dann, wenn der letzte Transfer-Deskriptor aus der Kette im Zeiger \textit{next}
+eine \textit{NULL} enthält.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Transfer-Deskriptor-Datenstruktur, core.h},label={usb_td_2},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+typedef struct usb_transfer_descriptor_t usb_transfer_descriptor;
+struct usb_transfer_descriptor_t {
+  u8 devaddress;  /* Geräteadresse */
+  u8 endpoint;	  /* Endpunkt */
+
+  u8 pid;	  /* USB Paket Typ */
+  u8 iso;	  /* Isochronen Transfer? */
+  u8 togl;	  /* Togl Bit (DATA0 oder DATA1) */
+
+  char * buffer;  /* Speicher für Übertragung */
+  u16 actlen;	  /* Anzahl der zu übertragenden Daten */
+
+  u8 state;	  /* Zustand der Anfrage */
+  usb_transfer_descriptor *next;  /* Zeiger auf nächsten TD */
+  usb_irp * irp;  /* Zeiger auf IRP */
+};
+\end{lstlisting}
+
+Im nächsten Abschnitt wird der Algorithmus beschrieben, der für die Aufteilung von I/O-Request-Paketen
+in Transfer-Deskriptoren zuständig ist.
+
+\subsection{Algorithmus zur Aufteilung eines IRP in einzelne TD}
+
+Grundlage für die Aufteilung der I/O-Request-Pakete ist das
+in Abbildung \ref{fluss_control} dargestellte Flussdiagramm.
+Es wird anhand des Control-Transfers gezeigt, wie Transfer-Deskriptoren
+erzeugt werden können. Die Aufteilung für Bulk-, Interrupt-
+und Isochronen-Transfer ist ähnlich dem Control-Transfer.
+Der Algorithmus ist für alle Transferarten in der Funktion \textit{usb\_submit\_irp(usb\_irp *irp)}
+implementiert.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=12cm]{images/fluss_control}
+\caption{Aufteilung eines Control-Transfers in Transfer-Deskriptoren}
+\label{fluss_control}
+}
+\end{figure}
+
+
+
+
+\section{Integration in ein eigenes Projekt}\label{integration}
+
+Mit der folgenden Anleitung soll Schritt für Schritt
+gezeigt werden, wie der USB-Stack in ein bestehendes oder
+neues Projekt integriert werden kann. 
+\newline\newline
+
+\textbf{Schritt 1. USB-Verzeichnisse kopieren} \newline
+\newline
+Zu Beginn müssen die kompletten Verzeichnisse \textbf{core}, \textbf{lib} und \textbf{usbspec} aus dem USB-Stack-Archiv
+in das eigene Projektverzeichnis kopiert werden. Wenn für den USB-Stack ein eigener
+Unterordner erstellt werden soll, müssen die Verzeichnisse entsprechend in 
+diesen Ordner kopiert werden.
+\newline
+
+\textbf{Schritt 2. Host-Treiber wählen} \newline
+\newline
+Im nächsten Schritt muss ein Ordner \textbf{host} auf der gleichen Ebene des 
+Ordners aus Schritt 1 angelegt werden. In diesen Ordner muss 
+ein passender USB-Host-Controller-Treiber aus dem Archiv ausgewählt und dort hinkopiert werden. 
+Für die Compilierung wird dazu noch die Datei \textbf{host.h} gebraucht, daher muss diese
+ebenfalls dorthin kopiert werden.
+Oft benötigen die Treiber noch weitere Dateien, wie beispielsweise
+im Fall des SL811HS-Treibers. Dort gibt es noch eine \textbf{sl811hs.h} Datei,
+welche ebenfalls kopiert werden muss.
+Wenn der Host-Controller nicht mit in den Mikroprozessor integriert ist,
+muss ebenfalls noch die Verbindung und Übertragung zwischen Mikrocontroller und Host-Controller 
+beschrieben werden. Dafür bieten
+die Host-Controller eigene Funktionen an, die allerdings angepasst werden müssen.
+Wie die Anbindung genau erfolgt, muss den Dokumentationen der Host-Controller-Treiber
+entnommen werden. Für den SL811HS ist dies in Kapitel 8 der Diplomarbeit beschrieben.
+\newline
+
+\textbf{Schritt 3. Treiber und Bibliotheken wählen }\newline
+\newline
+Auf die selbe Weise wie der Host-Treiber müssen die benötigten Gerätetreiber und Bibliotheken
+in das erstellte Verzeichnis kopiert werden. Es ist zu empfehlen, die Verzeichnisstruktur genauso wie im USB-Stack-Archiv
+aufzubauen.
+\begin{itemize}
+\item drivers 
+  \begin{itemize}
+    \item class  
+    \item net
+    \item ...
+  \end{itemize}
+\item uclibusb
+\end{itemize}
+
+Es exisitieren noch einige Ordner, die im USB-Stack-Archiv leer sind. Mit der Zeit wird
+diese Sammlung hoffentlich immer größer werden.
+\newline
+
+\textbf{Schritt 4. Quelltexte in Übersetzungsprozess integrieren} \newline
+\newline
+Im nächsten Schritt müssen die Dateien mit in den Übersetzungsprozess des Projektes eingebaut werden.
+Damit der Compiler die benötigten Header-Dateien findet, muss
+das Verzeichnis, in dem sich die USB-Stack-Dateien befinden, als Include-Pfad mitgegeben werden.
+Für den gcc würde der Aufruf \textit{gcc -I./}, oder wenn es einen extra Ordner für den
+USB-Stack gibt, \textit{gcc -I./ordnerzumstack} heißen. Über das Präprozessor-Flag
+DEBUG kann der Debugmodus ein- und ausgeschaltet werden (\textit{gcc -DDEBUG=1} oder \textit{gcc -DDEBUG=0}).
+\newline
+
+\textbf{Schritt 5. Inbetriebnahme des USB Stacks} \newline
+
+Die wesentlichen Funktionsaufrufe werden am Listing \ref{lst:usb_sample} gezeigt.
+In Zeile 1-4 sind die wichtigen Header-Dateien eingebunden. Welche
+hier stehen müssen ist abhängig von den Treibern, die für die Anwendung
+benötigt werden. Der USB Stack wird mit dem Funktionsaufruf
+aus Zeile 8 initialisiert. Wieder abhängig von den benötigten Treibern
+müssen die Initialisierungsfunktionen der Treiber aufgerufen werden (Zeile 10-11).
+Für Verwaltungs- und Steuerungsaufgaben muss der USB-Stack regelmäßig aufgerufen werden.
+Dies kann entweder über eine Endlosschleife (Zeile 13) gelöst werden,
+oder über einen periodischen Timer einer Thread-Bibliothek, etc.
+Finden keine periodischen Transfers statt und werden USB-Geräte nicht während
+des Betriebs gewechselt, kann auf diesen periodischen Funktionsaufruf verzichtet werden.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Inbetriebnahme des USB-Stacks},label={lst:usb_sample},
+captionpos=b,
+numbers=left,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+#include <core/core.h>
+#include <host/host.h>
+#include <drivers/class/hub.h>
+#include <drivers/class/storage.h>
+
+int main(void)
+{
+  usb_init();
+
+  usb_hub_init();
+  usb_storage_init();
+  
+  while(1){
+    usb_periodic(); 
+    wait_ms(1);
+  }
+  return 0;
+}
+\end{lstlisting}
+
+\textbf{Schritt 6.  USB-Programme schreiben} \newline
+Die Grundlagen sind an dieser Stelle geschaffen und es kann mit dem Programmieren
+der USB-Anwendung begonnen werden. Eine Kommunikation mit einem USB-Gerät,
+das direkt mit den Funktionen des USBDI angesteuert werden kann, könnte wie folgt aussehen:
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Beispiel für ein USB-Programm},label={lst:usb_driver_999},
+captionpos=b,
+numbers=left,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+/* Zeiger auf Gerätedatenstruktur */
+usb_device * dev = NULL;
+char buf[] = {'A','B','C'};
+
+/* USB-Verbindung zum Gerät öffnen */
+dev = usb_open(0x1234,0x5678);
+
+/* Daten an Endpunkt senden */
+usb_bulk_write(dev,2,buf,3,1000);
+
+/* Daten vom Endpunkt lesen */
+usb_bulk_read(dev,1,buf,3,1000);
+
+/* Verbindung beenden */
+usb_close(dev);
+
+\end{lstlisting}
+\index{Beispielprogramm}
+
+%\section{Portierung auf eine neue Architektur}
+
+%datentypen
+
+%port leitungen fuer die hostcontroller treiber
+
+
+
+%\section{USB Debug Monitor}
+%\subsection{Integration in USB Host Stack}
+%\subsection{Datenverkehr aufzeichnen}
+
+

@@ -1,0 +1,554 @@
+\chapter{Implementierung der USB-Bibliotheken und -Gerätetreiber}
+
+Die wichtigsten Komponenten des USB-Stacks sind die Treiber und Bibliotheken der USB-Geräte.
+Mit ihnen kann eine abstrahierte Schnittstelle
+für die Funktionen der einzelnen Geräte angeboten werden.
+Da die Treiber und Bibliotheken mit den Funktionen des USB-Stacks arbeiten
+und nicht direkt mit den Host-Controllern kommunizieren,
+können diese unabhängig vom eingesetzten Host-Controller
+verwendet werden.
+\newline\newline
+Wie bereits erwähnt, gibt es zwei Arten für die Ansteuerung 
+eines USB-Geräts, Bibliotheken oder Treiber. Bibliotheken bieten sich vor allem für 
+einfache Geräte an, die über keine periodischen Endpunkte (wie Interrupt und Isochrone)
+verfügen. Soll ein USB-Gerät hingegen von mehreren parallelen 
+Programmpfaden aus angesprochen werden, so ist die Wahl eines Treibers die bessere Möglichkeit.
+Der Treiber,
+der die Zugriffszeiten gerecht auf alle Prozesse verteilen kann, dient als Schnittstelle zum Gerät.
+Abhängig vom Gerät kann in den Treibern eigens der Mehrfachzugriff gesteuert werden.
+\newline\newline
+In den Treibern und Bibliotheken werden für die Kommunikation
+und Steuerung der Verbindung die Funktionen des USB-Stacks verwendet (siehe Kapitel \ref{kap:usbdi} auf Seite \pageref{kap:usbdi}).
+\newline\newline
+Im nächsten Abschnitt wird die Funktionsweise einer USB-Geräte-Bibliothek erklärt.
+
+\section{Bibliotheken} \label{kap:bib}
+\index{Bibliotheken}
+Der große Vorteil von Bibliotheken gegenüber Treibern ist,
+dass sie leicht in den Programmfluss eines Programms
+integriert werden können. An der Stelle, an der die Information 
+vom USB Gerät benötigt wird, muss die dafür vorgesehene Bibliotheksfunktion einfach eingefügt werden.
+Sobald die Funktion das Ergebnis ermittelt hat, setzt das Hauptprogramm
+mit der Arbeit fort. Der Nachteil von Bibliotheken ist, dass kostbare Rechenzeit
+beim Warten auf das Ergebnis verloren geht. Oft kann dies 
+aber für die Einfachheit in Kauf genommen werden, falls die Rechenzeit nicht anderweitig benötigt wird.
+\newline\newline
+Um eine Kommunikation mit einer Bibliothek durchführen zu können,
+muss erst ein \glqq{}Handle\grqq{}\footnote{\label{foot:usbdi}\glqq{}Handle\grqq{} werden in der Informatik meist Zeiger auf Dateien oder Geräte genannt.} für das Gerät
+erstellt werden. Im USB-Stack ist ein Handle ein Zeiger auf die \textit{usb\_device} Struktur (siehe Listing \ref{lst:usb_dev_struct} auf Seite \pageref{lst:usb_dev_struct})
+des ausgewählten Gerätes. Das Handle kann auf drei verschiedene Arten angelegt werden.
+
+\begin{enumerate}
+\item Mit der Funktion \textit{usb\_open} kann das Gerät über die Hersteller- und Produkt-ID gefunden werden.
+\item Über den Klassencode kann das Gerät mit der Funktion \textit{usb\_open\_class} gefunden werden.
+\item Werden spezielle Deskriptoren für die Auswahl des Gerätes benötigt, so kann ebenso über die interne Geräteliste des USB-Kerns iteriert
+und entsprechend für jedes Gerät die spezielle Information abgefragt werden.
+\end{enumerate}
+
+Hat man den Zeiger auf das gesuchte Gerät erhalten, kann mit den Funktionen 
+einer Bibliothek gearbeitet werden. 
+\newline\newline
+Im folgenden wird eine Bibliothek vorgestellt, die im Rahmen der Diplomarbeit entstanden ist.
+Die Bibliotheken befinden sich im Ordner uclibusb des Softwarearchivs.
+
+\subsection{USB zu RS232-Wandler: FT232}
+\index{FT232}
+\index{RS232}
+\index{USB zu RS232-Wandler}
+\subsubsection{Struktur und Arbeitsweise}
+Der FT232AM bzw. dessen Nachfolger der FT232BM von FTDI ist
+ein Umsetzer von USB-zu-TTL-RS232-Signalen. Für die Leitung RX und TX
+gibt es jeweils einen Bulk-Endpunkt. Schreibt man in den TX-Endpunkt,
+so werden die Daten über den UART des FT232 ausgegeben. Liest man im Gegensatz
+von dem RX-Endpunkt, so erhält man die über den UART empfangenen Daten.
+Intern, wie in Abbildung \ref{ftdi} zu sehen ist, sind direkt nach den UART
+Leitungen TX und RX kleine FIFOs als Zwischenpuffer für die
+empfangenen und zu sendenden Daten vorhanden.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/ftdi}
+\caption{FT232-Struktur}
+\label{ftdi}
+}
+\end{figure}
+
+\newpage
+\subsubsection{Konfiguration}
+
+Der Hersteller FTDI bietet für die Konfiguration des Gerätes
+verschiedene Herstelleranfragen (engl. \glqq{}Vendor Requests\grqq{}, siehe Kapitel 2.15) an.
+In Tabelle \ref{usb_ftdi} ist eine Übersicht der verschiedenen Anfragen dargestellt.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Anfrage & Nr.& Beschreibung \\ \hline
+FTDI\_SIO\_RESET  &0& Löst ein Reset des Ports aus \\ \hline
+FTDI\_SIO\_MODEM\_CTRL &1& Modem-Controllregister beschreiben \\ \hline
+FTDI\_SIO\_SET\_FLOW\_CTRL &2& Flusscontrollregister beschreiben\\ \hline
+FTDI\_SIO\_SET\_BAUD\_RATE &3& Übertragungsrate einstellen\\ \hline
+FTDI\_SIO\_SET\_DATA &4& Die Eigenschaft des Ports definieren\\ \hline
+FTDI\_SIO\_GET\_MODEM\_STATUS &5& Abfrage des Modem-Status-Registers \\ \hline
+FTDI\_SIO\_SET\_EVENT\_CHAR &6& Steuerzeichen definieren\\ \hline
+FTDI\_SIO\_SET\_ERROR\_CHAR &7& Fehlerzeichen definieren\\ \hline
+FTDI\_SIO\_SET\_LATENCY\_TIMER &8& Latenzzeit einstellen\\ \hline
+FTDI\_SIO\_GET\_LATENCY\_TIMER &9& Latenzzeit abfragen\\ \hline
+\end{tabular}
+\caption{Herstelleranfragen des FT232}
+\label{usb_ftdi}
+\end{table}
+Die Anfragen werden auf die gleiche Weise wie Standardanfragen über den Endpunkt 0
+an das Gerät gesendet. Da es vom Hersteller FDTI keine Übersicht
+der einzelnen Nachrichten gibt, wurden die Parameter dem
+offenen Linux-Treiber ftdi\_sio.c \cite{kernel} entnommen.
+
+\subsubsection{Bibliotheksfunktionen}
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Anfrage & Beschreibung \\ \hline
+\text{usb\_device * usb\_ft232\_open()} &  Öffnen der Verbindung \\ \hline
+\text{usb\_ft232\_close(usb\_device *dev)} &  Beenden der Verbindung \\ \hline
+\text{usb\_ft232\_send(usb\_device *dev,char *bytes, u8 length)} &  Daten senden \\ \hline
+\text{usb\_ft232\_receive(usb\_device *dev,char *bytes, u8 length)} &  Daten  empfangen\\ \hline
+\end{tabular}
+\caption{Bibliotheksfunktionen des FT232, ft232.h}
+\label{usb_ftdi_api}
+\end{table}
+
+Befindet sich ein FT232-Baustein am Bus des USB-Stacks,
+so kann mit der Funktion \textit{usb\_ft232\_open} das Handle
+für eine Kommunikation geholt werden. Um Daten versenden zu können,
+existiert die Funktion \textit{usb\_ft232\_send}, um Daten entsprechend
+empfangen zu können die Funktion \textit{usb\_ft232\_receive}. Als Parameter erwarten
+beide Funktionen einen Zeiger auf die Gerätedatenstruktur des angeschlossenen FT232-Bausteins, einen Zeiger auf einen Speicherbereich,
+der zum Versenden oder zum Empfangen reserviert ist und als letzter Parameter wird die Anzahl der zu sendenden 
+oder zu empfangenden Daten erwartet. Wird das Gerät für die Kommunikation nicht 
+mehr benötigt, kann das Gerät mit \textit{usb\_ft232\_close} wieder
+freigegeben werden.
+
+
+
+\section{Geräte- und Klassentreiber}
+\index{Gerätetreiber}
+\index{Klassentreiber}
+\subsection{Treiberarten}
+Für USB-Geräte gibt es zwei Treiberarten, die Gerätetreiber
+und die Klassentreiber. Ein Gerätetreiber ist speziell
+für eine bestimmte Hardware entwickelt worden. Kauft man ein solches Gerät,
+so muss der dazugehörige vom Hersteller mitgelieferte Treiber installiert werden.
+\newline\newline
+Für Standardgeräte wie Mäuse, Tastaturen, Drucker, Netzwerkkarten, etc.
+wurden mit der USB-Spezifikation sogenannte USB-Klassen definiert.
+Eine Klasse beschreibt eine Schnittstellenstruktur für
+eine bestimmte Geräteklasse. Das Ziel dieser Klassen ist,
+dass auf dem Rechner keine speziellen Treiber mehr für
+Standardgeräte installiert werden müssen. Dies bedeutet
+aber nicht, dass diese Geräte keine Treiber mehr benötigen.
+Die Betriebssysteme halten Standardtreiber dafür vor.
+Daher entfällt die Installation für den Benutzer und
+Hersteller von Standardperipherie müssen keine Treiber mehr entwickeln und
+verteilen.
+\newline\newline
+Die bekanntesten Geräteklassen werden in einzelnen Dokumenten
+von der USB-Organisation beschrieben:
+\index{Human-Interface-Devices}
+\index{Audio-Device-Class}
+\index{Communication-Class-Device}
+\index{Mass-Storage-Device-Class}
+\index{Printer-Device-Class}
+\begin{itemize}
+\item Human-Interface-Devices \cite{class_hid}
+\item Audio-Device-Class \cite{class_audio}
+\item Communication-Class-Device \cite{class_cdc}
+\item Mass-Storage-Device-Class \cite{class_msd}
+\item Printer-Device-Class \cite{class_print}
+\end{itemize}
+
+\subsection{Automatische Treiberauswahl für Geräte}
+Wie in Kapitel \ref{kap:usbdi_driver} auf Seite \pageref{kap:usbdi_driver}
+bereits angesprochen, werden Geräte- und Klassentreiber
+mit einer Instanz der Datenstruktur \textit{usb\_driver} (siehe Listing \ref{lst:usb_driver} auf Seite \pageref{lst:usb_driver}) am USB Stack registriert.
+Die Datenstruktur enthält Zeiger auf die folgenden Funktionen eines Treibers.
+
+\begin{description}
+\item [usb\_$<$treibername$>$\_probe:] 
+Diese Funktion wird immer dann vom USB-Stack aus aufgerufen, wenn ein neues Gerät
+am Bus erkannt wird. Sie überprüft, ob das neue
+Gerät mit dem Treiber angesteuert werden kann. Dies kann
+mit den gleichen drei Möglichkeiten wie für Bibliotheken aus Kapitel \ref{kap:bib} auf Seite \pageref{kap:bib} herausgefunden werden.
+Ist das Gerät von dem Treiber ansteuerbar, kann die Funktion das Gerät in die internen Datenstrukturen 
+des Treibers aufnehmen.
+\newline\newline
+Für die Klassentreiber gibt es extra Felder im Geräte- und Interface-Deskriptor des USB-Gerätes,
+in denen ein Klassencode angegeben werden kann. Mit speziellen Unterklassencodes
+und Protokollnummern kann das Gerät noch genauer identifiziert werden.
+
+\item [usb\_$<$treibername$>$\_check:]
+Befindet sich mindestens ein aktives Gerät in den internen Treiberdatenstrukturen,
+so wird im regelmäßigen Abstand von einer Millisekunde die Funktion $"$check$"$ aufgerufen.
+In dieser Funktion können für periodische Transfers Daten übertragen
+oder Verwaltungs- und andere Steuerungsaufgaben durchgeführt werden.
+\end{description}
+
+Im Treiberverzeichnis des Stacks liegt die Vorlage \textit{skeleton.c} für
+einen USB-Geräte- bzw. -Klassentreiber.
+
+\subsection{HID-Treiber}
+\index{HID-Treiber}
+Die Geräteklasse HID (\glqq{}Human-Interface-Device\grqq{}) umfasst alle Eingabegeräte (Maus, Tastatur, Zeichenbrett, etc.)
+für die Steuerung- bzw. Eingabe von Befehlen vom Benutzer.
+Der hier entwickelte Treiber bietet die Unterstützung für eine einfache Maus und Tastatur an. 
+\newline\newline
+Im Rahmen
+der Diplomarbeit ist nur die Struktur und noch kein funktionsfähiger Treiber entstanden.
+Die Implementierung wird im Anschluss an die Diplomarbeit stattfinden.
+Wie das Protokoll für ein HID-Gerät genau aussieht kann der USB-Klassen-Definition \cite{class_hid}
+entnommen werden.
+\newline\newline
+In Tabelle \ref{usb_hid_api} ist eine Übersicht über die benötigten Funktionen gegeben.
+\newpage
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Beschreibung \\ \hline
+\text{void usb\_hid\_init()} &  Treiber anmelden \\ \hline
+\text{void usb\_hid\_mouse\_xy(void * callback, u8 interval\_ms)} & Callback für Mausbewegung \\ \hline
+\text{void usb\_hid\_mouse\_leftclick(void * callback)} &  Callback für Links-Klick \\ \hline
+\text{void usb\_hid\_mouse\_rightclick(void * callback)} &  Callback für Rechts-Klick \\ \hline
+\text{void usb\_hid\_keyboard\_read(char * buf)} &  Empfangene Daten lesen \\ \hline
+\text{u16 usb\_hid\_keyboard\_reveived\_bytes()} &  Anzahl empfangener Daten \\ \hline
+\text{u8 usb\_hid\_keyboard\_lock\_states()} &  Lock-Tasten-Status abfragen \\ \hline
+\text{void usb\_hid\_keyboard\_callback(void * callback)} &  Callback für Eingaben \\ \hline
+\end{tabular}
+\caption{Treiberfunktionen der HID-Geräteklasse, hid.h}
+\label{usb_hid_api}
+\end{table}
+\index{hid.h}
+
+\subsection{Hub-Treiber} \label{kap:hub}
+\index{Hub-Treiber}
+
+Der Hub-Treiber ist bei vielen USB-Stacks fest in den Kern integriert.
+Da nicht jede Embedded-Lösung ein Hub-Gerät benötigt,
+wurde der Hub-Treiber als ein eigener Klassentreiber entwickelt und kann 
+bei Bedarf leicht weggelassen werden.
+\newline\newline
+Der Hub-Treiber bietet nur die drei Standardfunktionen \textit{usb\_hub\_init()}, \textit{usb\_hub\_probe()} und \textit{usb\_hub\_check()} an.
+Wurde der Hub-Treiber mit der Funktion \textit{usb\_hub\_init()} geladen,
+arbeitet er automatisch im Hintergrund. Jedesmal, wenn ein neues Gerät am
+Bus hinter einem Hub angeschlossen wird, übernimmt der Hub-Treiber die Aufrufe,
+welche für den Kern des USB-Stack erledigt werden müssen. Im Rahmen der Diplomarbeit
+wurde nur die Grundstruktur für den Treiber entwickelt. Im Treiberarchiv
+befindet sich das Gerüst für den Hub-Treiber, welches noch fertig implementiert werden muss.
+\newline\newline
+Der grobe Ablauf im Hub-Treiber kann der Abbildung \ref{hub} entnommen werden.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=14cm]{images/hub}
+\caption{Hub-Treiber Ablauf}
+\label{hub}
+}
+\end{figure}
+
+\subsection{Massenspeichertreiber}
+\index{Massenspeicher-Treiber}
+Viele USB-Geräte bieten ein Massenspeicher-Interface an,
+da über dies ganz einfach standardisiert Daten ausgetauscht werden können.
+Für die Ansteuerung der Geräte werden über USB SCSI-Kommandos versendet.
+Das hat den großen Vorteil, dass leicht USB-Treiber für Geräte
+wie Festplatten, CD-Brenner, ZIP-Laufwerke, etc. geschrieben werden können,
+da diese meist mit dem SCSI-Protokoll ansprechbar sind.
+\newline\newline
+Abbildung \ref{msdstruktur} (Seite \pageref{msdstruktur}) zeigt die Struktur für die Datenspeicherverwaltung. 
+Auf der untersten Ebene befindet sich das Massenspeichermedium,
+welches über SCSI-Kommandos angesteuert wird. Die SCSI-Kommandos
+werden eingebettet in USB-Nachrichten zwischen USB-Host und -Gerät
+übertragen. Der Massenspeichertreiber auf dem System des USB-Host
+kann die USB-Nachrichten entgegennehmen und die SCSI-Kommandos
+extrahieren. Für den automatischen Aufbau
+der SCSI-Kommandos bietet der Massenspeichertreiber Funktionen an.
+Basierend auf den Funktionen kann ein Dateisystem aufgesetzt werden.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[height=11.5cm]{images/msdstruktur}
+\caption{Struktur für die Datenspeicherverwaltung}
+\label{msdstruktur}
+}
+\end{figure}
+
+Im folgenden werden die Punkte aus der Abbildung \ref{msdstruktur} (Seite \pageref{msdstruktur})
+von oben nach unten beschrieben.
+
+\subsubsection{Embedded Dateisysteme}
+
+Dateisysteme bieten Möglichkeiten für die 
+Anordnung und den Zugriff auf Daten an.
+Die benötigten Zugriffsfunktionen (siehe Tabelle \ref{usb_dateisystem_api} auf Seite \pageref{usb_dateisystem_api})
+der verschiedenen Dateisysteme
+unterscheiden sich, im Gegensatz zu der
+Anordnung und den Strategien für die Verwaltung der Daten, meist wenig.
+Abhängig vom eingesetzten Speichermedium und den Anforderungen
+der Anwendungen muss das passende Dateisystem gewählt werden. Bei dem Entwurf
+des Massenspeichertreibers muss darauf geachtet werden, dass möglichst viele
+Dateisysteme darauf aufbauen können.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Beschreibung \\ \hline
+\text{mkdir} &  Erzeugen eines Verzeichnisses  \\ \hline
+\text{chdir} &  Wechseln in ein anderes Verzeichnis \\ \hline
+\text{rmdir} &  Löschen eines Verzeichnisses \\ \hline
+\text{readdir} & Lesen von Verzeichniseinträgen  \\ \hline
+\text{open} & Öffnen einer Datei  \\ \hline
+\text{close} & Schließen einer Datei  \\ \hline
+\text{read} & Lesen einer Datei  \\ \hline
+\text{write} & Schreiben einer Datei  \\ \hline
+\text{unlink} & Löschen einer Datei  \\ \hline
+\text{seek} & Positionieren des Lese- oder Schreibzeigers  \\ \hline
+\end{tabular}
+\caption{Benötigte Funktionen von Dateisystemen}
+\label{usb_dateisystem_api}
+\end{table}
+\index{Dateisystem}
+
+
+Es gibt eine Vielfalt an verschiedenen Dateisystemen für Embedded Systeme.
+Die folgende Liste zeigt nur einen kleinen Auszug.
+
+\begin{itemize}
+\item \textbf{TINY File System} von Lucent Technologies (http://www.bell-labs.com/topic/swdist)
+\item \textbf{Solid File System} von ELDOS (http://www.eldos.com/solfs/embedded.php)
+\item \textbf{uc/Filesystem} von Embedded Office (http://www.embedded-office.de)
+\item \textbf{FullFAT} von Holger Klabunde (http://www.holger-klabunde.de)
+\item \textbf{FAT File System Module} von Elm Chan (http://elm-chan.org/)
+\end{itemize}
+
+
+\newpage
+\subsubsection{Massenspeicherfunktionen}
+
+Speichermedien wie Festplatten, USB-Sticks, CD-ROM Medien, etc.
+haben gemeinsam, dass die Daten blockweise (ein Block entspricht einem Sektor) übertragen und abgelegt werden.
+Für die Identifikation eines Speicherbereichs werden daher 
+nicht Speicheradressen sondern Sektornummern benötigt.
+Mit den
+Funktionen aus der Tabelle \ref{usb_storage_api} kann
+so abstrahiert auf viele Speichermedien zugegriffen werden.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Beschreibung \\ \hline
+\text{void usb\_storage\_init()} &  Treiber anmelden \\ \hline
+\text{u8 usb\_storage\_open(u8 device);} &  Verbindung öffnen \\ \hline
+\text{u8 usb\_storage\_read\_capacity(u8 device)} & Kapazität ermitteln \\ \hline
+\text{u8 usb\_storage\_inquiry(u8 device)} &  Status abfragen \\ \hline
+\text{void usb\_storage\_read\_sector(u8 device, u32 sector, char * buf)} &  Daten lesen \\ \hline
+\text{void usb\_storage\_write\_sector(u8 device, u32 sector, char * buf)} &  Daten schreiben \\ \hline
+\end{tabular}
+\caption{Treiberfunktionen der Massenspeicher-Geräteklasse, storage.h}
+\label{usb_storage_api}
+\end{table}
+\index{storage.h}
+
+\subsubsection{SCSI-Kommandointerpreter}
+
+Wie bereits erwähnt, werden USB-Massenspeichergeräte immer über
+SCSI-Nachrichten, die über USB übertragen werden, angesteuert.
+Eine SCSI-Nachricht für ein USB-Massenspeichergerät besteht aus zwei Paketen.
+Das \glqq{}Command Block Wrapper CBW\grqq{}, das
+die Anfrage enthält und das \glqq{}Command Status Wrapper CSW\grqq{},
+das die Antwort bzw. den Status auf die Anfrage beinhaltet.
+Die Datenstrukturen sind in den Listings \ref{lst:usb_cbw} und \ref{lst:usb_csw} abgedruckt.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Command Block Wrapper, storage.h},label={lst:usb_cbw},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+
+typedef struct usb_storage_cbw_t usb_storage_cbw;
+struct usb_storage_cbw_t {
+  u32 dCBWSignature;  /* Signatur = 0x43425355 */
+  u32 dCBWTag;
+  u32 dCBWDataTransferLength;
+  u8  bCWDFlags;      /* Enthält Bit für die Richtung */
+  u8  bCBWLun;
+  u8  bCBWCBLength;   /* 1 - 16 */
+  u8  CBWCB[16];      /* SCSI Kommando */
+};
+\end{lstlisting}
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Command Status Wrapper, storage.h},label={lst:usb_csw},
+captionpos=b,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+
+typedef struct usb_storage_csw_t usb_storage_csw;
+struct usb_storage_csw_t {
+  u32 dCSWSignature;	/* Signatur = 0x53425355 */
+  u32 dCSWTag;		/* identisch mit dCBWTag aus Anfrage */
+  u32 dCSWDataResidue;	/* identisch mit bCBWCBLength */
+  u8  bCSWStatus;	/* Status über Erfolg */
+};
+\end{lstlisting}
+
+Eingebettet in \glqq{}Command Block Wrapper CBW\grqq{} (Listing \ref{lst:usb_cbw})
+werden die SCSI-Kommandos übertragen. In der Tabelle \ref{usb_scsi} sind
+die wichtigsten Kommandos aufgelistet. Der genaue Aufbau kann dem Dokument \cite{class_msd} entnommen werden.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|c|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Kommando & Beschreibung \\ \hline
+\text{0x00} & Test Unit Ready \\ \hline
+\text{0x03} & Request Sense \\ \hline
+\text{0x12} & Inquiry \\ \hline
+\text{0x1A} & Mode Sense \\ \hline
+\text{0x1E} & Prevent Allow Media Removal \\ \hline
+\text{0x25} & Read Capacity \\ \hline
+\text{0x28} & Read \\ \hline
+\text{0x2A} & Write \\ \hline
+\text{0x2F} & Verify \\ \hline
+\end{tabular}
+\caption{Typische SCSI-Kommandos, storage.h}
+\label{usb_scsi}
+\end{table}
+
+Abbildung \ref{datenfluss_cbw} zeigt den Fluss für Befehle, eingehende und ausgehende Daten und den Status-Transport.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[height=8cm]{images/cbw_csw}
+\caption{Datenfluss von CBW und CSW}
+\label{datenfluss_cbw}
+}
+\end{figure}
+
+Der Quelltext im Listing \ref{lst:usb_capacity} zeigt
+die Implementierung der Funktion für das Abfragen der Speicherkapazität eines
+Massenspeichergeräts. Im Wesentlichen wird in Zeile 12 die Klassenanfrage \textit{Bulk-Only Mass Storage Reset}
+an das Gerät gesendet (mehr zu dieser Anfrage in Abschnitt \ref{bulk_reset} auf Seite \pageref{bulk_reset}).
+Desweiteren wird der Command Block Wrapper mit dem SCSI-Kommando für die Abfrage der Kapazität 
+aufgebaut und anschließend an das Gerät gesendet. Als Antwort erhält man die Sektorgrösse
+und die Anzahl der Sektoren, woraus man sich wiederum die Kapazität durch Multiplikation
+der beiden Faktoren ermitteln kann.
+
+\lstset{language=C}
+\begin{lstlisting}[caption={Abfrage der Speicherkapazität eines Massenpeichergeräts, storage.c},label={lst:usb_capacity},
+captionpos=b,
+numbers=left,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+u8 usb_storage_read_capacity(u8 device, char * size)
+{
+  /* send cwb "usbc" */
+  char tmp[8];
+  u8 i;
+  u32 size;
+  usb_storage_cbw  * cbw = (usb_storage_cbw*)malloc(sizeof(usb_storage_cbw));
+
+  usb_control_msg(massstorage[device], 0x02,1,0, 0x8100, 0,tmp, 8, 0); 
+
+  cbw->dCBWSignature= 0x43425355;
+  cbw->dCWBTag=0x826A6008;
+  cbw->dCBWDataTransferLength=0x00000008;
+  cbw->bCWDFlags=0x80;
+  cbw->bCBWLun=0x00;
+  cbw->bCBWCBLength=0x0A;
+
+  for(i=0;i<16;i++)
+    cbw->CBWCB[i]=0x00;
+
+  cbw->CBWCB[0]=0x25; // SCSI: Speicherkapazität abfragen
+
+  usb_bulk_write(massstorage[device], 2, (char*)cbw, 31, 0);
+  usb_bulk_read(massstorage[device], 1, (char*)cbw, 8, 0);
+  
+  /* Ersten 4 Byte = Max. Sector Adresse, zweiten 4 Byte = Sectorgrösse */
+  for(i=0;i<8;i++)
+    size[i]=cbw[i];
+
+  usb_bulk_read(massstorage[device], 1, (char*)cbw, 13, 0);
+
+  free(cbw);
+
+  return 0;
+}
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{USB-Schnittstelle}
+Die USB-Klassenspezifikation für Massenspeicher bietet verschiedene Endpunkt-Konfigurationen
+für den Betrieb an. Die einfachste und am meisten implementierte Konfiguration
+ist die sogenannte \glqq{}Bulk-Only\grqq{} Methode. Hierbei werden die Daten
+über einen eingehenden und ausgehenden Bulk-Endpunkt übertragen.
+Das Betriebssystem oder die Anwendung kann über den Klassencode 0x08 
+und den Interface-Protokoll-Code 0x50 erkennen, dass es sich um ein Bulk-Only-Gerät handelt.
+\newline\newline
+Außerdem muss jedes Bulk-Only-Gerät die folgenden beiden Klassen-Anfragen
+beantworten können.
+\label{bulk_reset}
+\newline\newline
+\textbf{Bulk-Only Mass Storage Reset}\newline\newline
+Diese Anfrage wird benötigt, um das Massenspeichergerät zu reseten. Nachfolgend
+der Anfrage muss das Massenspeichergerät auf ein Command-Block-Wrapper-Paket 
+sofort antworten können. Um den Reset auszulösen, muss die Anfrage wie folgt aufgebaut sein:
+\begin{itemize}
+\item \textit{bmRequestType:} Klasse, Interface, Host zu Gerät
+\item \textit{bRequest} 255 (0xFF)
+\item \textit{wValue} 0
+\item \textit{wIndex} Interface-Nummer
+\item \textit{wLength} 0
+\end{itemize}
+
+
+\textbf{Get Max LUN}\newline\newline
+In einem Massenspeichergerät können mehrere logische Speicherbereiche
+genutzt werden. Über die sogenannte \glqq{}Logical-Unit-Number\grqq{}
+kann ein Bereich ausgewählt werden. Mit der Klassen-Anfrage kann ermittelt
+werden, wieviele dieser logischen Bereiche existieren.
+
+\begin{itemize}
+\item \textit{bmRequestType:} Klasse, Interface, Gerät zu Host
+\item \textit{bRequest} 254 (0xFE)
+\item \textit{wValue} 0
+\item \textit{wIndex} Interface-Nummer
+\item \textit{wLength} 1 
+\end{itemize}
+
+
+\subsubsection{SCSI-Kommandointerpreter, Verwaltung/Ansteuerung, Medium}
+Die letzten drei Ebenen werden unabhängig vom Treiber im USB-Gerät
+realisiert und sind daher für den Entwurf des Massenspeichertreibers
+nicht von Bedeutung.
+
+
+
+
+

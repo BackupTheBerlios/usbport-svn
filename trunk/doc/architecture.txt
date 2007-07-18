@@ -1,0 +1,39 @@
+
+
+Functions:
++++++++++++++++
+
+host:
+  hcd_irq()
+  hcd_start()
+  hcd_stop()
+  hcd_enqueue()
+  hcd_dequeue()
+
+
+  sl811_init()
+
+core:
+  usb_init()
+  usb_periodic()
+  usb_add_device()
+  usb_remove_device()
+  usb_register_driver()
+
+usb:
+  usb_bulk_write()
+  usb_bulk_read()
+
+
+
+Data Structs:
++++++++++++++++
+
+
+usb_device:
+
+usb_irp:
+
+usb_ep:
+
+

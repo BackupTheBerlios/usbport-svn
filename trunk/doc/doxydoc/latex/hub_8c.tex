@@ -1,0 +1,112 @@
+\section{/home/bene/projects/sl811/usbstack/drivers/class/hub.c File Reference}
+\label{hub_8c}\index{/home/bene/projects/sl811/usbstack/drivers/class/hub.c@{/home/bene/projects/sl811/usbstack/drivers/class/hub.c}}
+{\tt \#include $<$wait.h$>$}\par
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include $<$core/core.h$>$}\par
+{\tt \#include $<$core/usb.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-hub\_\-probe} ()
+\item 
+void {\bf usb\_\-hub\_\-check} ()
+\item 
+void {\bf usb\_\-hub\_\-init} ()
+\item 
+u8 {\bf usb\_\-hub\_\-get\_\-hub\_\-descriptor} ({\bf usb\_\-device} $\ast$dev, char $\ast$buf)
+\item 
+u8 {\bf usb\_\-hub\_\-get\_\-hub\_\-status} ({\bf usb\_\-device} $\ast$dev, char $\ast$buf)
+\item 
+u8 {\bf usb\_\-hub\_\-get\_\-port\_\-status} ({\bf usb\_\-device} $\ast$dev, char $\ast$buf)
+\item 
+u8 {\bf usb\_\-hub\_\-clear\_\-port\_\-feature} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-hub\_\-set\_\-port\_\-feature} ({\bf usb\_\-device} $\ast$dev, u8 value)
+\item 
+u8 {\bf usb\_\-hub\_\-clear\_\-hub\_\-feature} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-hub\_\-set\_\-hub\_\-feature} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-hub\_\-set\_\-hub\_\-descriptor} ({\bf usb\_\-device} $\ast$dev)
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-driver} {\bf hub}
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{hub.c@{hub.c}!usb_hub_check@{usb\_\-hub\_\-check}}
+\index{usb_hub_check@{usb\_\-hub\_\-check}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-hub\_\-check ()}\label{hub_8c_24ec349a0e4c1ac7b29402a95b8737e3}
+
+
+\index{hub.c@{hub.c}!usb_hub_clear_hub_feature@{usb\_\-hub\_\-clear\_\-hub\_\-feature}}
+\index{usb_hub_clear_hub_feature@{usb\_\-hub\_\-clear\_\-hub\_\-feature}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-clear\_\-hub\_\-feature ({\bf usb\_\-device} $\ast$ {\em dev})}\label{hub_8c_a72545a2d6d246fb500961c64fe29a0d}
+
+
+\index{hub.c@{hub.c}!usb_hub_clear_port_feature@{usb\_\-hub\_\-clear\_\-port\_\-feature}}
+\index{usb_hub_clear_port_feature@{usb\_\-hub\_\-clear\_\-port\_\-feature}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-clear\_\-port\_\-feature ({\bf usb\_\-device} $\ast$ {\em dev})}\label{hub_8c_a7d3726038329b0e5d59acd525f91b68}
+
+
+\index{hub.c@{hub.c}!usb_hub_get_hub_descriptor@{usb\_\-hub\_\-get\_\-hub\_\-descriptor}}
+\index{usb_hub_get_hub_descriptor@{usb\_\-hub\_\-get\_\-hub\_\-descriptor}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-get\_\-hub\_\-descriptor ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em buf})}\label{hub_8c_c21fc8f723d900bea11ebd5444a87bca}
+
+
+\index{hub.c@{hub.c}!usb_hub_get_hub_status@{usb\_\-hub\_\-get\_\-hub\_\-status}}
+\index{usb_hub_get_hub_status@{usb\_\-hub\_\-get\_\-hub\_\-status}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-get\_\-hub\_\-status ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em buf})}\label{hub_8c_ff32fc6cfc0498e9efbad0e5cabef2f3}
+
+
+\index{hub.c@{hub.c}!usb_hub_get_port_status@{usb\_\-hub\_\-get\_\-port\_\-status}}
+\index{usb_hub_get_port_status@{usb\_\-hub\_\-get\_\-port\_\-status}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-get\_\-port\_\-status ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em buf})}\label{hub_8c_2f1d2a41cae6f89a70ee3af9094dee67}
+
+
+\index{hub.c@{hub.c}!usb_hub_init@{usb\_\-hub\_\-init}}
+\index{usb_hub_init@{usb\_\-hub\_\-init}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-hub\_\-init ()}\label{hub_8c_093ef9bde0177e7fff82a9267d984ccf}
+
+
+\index{hub.c@{hub.c}!usb_hub_probe@{usb\_\-hub\_\-probe}}
+\index{usb_hub_probe@{usb\_\-hub\_\-probe}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-hub\_\-probe ()}\label{hub_8c_720674243c6525534561d4050e223bc5}
+
+
+\index{hub.c@{hub.c}!usb_hub_set_hub_descriptor@{usb\_\-hub\_\-set\_\-hub\_\-descriptor}}
+\index{usb_hub_set_hub_descriptor@{usb\_\-hub\_\-set\_\-hub\_\-descriptor}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-set\_\-hub\_\-descriptor ({\bf usb\_\-device} $\ast$ {\em dev})}\label{hub_8c_7fd34eb3e46bbc096f33a2d3c0b7dc9f}
+
+
+\index{hub.c@{hub.c}!usb_hub_set_hub_feature@{usb\_\-hub\_\-set\_\-hub\_\-feature}}
+\index{usb_hub_set_hub_feature@{usb\_\-hub\_\-set\_\-hub\_\-feature}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-set\_\-hub\_\-feature ({\bf usb\_\-device} $\ast$ {\em dev})}\label{hub_8c_33f761053768d611d75ab8e5d18a54f3}
+
+
+\index{hub.c@{hub.c}!usb_hub_set_port_feature@{usb\_\-hub\_\-set\_\-port\_\-feature}}
+\index{usb_hub_set_port_feature@{usb\_\-hub\_\-set\_\-port\_\-feature}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-hub\_\-set\_\-port\_\-feature ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em value})}\label{hub_8c_332942f9b9b11780522158cd2f17ed58}
+
+
+
+
+\subsection{Variable Documentation}
+\index{hub.c@{hub.c}!hub@{hub}}
+\index{hub@{hub}!hub.c@{hub.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-driver} {\bf hub}}\label{hub_8c_8d2b9bec190364a4e93ecd03b4998a12}
+
+
+\textbf{Initial value:}
+
+\begin{Code}\begin{verbatim} {
+  .name   = "hub",
+  .probe  = usb_hub_probe,
+  .check  = usb_hub_check,
+  .data   = NULL
+}
+\end{verbatim}\end{Code}

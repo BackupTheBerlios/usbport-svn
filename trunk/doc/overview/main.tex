@@ -1,0 +1,569 @@
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\title{usbPort - USB Stack für Embedded Systeme}
+\author{Benedikt Sauter}
+\date{29. Oktober 2006}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Einleitung}
+
+\subsection{Anwendungsbereich}
+usbPort ist ein USB Stack f"ur Rechnersysteme mit wenig Ressourcen (RAM und CPU, meist Mikrocontroller).
+Die Struktur der Software wurde nach der Spezifikation der USB Organisation erstellt.
+
+\subsection{"Ubersicht}
+Der USB Stack ist nicht f"ur einen bestimmten USB Host Controller geschrieben, sondern
+bietet eine Schnittstelle f"ur USB Host Controller Treiber an. Da der Stack in der Programmiersprache C  geschrieben worden ist,
+kann man ihn leicht auf verschiedene Prozessoren portieren.
+In der ersten Version gibt es einen Treiber f"ur den Host Controller SL811 von Cypress.
+\newline\newline Der Stack kann in verschiedenen Betriebsarten angesteuert werden. F"ur Programme ohne parallele 
+Programmpfade, gibt es den sogenannten {\bf Single Modus}. Dieser geht mit dem Arbeitsspeicher sehr sparend um, aber
+ist daf"ur bei der bei der Verteilung der Transferrate auf die verschiedenen Verbindungen nicht ausgewogen, wodurch es zu engp"assen kommen
+kann. 
+Im Gegensatz zum Single Mode gibt es den {\bf Queue Modus}, welcher mehr Speicher ben"otigt, dadurch aber mit einem
+flexibleren Algorithmus den Zugriff auf den USB Bus steuert.
+
+
+\section{USB Stack}
+
+\subsection{Struktur Beschreibung}
+
+Der Stack ist in drei Schichten aufgeteilt. Die Hardware kann man als vierte Schicht ansehen,
+wobei die API dieser Schicht durch den eingesetzten USB Baustein vorgegeben ist.
+Jede weitere Schicht bietet eine von usbPort angebotene API f"ur die Nachbarschichten an.
+
+\begin{center}
+USB Treiber / Direkter Zugriff auf USB Ger"ate \\
+USB Kern \\
+USB Host Controller Treiber \\
+USB Host Controller (Baustein)
+\end{center}
+
+\subsection{Verzeichnistruktur}
+
+\begin{itemize}
+\item boards 
+\item COPYING 
+\item core  
+\item dbgmonitor 
+\item debug.h  
+\item devices 
+\item doc  
+\item drivers  
+\item examples 
+\item lib  
+\item misc 
+\item README  
+\item types.h 
+\item usbspec 
+\end{itemize}
+
+\newpage
+
+\subsection{USB Treiber / Direkter Zugriff auf USB Ger"ate}
+
+\subsubsection{USB Treiber API}
+Die USB Ger"ate Treiber dienen zur Kommunukation mit den Ger"aten. Es gibt einen allgemeinen
+Treiber, mit dem man direkt auf jedes USB Ger"at zugreifen kann. Dazu gibt es eine
+Reihe von fertigen Klassen Treibern f"ur verschiedene Ger"ate wie Hubs, Tastaturen, Massenspeicher und einige mehr.
+Diese Treiber befinden sich in dem Unterordner drivers/classes.
+\newline
+\newline
+\noindent 
+Die API der USB Ger"ate Treiber Schicht:
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Funktion & Beschreibung\\ \hline
+usb\_open() & mitte\\ \hline
+usb\_close() & mitte\\ \hline
+usb\_set\_configuration() & mitte\\ \hline
+usb\_reset() & mitte\\ \hline
+usb\_control\_msg() & mitte\\ \hline
+usb\_get\_string() & mitte\\ \hline
+usb\_get\_string\_simple() & mitte\\ \hline
+usb\_get\_descriptor() & mitte\\ \hline
+usb\_bulk\_write() & mitte\\ \hline
+usb\_bulk\_read() & mitte\\ \hline
+usb\_interrupt\_write() & mitte\\ \hline
+usb\_interrupt\_read() & mitte\\ \hline
+usb\_isochron\_write() & mitte\\ \hline
+usb\_isochron\_read() & mitte\\ \hline
+\end{tabular}
+\end{center}
+\caption{USB Treiber API} 
+\end{figure}
+
+
+
+\newpage
+
+\subsection{USB Kern}
+
+\subsubsection{USB Kern API}
+
+Die prim"are Aufgabe des Kerns ist die Vermittlung von USB Anfragen der Ger"ate Treibern
+zu den Host Controller Treibern. Die Anfragen werden mit Hilfe von USB Request Blocks (kurz URB) get"atigt.
+\newline
+\newline
+\noindent
+Weitere Aufgaben des Kerns sind:
+
+\begin{itemize}
+\item Erkennung und Konfiguartion von neuen Ger"aten
+\item Laden und Entladen der Treiber
+\item API f"ur Ger"ate Treiber
+\item API f"ur Host Controller Treiber
+\end{itemize}
+
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Funktion & Beschreibung\\ \hline
+usb\_core\_init() & mitte\\ \hline
+usb\_add\_device() & mitte\\ \hline
+usb\_remove\_device() & mitte\\ \hline
+usb\_register\_driver() & mitte\\ \hline
+usb\_core\_process() & mitte\\ \hline
+usb\_alloc\_urb() & mitte\\ \hline
+usb\_free\_urb() & mitte\\ \hline
+usb\_submit\_urb() & mitte\\ \hline
+usb\_fill\_control\_urb() & mitte\\ \hline
+usb\_fill\_bulk\_urb() & mitte\\ \hline
+usb\_fill\_int\_urb() & mitte\\ \hline
+usb\_fill\_iso\_urb() & mitte\\ \hline
+\end{tabular}
+\end{center}
+\caption{USB Kern API} 
+\end{figure}
+
+\noindent
+Die Hauptfunktion des USB Stacks ist {\bf usb\_core\_process}.
+Sie muss zyklisch immer wieder aufgerufen werden, damit der USB Stack
+{\it am Leben} gehalten wird. Dies kann "uber verschiedene Weisen geschehen:
+
+\begin{itemize}
+\item eine einfache Endlosschleife im Hauptprogramm
+\item einem Z"ahlerinterrupt (ausgel"ost von einer RTC)
+\item Funktion l"auft in einem Thread (eventuell http://www.sics.se/~adam/pt/)
+\end{itemize}
+
+\noindent
+Falls der USB Controller "uber eine Interruptleitung verf"ugt,
+kann in der dazugeh"origen Routine direkt die Funktion usb\_core\_process
+aufgerufen werden. Aber sobald ein Hub angeschlossen wird, reicht der alleinige
+Aufruf in der Interruptroutine nicht mehr, es muss ebenfalls daf"ur gesorgt
+werden, dass die Funktion regelm"assig aufgerufen wird. Nur so kann
+der Kern mitbekommen was auf dem USB Bus hinter dem Hub passiert.
+
+\subsubsection{Datenstrukturen und Arbeitsweise}
+
+Der Kern ist wie er schon vom Namen her verr"at das zentrale Element
+in dem USB Stack. Er wird durch die Datenstruktur struct usb\_core dargestellt.
+
+\lstset{language=C}
+\begin{lstlisting}
+struct usb_core
+{
+    /* zuletzt verwendete Ger"ate Adresse */
+	uint8 nextaddress;
+	/* aktuelles Ereigniss des Root Ports am Host */
+	uint8 hcd_event;
+	/* aktuelle am Bus sich befindende Ger"ate */
+	struct usb_device * devices;
+	/* angemeldete Treiber */	
+	struct usb_drivers * drivers;
+};
+\end{lstlisting}
+
+\noindent
+Genauso wie f"ur den Kern, gibt es f"ur jedes angesteckte Ger"at eine Datenstruktur:
+
+\lstset{language=C}
+\begin{lstlisting}
+struct usb_device
+{
+	/* Adresse des Ger"ats */
+	uint8 address;
+	/* Produkt ID */ 
+	uint32 product_id;			
+	/* Hersteller ID */
+	uint32 vendor_id;		
+	/* zugeh"orige Kern */
+	struct usb_core *core;		
+	/* aktuellen Endpunkte der Konfiguration */
+	struct usb_endpoint *endpoints;
+};
+\end{lstlisting}
+
+
+\noindent
+In der Ger"ate Datenstruktur befindet sich eine Liste mit Endpunkten.
+Bei einem Endpunkt wird nur die Fifo Gr"osse gespeichert,
+da diese f"ur die Kommunikation wichtig ist.  Es wird in diesem 
+Absatz noch darauf eingegangen wo diese genau ben"otigt wird.
+
+\lstset{language=C}
+\begin{lstlisting}
+
+struct usb_endpoint
+{  
+	/* verkettete Liste mit Endpunkten */
+    struct usb_endpoint * next;	
+	/* Endpunkt Adresse */
+	uint8 address;
+	/* phsikalische Speicher im Ger"at f"ur diesen Endpunkt */
+	uint8 fifosize;
+};
+
+\end{lstlisting}
+
+
+\noindent
+Das waren im wesentlichen alle Datenstrukturen, die den Bus
+Zustand beschreiben. Zus"atzlich zu diesen gibt es noch
+welche die die Nachrichten auf dem USB Bus wiederspiegeln.
+\newline
+\newline
+\noindent
+Mit USB Request Blocks (URB) k"onnen Nachrichten versendet werden.
+Ein URB sieht wie folgt aus:
+
+
+\lstset{language=C}
+\begin{lstlisting}
+struct urb
+{
+	struct usb_device * dev;
+	/* tells if packet is an isochronous */
+	u8 iso;
+	/* tells if packet is an setup packet */
+	u8 setup;
+	/* endpoint address */
+	u8 endpoint;
+	/* buffer for incoming and outgoing data */
+	char* buf;
+	/* max buffer length */
+	u16 buflen;
+	/* pointer for function after complete */
+	void * complete;
+};
+
+\end{lstlisting}
+
+\noindent
+Dadurch kann eine Nachricht eindeutig identifiziert werden.
+Es ist genau definiert mit welcher "Ubertragungsmethode
+die Nachricht an wen in welcher Richtung gesendet wird.
+\newline
+Die USB Kern API bietet entsprechende Funktionen an,
+um URBs zu erstellen und versenden.
+\newline
+\newline
+Im USB Kern werden URBs noch einmal in kleinere Teile
+partitioniert, den Transfer Deskriptoren.
+USB Host Controller Treiber m"ussen diese Deskriptoren
+dann nur noch auf den USB Bus legen und "ubertragen.
+\newline
+\newline
+Tansfer Deskriptoren sehen wie folgt aus:
+
+\lstset{language=C}
+\begin{lstlisting}
+struct usb_transferdescr
+{   
+	/* device address */
+	u8 address;
+	/* endpoint address */
+	u8 endpoint;
+	/* Interrupt on complete */
+	u8 ioc;
+	/* PID setup,out or in */
+	u8 pid;
+	/* if packet is isochronous */
+	u8 iso;
+	/* Togl Bit select DATA0 or DATA1 */
+	u8 togl;
+	/* buffer */
+	char *buf;
+	/* buffer length */
+	u16 buflen;
+};
+
+\end{lstlisting}
+
+Die Funktion usb\_submit\_urb wandelt URBs
+in die entsprechenden Transfer Deskriptoren um.
+
+Daf"ur muss die Nachricht aus dem URB in Endpunkt grosse
+St"uecke Zerlegt werden. Beim Aufteilen muss das Togl Bit 
+in den einzelnen Transfer Deskriporen gleich
+richtig gesetzt werden.
+
+Wenn es sich um ein Setup Paket handelt, muss
+das erste Paket speziell mit der PID Setup makiert werden.
+
+Bei einem  UHCI Controller kann man ein spezielles 
+Flag Interrupt on Complete setzen. Welches dann daf"ur
+sorgt das erst bei einem ensprechenden Paket ein 
+Interrupt ausgel"ost wird. Ich will versuchen
+dieses Konzept zu "ubernehmen. 
+
+Das heisst man kann bei einem Standard Request z.B.
+GetDeviceDescriptor alle 5 Transferdeskriporen absenden.
+Der UHCI Controller w"urde jetzt direkt die Puffer
+mit den Antwort Bytes füllen und erst beim letzten TD signalisieren
+das er fertig ist.
+
+Der UHCI braucht daf"ur keinen extra Speicher, da er direkt
+im Arbeitsspeicher des Computers arbeitet.
+
+Bei Embedded USB Host Controller ist dies leider aber nicht immer 
+m"oglich. Der SL811 hat daf"ur zwar 240 Byte Speicher, nur gibt es viele Bausteine die 
+"uber so einen internen Speicher nicht verf"ugen.
+
+Das heisst das sammeln der Pakete wird im Host Treiber geschehen.
+Dann kann man individuell auf den Baustein eingehen.
+
+Es wird dann zu der Funktion usb\_hcd\_transfer eine benoetigt,
+die die Antwort der letzten n TDs abholt. Dazu wird ein zaehler benoetigt
+wie oft das Interrupt on Complete Flag nicht gesetzt war.
+
+Wie kommen die Daten jetzt wieder in den Stack zur"uck?
+
+Normalerweise werden im Single Modus die TDs direkt mit den Daten bef"ullt.
+Im Queue Modus ohne der oben genannten Idee wuerde man ebenfalls die Daten
+direkt in die TDs wieder schreiben.
+
+Die Funktion die die letzten n TDs abholt muss die Daten auf die zugehoerigen TDs verteilen.
+
+Woher weiss man welche TDs zu welcher URB gehoeren?
+
+Eventuell sollte man eine TD Liste im URB speichern.
+
+Gibt es ein System mit den man eindeutige IDs ueber einen besimmten Zeitraum verteilen kann?
+Wie kann man merken das eine Grenze uberschritten wird und eine Zahl doppelt hergenommen wird?
+Und das ganze sollte mit einem Byte funktionieren.
+
+
+
+Warum das Ganze?
+
+Der USB Stack w"urde sonst nahezu 100 Prozent der Prozessorzeit durch warten verbraten.
+Auf dem USB Bus wird jede Millisekunde eine SOF generiert. Nach diesem koennen Daten versendet werden.
+Das heisst zwischen zwei SOFs kann der USB Baustein selbst"andig arbeiten und man
+kann diese Zeit sinnvoll im eigenen Programm nutzen.
+
+\subsubsection{usb\_submit\_urb - im Single oder Queue Modus}
+
+
+Der Single Modus ist f"ur Umgebungen mit extrem wenig Arbeitsspeicher.
+In diesem Modus werden die Nachrichten sofort nacheinander
+abgearbeitet. Eigentlich verfolgt ein USB Stack die Strategie,
+die verf"ugbare Datenrate fair auf alle Ger"ate am Bus zu verteilen.
+So ist z.B. in der USB Spezifikation definiert das f"ur Isochronous- und Interrupt
+Transfer bis zu 90 Prozent der Gesamtdatenrate reserviert sind.
+Daf"ur braucht man aber entsprechende Warteschlangen um ein faires
+aufteilen der Datenrate zu erm"oglichen. Und auf dieses Feature verzichtet
+man im Single Modus. Wenn man aber genug Speicherplatz zur Verf"ugung hat
+kann man den Queue Modus w"ahlen und hat die eben erw"ahnten Vorteile.
+\newline
+\newline
+\noindent
+Im Queue Modus werden die Transferdeskriptoren in USB Kern gesammelt.
+Parallel dazu werden immer entsprechend zusammen passende Transferdeskriptoren
+f"ur ein Frame gesammelt um so effektiv die Transferrate nutzen zu k"onnen.
+\newline
+\newline
+\noindent
+Im Single Modus werden die erzeugen Transferdeskriptoren sofort an
+den Host Controller zur "Ubertragung auf dem USB Bus "ubergeben.
+
+
+\subsubsection{usb\_submit\_urb - Algorithmus}
+
+{\bf Allgemein}
+\newline
+\begin{enumerate}
+\item Pr"ufe ob es sich um ein Setup Request handelt -> if urb->setup==1
+\item Falls Setup -> goto Setup Transfer Deskriptor
+\item sonst -> pruefe 7. Bit in Endpoint Adresse ob es sich um eine IN oder OUT Pipe handelt
+\item Teile Gesamtanzahl der zu "ubertragenden Bytes durch Endpunkt FIFO Gr"oesse
+\item Genererie n TDs mit entsprechend gesetztem Togl Bit und if urb->iso makiere TD
+\end{enumerate}
+\noindent
+\newline
+{\bf Setup Transfer Deskriptor}
+
+\begin{enumerate}
+\item Generiere Setup TD
+\item Falls keine Antwort erwartet wird (7. Bit im 8. Byte des Descr) -> PID IN zero data1
+\item Sonst Anzahl der zu "ubertragenden Bytes durch Endpunkt FIFO Gr"oesse
+\item Genererie n TDs mit entsprechend gesetztem Togl Bit
+\item Als Abschluss muss ein OUT zero data1 oder data0 Packet gesendet werden
+\end{enumerate}
+\noindent
+\newline
+Nach jedem nicht isochronen Packet muss ein ACK vom Ger"at kommen.
+Falls ein NACK kommt, muss das letzte Packet nochmal gesendet werden.
+
+
+\newpage
+\subsection{USB Host Controller Treiber}
+
+\subsubsection{USB Host Controller Treiber API}
+
+
+Der Host Controller Treiber muss f"ur den USB Kern die folgenden Funktionen anbieten:
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Funktion & Beschreibung\\ \hline
+usb\_hcd\_init() & mitte\\ \hline
+usb\_hcd\_event() & mitte\\ \hline
+usb\_hcd\_transfer() & mitte\\ \hline
+\end{tabular}
+\end{center}
+\caption{USB Host Controller API}
+\end{figure}
+
+\subsubsection{Kommunikation "uber Transfer Deskriptoren}
+Die Aufgabe des Host Controllers umfasst die "Ubertragung
+von Daten auf dem USB Bus. Die Auftr"age bekommt der Controller
+"uber Transfer Deskriptoren. Die Transfer Deskriptoren stellen
+Datenstrukturen da, die folgende Informationen beinhalten:
+
+\begin{itemize}
+\item Adresse des angesprochenen USB Ger"ats
+\item Endpoint
+\item ISO (Handelt es sich um ein isochrones Packet?) 
+\item PID des Packets (SETUP,IN oder OUT)
+\item Toggl Bit
+\item Interrupt on complete 
+\item Pufferspeicher Adresse
+\item Nachrichten L"ange
+\end{itemize}
+
+\newpage
+\subsubsection{Events vom Host Controller}
+Der USB Host Controller Treiber signalisiert dem USB Kern "uber
+Events, wenn etwas auf dem Host Controller passiert ist.
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Ereignisse & Beschreibung\\ \hline
+HCD\_EVENT\_NONE & mitte\\ \hline
+HCD\_EVENT\_DEVICEFOUND & Neues Ger"at am Host gefunden\\ \hline
+HCD\_EVENT\_DEVICEREMOVED & Das Ger"at wurde von Host entfernt\\ \hline
+HCD\_EVENT\_NACK & NACK Signal von USB Ger"at empfangen\\ \hline
+HCD\_EVENT\_ACK & ACK Signal von USB Ger"at empfangen\\ \hline
+HCD\_EVENT\_ISO & Host hat ein isochrones Packet empfangen\\ \hline
+HCD\_EVENT\_READY & Controller ist bereit f"ur neue Transaktionen\\ \hline
+\end{tabular}
+\end{center}
+\caption{USB Host Controller Ereignisse} 
+\end{figure}
+
+\noindent
+Diese Ereignisse sind nur f"ur Ger"ate die direkt am Host Controller
+h"angen. Falls mehrer Ger"ate an einem USB Bus betrieben werden sollen,
+muss ein USB Hub dazwischen geschaltet werden. Der USB Hub Treiber ist dann
+selbst"andig f"ur die Verwaltung der Ger"ate an seinen Ports zust"andig.
+
+
+
+\subsubsection{Interrupt Leitung}
+
+Oft haben USB Host Bausteine eine Interrupt Leitung, an der signalisiert
+wird wenn sich ein Ereignis im Baustein ereignet hat. In der Interruptroutine
+muss das Ereignis am Controller abgefragt werden und danach die Funktion
+usb\_core\_process aufgerufen werden.
+
+\lstset{language=C}
+\begin{lstlisting}
+uint8_t event;
+
+event = usb_hcd_event();
+core.hcd_event=event;
+
+/* execute event at once*/
+usb_core_process((struct usbcore*)&core);
+\end{lstlisting}
+
+
+
+
+
+
+\newpage
+\section{USB Hub Treiber}
+
+
+
+\section{USB Treiber selber schreiben}
+
+
+\section{Beispiel: Erkennung eines neuen USB Ger"ats}
+
+Das Ger"at wird direkt am USB Host Controller eingesteckt. Nachdem das Ger"at erkannt worden
+ist beginnt der USB Kern mit der Enumeration.
+\newline
+\newline
+HCD = Host Controller Drivder
+\newline
+HC = Host Controller
+\newline
+CORE = USB Kern
+\newline
+DRIVERAPI = Treiber API
+\newline
+TD = Transfer Deskriptor
+
+\begin{enumerate}
+\item Ger"at wird angesteckt
+\item HC l"ost Interrupt aus
+\item Interrupt Routine holt Event und meldet es dem Kern
+\item CORE usb\_core\_process startet Enumeration
+\item DRIVERAPI GetDeviceDescriptor Request wird erzeugt
+\item CORE Request wird abgesendet (usb\_urb\_submit)
+\item CORE erzeugt aus dem Requests einzelne Transfer Deskriptoren
+\item CORE f"ugt neue TDs in Frame Liste ein
+\item HCD erstes TD wird versendet und makiert (SETUP DATA0)	(TD1)
+
+\item HC l"ost Interrupt aus
+\item HC meldet das er wieder Betriebsbereit ist
+\item HCD zweiter TD wird versendet und makiert (IN DATA1)		(TD2)
+
+\item HC l"ost Interrupt aus
+\item HC meldet das er wieder Betriebsbereit ist
+\item HCD stoppt Request in dem ein leeres OUT Packet gesendet wird (OUT ZERO DATA0) (TD3)
+\item DRIVERAPI SetAddress Request wird erzeugt
+\item CORE Request wird abgesendet (usb\_urb\_submit)
+\item CORE erzeugt aus dem Requests einzelne Transfer Deskriptoren (TD)
+\item CORE f"ugt neue TDs in Frame Liste ein
+\item HCD erstes TD wird versendet und makiert (SETUP DATA0)	(TD1)
+
+\item 
+
+
+
+\end{enumerate}
+
+
+\end{document}

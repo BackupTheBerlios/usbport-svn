@@ -1,0 +1,115 @@
+\section{/home/bene/projects/sl811/usbstack/host/at90usb1287-hcd.c File Reference}
+\label{at90usb1287-hcd_8c}\index{/home/bene/projects/sl811/usbstack/host/at90usb1287-hcd.c@{/home/bene/projects/sl811/usbstack/host/at90usb1287-hcd.c}}
+{\tt \#include \char`\"{}host.h\char`\"{}}\par
+{\tt \#include $<$wait.h$>$}\par
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include \char`\"{}at90usb1287.h\char`\"{}}\par
+{\tt \#include $<$avr/io.h$>$}\par
+{\tt \#include \char`\"{}uart.h\char`\"{}}\par
+{\tt \#include $<$core/core.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf at90usb1287\_\-roothub\_\-probe} ()
+\item 
+void {\bf at90usb1287\_\-roothub\_\-check} ()
+\item 
+void {\bf at90usb1287\_\-start\_\-transfer} ()
+\item 
+void {\bf hcdi\_\-init} ()
+\item 
+u8 {\bf hcdi\_\-enqueue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\item 
+u8 {\bf hcdi\_\-dequeue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\item 
+void {\bf hcdi\_\-irq} ()
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf device\_\-on\_\-downstream}
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf td\_\-usba}
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf td\_\-usbb}
+\item 
+{\bf usb\_\-driver} {\bf at90usb1287\_\-roothub}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf device\_\-on\_\-downstream}
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!at90usb1287_roothub_check@{at90usb1287\_\-roothub\_\-check}}
+\index{at90usb1287_roothub_check@{at90usb1287\_\-roothub\_\-check}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void at90usb1287\_\-roothub\_\-check ()}\label{at90usb1287-hcd_8c_1a3d009906c9ffdce273133c14cb4638}
+
+
+This function is called periodical, to notice port changes after an hub \index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!at90usb1287_roothub_probe@{at90usb1287\_\-roothub\_\-probe}}
+\index{at90usb1287_roothub_probe@{at90usb1287\_\-roothub\_\-probe}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void at90usb1287\_\-roothub\_\-probe ()}\label{at90usb1287-hcd_8c_3c41bd8208a4ccb6902dfab1ada4e82c}
+
+
+Find and initial root hub \index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!at90usb1287_start_transfer@{at90usb1287\_\-start\_\-transfer}}
+\index{at90usb1287_start_transfer@{at90usb1287\_\-start\_\-transfer}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void at90usb1287\_\-start\_\-transfer ()}\label{at90usb1287-hcd_8c_e8558b50d99a54990fc4815536e97817}
+
+
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!hcdi_dequeue@{hcdi\_\-dequeue}}
+\index{hcdi_dequeue@{hcdi\_\-dequeue}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-dequeue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{at90usb1287-hcd_8c_2937060a6cc3d0d69f04ea1d33d24de1}
+
+
+Remove an transfer descriptor from transfer queue. \index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!hcdi_enqueue@{hcdi\_\-enqueue}}
+\index{hcdi_enqueue@{hcdi\_\-enqueue}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-enqueue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{at90usb1287-hcd_8c_156486d5382dea364107d54250a29795}
+
+
+hcdi\_\-enqueue takes usb\_\-irp and split it into several usb packeges (SETUP,IN,OUT) In the usbstack they are transported with the usb\_\-transfer\_\-descriptor data structure. \index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!hcdi_init@{hcdi\_\-init}}
+\index{hcdi_init@{hcdi\_\-init}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-init ()}\label{at90usb1287-hcd_8c_a5e728976c2dc39c8374ddbea42e9864}
+
+
+Intial host controller and necessary software structures. \index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!hcdi_irq@{hcdi\_\-irq}}
+\index{hcdi_irq@{hcdi\_\-irq}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-irq ()}\label{at90usb1287-hcd_8c_68ce1031b8a7a610ec829f164d6f33cd}
+
+
+IRQ from host controller. 
+
+\subsection{Variable Documentation}
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!at90usb1287_roothub@{at90usb1287\_\-roothub}}
+\index{at90usb1287_roothub@{at90usb1287\_\-roothub}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-driver} {\bf at90usb1287\_\-roothub}}\label{at90usb1287-hcd_8c_4ee608227528ece23c06ed0cea3e5d5d}
+
+
+\textbf{Initial value:}
+
+\begin{Code}\begin{verbatim} {
+  .name   = "at90usb1287_roothub",
+  .probe  = at90usb1287_roothub_probe,
+  .check  = at90usb1287_roothub_check,
+  .data   = NULL,
+}
+\end{verbatim}\end{Code}
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!device_on_downstream@{device\_\-on\_\-downstream}}
+\index{device_on_downstream@{device\_\-on\_\-downstream}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ {\bf device\_\-on\_\-downstream}}\label{at90usb1287-hcd_8c_62e872bcf4a481ddb425c94ac5ec3be7}
+
+
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!device_on_downstream@{device\_\-on\_\-downstream}}
+\index{device_on_downstream@{device\_\-on\_\-downstream}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ {\bf device\_\-on\_\-downstream}}\label{at90usb1287-hcd_8c_62e872bcf4a481ddb425c94ac5ec3be7}
+
+
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!td_usba@{td\_\-usba}}
+\index{td_usba@{td\_\-usba}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ {\bf td\_\-usba}}\label{at90usb1287-hcd_8c_fc9f5e8894c82e44f3ebe104df7d5fb6}
+
+
+\index{at90usb1287-hcd.c@{at90usb1287-hcd.c}!td_usbb@{td\_\-usbb}}
+\index{td_usbb@{td\_\-usbb}!at90usb1287-hcd.c@{at90usb1287-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ {\bf td\_\-usbb}}\label{at90usb1287-hcd_8c_14a82e7d20769a960e54b3eaa0122b94}
+
+

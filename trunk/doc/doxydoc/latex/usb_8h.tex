@@ -1,0 +1,136 @@
+\section{/home/bene/projects/sl811/usbstack/core/usb.h File Reference}
+\label{usb_8h}\index{/home/bene/projects/sl811/usbstack/core/usb.h@{/home/bene/projects/sl811/usbstack/core/usb.h}}
+{\tt \#include $<$lib/types.h$>$}\par
+{\tt \#include $<$core/core.h$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf usb\_\-open} (u32 vendor\_\-id, u32 product\_\-id)
+\item 
+{\bf usb\_\-device} $\ast$ {\bf usb\_\-open\_\-class} (u8 class)
+\item 
+u8 {\bf usb\_\-close} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-get\_\-device\_\-descriptor} ({\bf usb\_\-device} $\ast$dev, char $\ast$buf, u8 size)
+\item 
+u8 {\bf usb\_\-set\_\-address} ({\bf usb\_\-device} $\ast$dev, u8 address)
+\item 
+u8 {\bf usb\_\-set\_\-configuration} ({\bf usb\_\-device} $\ast$dev, u8 configuration)
+\item 
+u8 {\bf usb\_\-set\_\-altinterface} ({\bf usb\_\-device} $\ast$dev, u8 alternate)
+\item 
+u8 {\bf usb\_\-reset} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-control\_\-msg} ({\bf usb\_\-device} $\ast$dev, u8 requesttype, u8 request, u16 value, u16 index, u16 length, char $\ast$buf, u16 size, u16 timeout)
+\item 
+u8 {\bf usb\_\-get\_\-string} ({\bf usb\_\-device} $\ast$dev, u8 index, u8 langid, char $\ast$buf, u8 buflen)
+\item 
+u8 {\bf usb\_\-get\_\-string\_\-simple} ({\bf usb\_\-device} $\ast$dev, u8 index, char $\ast$buf, u8 buflen)
+\item 
+u8 {\bf usb\_\-get\_\-descriptor} ({\bf usb\_\-device} $\ast$dev, unsigned char type, unsigned char index, void $\ast$buf, u8 size)
+\item 
+u8 {\bf usb\_\-bulk\_\-write} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\item 
+u8 {\bf usb\_\-bulk\_\-read} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\item 
+u8 {\bf usb\_\-u8errupt\_\-write} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\item 
+u8 {\bf usb\_\-u8errupt\_\-read} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\item 
+u8 {\bf usb\_\-isochron\_\-write} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\item 
+u8 {\bf usb\_\-isochron\_\-read} ({\bf usb\_\-device} $\ast$dev, u8 ep, char $\ast$buf, u8 size, u8 timeout)
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{usb.h@{usb.h}!usb_bulk_read@{usb\_\-bulk\_\-read}}
+\index{usb_bulk_read@{usb\_\-bulk\_\-read}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-bulk\_\-read ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_09618efcb98dc1cf22908bc76973ac5b}
+
+
+Read from an bulk endpoint. \index{usb.h@{usb.h}!usb_bulk_write@{usb\_\-bulk\_\-write}}
+\index{usb_bulk_write@{usb\_\-bulk\_\-write}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-bulk\_\-write ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_780bd3c2aeb11aa07d94e7fd2814091e}
+
+
+Write to an a bulk endpoint. \index{usb.h@{usb.h}!usb_close@{usb\_\-close}}
+\index{usb_close@{usb\_\-close}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-close ({\bf usb\_\-device} $\ast$ {\em dev})}\label{usb_8h_a016743f793d7fbe430b91a6ac19bbca}
+
+
+Close device after a communication. \index{usb.h@{usb.h}!usb_control_msg@{usb\_\-control\_\-msg}}
+\index{usb_control_msg@{usb\_\-control\_\-msg}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-control\_\-msg ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em requesttype}, u8 {\em request}, u16 {\em value}, u16 {\em index}, u16 {\em length}, char $\ast$ {\em buf}, u16 {\em size}, u16 {\em timeout})}\label{usb_8h_1819f0ea1b21096f25d9f7f6747aae41}
+
+
+Create a control transfer. \index{usb.h@{usb.h}!usb_get_descriptor@{usb\_\-get\_\-descriptor}}
+\index{usb_get_descriptor@{usb\_\-get\_\-descriptor}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-get\_\-descriptor ({\bf usb\_\-device} $\ast$ {\em dev}, unsigned char {\em type}, unsigned char {\em index}, void $\ast$ {\em buf}, u8 {\em size})}\label{usb_8h_c018ca15172cdaf5e46cb88eadee6de2}
+
+
+\index{usb.h@{usb.h}!usb_get_device_descriptor@{usb\_\-get\_\-device\_\-descriptor}}
+\index{usb_get_device_descriptor@{usb\_\-get\_\-device\_\-descriptor}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-get\_\-device\_\-descriptor ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em buf}, u8 {\em size})}\label{usb_8h_30772d3ad0aab2e7185c3678c95cc604}
+
+
+\index{usb.h@{usb.h}!usb_get_string@{usb\_\-get\_\-string}}
+\index{usb_get_string@{usb\_\-get\_\-string}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-get\_\-string ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em index}, u8 {\em langid}, char $\ast$ {\em buf}, u8 {\em buflen})}\label{usb_8h_5ebf547e758584cccc3d12def6b2706a}
+
+
+\index{usb.h@{usb.h}!usb_get_string_simple@{usb\_\-get\_\-string\_\-simple}}
+\index{usb_get_string_simple@{usb\_\-get\_\-string\_\-simple}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-get\_\-string\_\-simple ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em index}, char $\ast$ {\em buf}, u8 {\em buflen})}\label{usb_8h_c724192e64a16676a38f9a84c6e0a657}
+
+
+\index{usb.h@{usb.h}!usb_isochron_read@{usb\_\-isochron\_\-read}}
+\index{usb_isochron_read@{usb\_\-isochron\_\-read}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-isochron\_\-read ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_2764be421f5db3fe7546ef8d591f39e5}
+
+
+Read from an isochron endpoint. \index{usb.h@{usb.h}!usb_isochron_write@{usb\_\-isochron\_\-write}}
+\index{usb_isochron_write@{usb\_\-isochron\_\-write}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-isochron\_\-write ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_c36bbab7df127d7d2076bc04b3a12a40}
+
+
+Write to an isochron endpoint. \index{usb.h@{usb.h}!usb_open@{usb\_\-open}}
+\index{usb_open@{usb\_\-open}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ usb\_\-open (u32 {\em vendor\_\-id}, u32 {\em product\_\-id})}\label{usb_8h_b1ab8d31ba6bf15352c1b62500f7ec7d}
+
+
+Open a device with verndor- and product-id for a communication. \index{usb.h@{usb.h}!usb_open_class@{usb\_\-open\_\-class}}
+\index{usb_open_class@{usb\_\-open\_\-class}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ usb\_\-open\_\-class (u8 {\em class})}\label{usb_8h_52c2bd3e63f3188fba38052e833f5afd}
+
+
+Open a device with an class code for a communication. \index{usb.h@{usb.h}!usb_reset@{usb\_\-reset}}
+\index{usb_reset@{usb\_\-reset}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-reset ({\bf usb\_\-device} $\ast$ {\em dev})}\label{usb_8h_cabbd669fcfbbd1ff806b37344c0486e}
+
+
+usb\_\-reset resets the specified device by sending a RESET down the port it is connected to. Returns 0 on success or $<$ 0 on error. \index{usb.h@{usb.h}!usb_set_address@{usb\_\-set\_\-address}}
+\index{usb_set_address@{usb\_\-set\_\-address}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-set\_\-address ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em address})}\label{usb_8h_5a09d4be5e45fe503236041ada40405d}
+
+
+\index{usb.h@{usb.h}!usb_set_altinterface@{usb\_\-set\_\-altinterface}}
+\index{usb_set_altinterface@{usb\_\-set\_\-altinterface}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-set\_\-altinterface ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em alternate})}\label{usb_8h_f61ea8d82c09b7bc9a7d5944ebe03c1c}
+
+
+\index{usb.h@{usb.h}!usb_set_configuration@{usb\_\-set\_\-configuration}}
+\index{usb_set_configuration@{usb\_\-set\_\-configuration}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-set\_\-configuration ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em configuration})}\label{usb_8h_0d65fa2357fef7e70f480e6b479975cf}
+
+
+\index{usb.h@{usb.h}!usb_u8errupt_read@{usb\_\-u8errupt\_\-read}}
+\index{usb_u8errupt_read@{usb\_\-u8errupt\_\-read}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-u8errupt\_\-read ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_ed39685b228fc5b4192d0ff6b3acc12a}
+
+
+\index{usb.h@{usb.h}!usb_u8errupt_write@{usb\_\-u8errupt\_\-write}}
+\index{usb_u8errupt_write@{usb\_\-u8errupt\_\-write}!usb.h@{usb.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-u8errupt\_\-write ({\bf usb\_\-device} $\ast$ {\em dev}, u8 {\em ep}, char $\ast$ {\em buf}, u8 {\em size}, u8 {\em timeout})}\label{usb_8h_748c402a0d9400622abff015492e7c6b}
+
+

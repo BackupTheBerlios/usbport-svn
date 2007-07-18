@@ -1,0 +1,120 @@
+\section{/home/bene/projects/sl811/usbstack/host/sl811hs-hcd.c File Reference}
+\label{sl811hs-hcd_8c}\index{/home/bene/projects/sl811/usbstack/host/sl811hs-hcd.c@{/home/bene/projects/sl811/usbstack/host/sl811hs-hcd.c}}
+{\tt \#include \char`\"{}host.h\char`\"{}}\par
+{\tt \#include \char`\"{}sl811hs.h\char`\"{}}\par
+{\tt \#include $<$wait.h$>$}\par
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include \char`\"{}uart.h\char`\"{}}\par
+{\tt \#include $<$core/core.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf HUB\_\-PORTSTATUS\_\-C\_\-PORT\_\-CONNECTION}~1
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf sl811\_\-roothub\_\-probe} ()
+\item 
+void {\bf sl811\_\-roothub\_\-check} ()
+\item 
+void {\bf sl811\_\-start\_\-transfer} ()
+\item 
+void {\bf hcdi\_\-init} ()
+\item 
+u8 {\bf hcdi\_\-enqueue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\item 
+u8 {\bf hcdi\_\-dequeue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\item 
+void {\bf hcdi\_\-irq} ()
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf device\_\-on\_\-downstream}
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf td\_\-usba}
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf td\_\-usbb}
+\item 
+{\bf usb\_\-driver} {\bf sl811\_\-roothub}
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!HUB_PORTSTATUS_C_PORT_CONNECTION@{HUB\_\-PORTSTATUS\_\-C\_\-PORT\_\-CONNECTION}}
+\index{HUB_PORTSTATUS_C_PORT_CONNECTION@{HUB\_\-PORTSTATUS\_\-C\_\-PORT\_\-CONNECTION}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define HUB\_\-PORTSTATUS\_\-C\_\-PORT\_\-CONNECTION~1}\label{sl811hs-hcd_8c_e1fa436fd22f88502b92ee0bf90e264f}
+
+
+
+
+\subsection{Function Documentation}
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!hcdi_dequeue@{hcdi\_\-dequeue}}
+\index{hcdi_dequeue@{hcdi\_\-dequeue}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-dequeue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{sl811hs-hcd_8c_2937060a6cc3d0d69f04ea1d33d24de1}
+
+
+Remove an transfer descriptor from transfer queue. \index{sl811hs-hcd.c@{sl811hs-hcd.c}!hcdi_enqueue@{hcdi\_\-enqueue}}
+\index{hcdi_enqueue@{hcdi\_\-enqueue}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-enqueue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{sl811hs-hcd_8c_156486d5382dea364107d54250a29795}
+
+
+hcdi\_\-enqueue takes usb\_\-irp and split it into several usb packeges (SETUP,IN,OUT) In the usbstack they are transported with the usb\_\-transfer\_\-descriptor data structure. \index{sl811hs-hcd.c@{sl811hs-hcd.c}!hcdi_init@{hcdi\_\-init}}
+\index{hcdi_init@{hcdi\_\-init}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-init ()}\label{sl811hs-hcd_8c_a5e728976c2dc39c8374ddbea42e9864}
+
+
+Intial host controller and necessary software structures. \index{sl811hs-hcd.c@{sl811hs-hcd.c}!hcdi_irq@{hcdi\_\-irq}}
+\index{hcdi_irq@{hcdi\_\-irq}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-irq ()}\label{sl811hs-hcd_8c_68ce1031b8a7a610ec829f164d6f33cd}
+
+
+IRQ from host controller. \index{sl811hs-hcd.c@{sl811hs-hcd.c}!sl811_roothub_check@{sl811\_\-roothub\_\-check}}
+\index{sl811_roothub_check@{sl811\_\-roothub\_\-check}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-roothub\_\-check ()}\label{sl811hs-hcd_8c_0c629c34f38f5f6872ee3f16275876db}
+
+
+This function is called periodical, to notice port changes after an hub \index{sl811hs-hcd.c@{sl811hs-hcd.c}!sl811_roothub_probe@{sl811\_\-roothub\_\-probe}}
+\index{sl811_roothub_probe@{sl811\_\-roothub\_\-probe}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-roothub\_\-probe ()}\label{sl811hs-hcd_8c_8d05c2e225b366547b63e359175e19ba}
+
+
+Find and initial root hub \index{sl811hs-hcd.c@{sl811hs-hcd.c}!sl811_start_transfer@{sl811\_\-start\_\-transfer}}
+\index{sl811_start_transfer@{sl811\_\-start\_\-transfer}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void sl811\_\-start\_\-transfer ()}\label{sl811hs-hcd_8c_c6bbcb4b1f84c5aebfb37bd2d0440c7a}
+
+
+
+
+\subsection{Variable Documentation}
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!device_on_downstream@{device\_\-on\_\-downstream}}
+\index{device_on_downstream@{device\_\-on\_\-downstream}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ {\bf device\_\-on\_\-downstream}}\label{sl811hs-hcd_8c_62e872bcf4a481ddb425c94ac5ec3be7}
+
+
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!sl811_roothub@{sl811\_\-roothub}}
+\index{sl811_roothub@{sl811\_\-roothub}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-driver} {\bf sl811\_\-roothub}}\label{sl811hs-hcd_8c_4a9f6f9e694b6e75d4136f61bcdf60e8}
+
+
+\textbf{Initial value:}
+
+\begin{Code}\begin{verbatim} {
+  .name   = "sl811_roothub",
+  .probe  = sl811_roothub_probe,
+  .check  = sl811_roothub_check,
+  .data   = NULL,
+}
+\end{verbatim}\end{Code}
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!td_usba@{td\_\-usba}}
+\index{td_usba@{td\_\-usba}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ {\bf td\_\-usba}}\label{sl811hs-hcd_8c_fc9f5e8894c82e44f3ebe104df7d5fb6}
+
+
+\index{sl811hs-hcd.c@{sl811hs-hcd.c}!td_usbb@{td\_\-usbb}}
+\index{td_usbb@{td\_\-usbb}!sl811hs-hcd.c@{sl811hs-hcd.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ {\bf td\_\-usbb}}\label{sl811hs-hcd_8c_14a82e7d20769a960e54b3eaa0122b94}
+
+

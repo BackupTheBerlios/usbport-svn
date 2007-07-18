@@ -1,0 +1,204 @@
+\section{/home/bene/projects/sl811/usbstack/core/core.h File Reference}
+\label{core_8h}\index{/home/bene/projects/sl811/usbstack/core/core.h@{/home/bene/projects/sl811/usbstack/core/core.h}}
+{\tt \#include $<$lib/types.h$>$}\par
+{\tt \#include $<$lib/list.h$>$}\par
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+struct {\bf usb\_\-device\_\-t}
+\item 
+struct {\bf usb\_\-endpoint\_\-t}
+\item 
+struct {\bf usb\_\-transfer\_\-descriptor\_\-ep\_\-t}
+\item 
+struct {\bf usb\_\-driver\_\-t}
+\item 
+struct {\bf usb\_\-irp\_\-t}
+\item 
+struct {\bf usb\_\-transfer\_\-descriptor\_\-t}
+\item 
+struct {\bf usb\_\-core\_\-t}
+\end{CompactItemize}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf USB\_\-IRP\_\-WAITING}~1
+\item 
+\#define {\bf USB\_\-TRANSFER\_\-DESCR\_\-NONE}~1
+\item 
+\#define {\bf USB\_\-TRANSFER\_\-DESCR\_\-SEND}~2
+\end{CompactItemize}
+\subsection*{Typedefs}
+\begin{CompactItemize}
+\item 
+typedef {\bf usb\_\-device\_\-t} {\bf usb\_\-device}
+\item 
+typedef {\bf usb\_\-endpoint\_\-t} {\bf usb\_\-endpoint}
+\item 
+typedef {\bf usb\_\-transfer\_\-descriptor\_\-ep\_\-t} {\bf usb\_\-transfer\_\-descriptor\_\-ep}
+\item 
+typedef {\bf usb\_\-driver\_\-t} {\bf usb\_\-driver}
+\item 
+typedef {\bf usb\_\-irp\_\-t} {\bf usb\_\-irp}
+\item 
+typedef {\bf usb\_\-transfer\_\-descriptor\_\-t} {\bf usb\_\-transfer\_\-descriptor}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-init} ()
+\item 
+void {\bf usb\_\-periodic} ()
+\item 
+u8 {\bf usb\_\-next\_\-address} ()
+\item 
+{\bf usb\_\-device} $\ast$ {\bf usb\_\-add\_\-device} ()
+\item 
+u8 {\bf usb\_\-remove\_\-device} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-register\_\-driver} ({\bf usb\_\-driver} $\ast$driver)
+\item 
+void {\bf usb\_\-probe\_\-driver} ()
+\item 
+{\bf usb\_\-irp} $\ast$ {\bf usb\_\-get\_\-irp} ()
+\item 
+u8 {\bf usb\_\-remove\_\-irp} ({\bf usb\_\-irp} $\ast$irp)
+\item 
+u16 {\bf usb\_\-submit\_\-irp} ({\bf usb\_\-irp} $\ast$irp)
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf usb\_\-create\_\-transfer\_\-descriptor} ({\bf usb\_\-irp} $\ast$irp)
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-core\_\-t} {\bf core}
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{core.h@{core.h}!USB_IRP_WAITING@{USB\_\-IRP\_\-WAITING}}
+\index{USB_IRP_WAITING@{USB\_\-IRP\_\-WAITING}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define USB\_\-IRP\_\-WAITING~1}\label{core_8h_f944ea9c1c344120b6a76b558d17502f}
+
+
+\index{core.h@{core.h}!USB_TRANSFER_DESCR_NONE@{USB\_\-TRANSFER\_\-DESCR\_\-NONE}}
+\index{USB_TRANSFER_DESCR_NONE@{USB\_\-TRANSFER\_\-DESCR\_\-NONE}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define USB\_\-TRANSFER\_\-DESCR\_\-NONE~1}\label{core_8h_0f49f908740eb57b66ac6fd6fa34f254}
+
+
+\index{core.h@{core.h}!USB_TRANSFER_DESCR_SEND@{USB\_\-TRANSFER\_\-DESCR\_\-SEND}}
+\index{USB_TRANSFER_DESCR_SEND@{USB\_\-TRANSFER\_\-DESCR\_\-SEND}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define USB\_\-TRANSFER\_\-DESCR\_\-SEND~2}\label{core_8h_15d88238c095718d6a84b0589f9cf361}
+
+
+
+
+\subsection{Typedef Documentation}
+\index{core.h@{core.h}!usb_device@{usb\_\-device}}
+\index{usb_device@{usb\_\-device}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-device\_\-t} {\bf usb\_\-device}}\label{core_8h_012617ff18a07f414412b30b4eadc6ef}
+
+
+Main datastructure of the usbstack, which have to be instanced in the main application. \index{core.h@{core.h}!usb_driver@{usb\_\-driver}}
+\index{usb_driver@{usb\_\-driver}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-driver\_\-t} {\bf usb\_\-driver}}\label{core_8h_ff1f997f9dcedd3e85f4f98488881c16}
+
+
+USB Driver data structure \index{core.h@{core.h}!usb_endpoint@{usb\_\-endpoint}}
+\index{usb_endpoint@{usb\_\-endpoint}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-endpoint\_\-t} {\bf usb\_\-endpoint}}\label{core_8h_62c9b2ad7123c6b8d665c85e80ef95bb}
+
+
+\index{core.h@{core.h}!usb_irp@{usb\_\-irp}}
+\index{usb_irp@{usb\_\-irp}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-irp\_\-t} {\bf usb\_\-irp}}\label{core_8h_29c6448aba2a7bc2ba69f2cefbbde1d5}
+
+
+I/O Request Block \index{core.h@{core.h}!usb_transfer_descriptor@{usb\_\-transfer\_\-descriptor}}
+\index{usb_transfer_descriptor@{usb\_\-transfer\_\-descriptor}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-transfer\_\-descriptor\_\-t} {\bf usb\_\-transfer\_\-descriptor}}\label{core_8h_cf719b5481c3bcd1af62d3e0d417754f}
+
+
+usb transfer descriptor \index{core.h@{core.h}!usb_transfer_descriptor_ep@{usb\_\-transfer\_\-descriptor\_\-ep}}
+\index{usb_transfer_descriptor_ep@{usb\_\-transfer\_\-descriptor\_\-ep}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-transfer\_\-descriptor\_\-ep\_\-t} {\bf usb\_\-transfer\_\-descriptor\_\-ep}}\label{core_8h_0a46ce3ac840fb8200582c283d8a067c}
+
+
+
+
+\subsection{Function Documentation}
+\index{core.h@{core.h}!usb_add_device@{usb\_\-add\_\-device}}
+\index{usb_add_device@{usb\_\-add\_\-device}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ usb\_\-add\_\-device ()}\label{core_8h_d25cbf02b3b5e22f22c697193bb87f92}
+
+
+Enumerate new device and create data structures for the core. usb\_\-add\_\-device expected that the device answers to address zero. \index{core.h@{core.h}!usb_create_transfer_descriptor@{usb\_\-create\_\-transfer\_\-descriptor}}
+\index{usb_create_transfer_descriptor@{usb\_\-create\_\-transfer\_\-descriptor}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ usb\_\-create\_\-transfer\_\-descriptor ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8h_7e0bd9c92c1fb753304e6f77c0d6bd2c}
+
+
+Create a transfer descriptor with an parent irp. \index{core.h@{core.h}!usb_get_irp@{usb\_\-get\_\-irp}}
+\index{usb_get_irp@{usb\_\-get\_\-irp}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-irp}$\ast$ usb\_\-get\_\-irp ()}\label{core_8h_b4a317acc71220967da6cf6dd1da7ac9}
+
+
+Not implemented. \index{core.h@{core.h}!usb_init@{usb\_\-init}}
+\index{usb_init@{usb\_\-init}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-init ()}\label{core_8h_60af0d8621d025f018ba0f56bca00a93}
+
+
+Initialize USB stack. \index{core.h@{core.h}!usb_next_address@{usb\_\-next\_\-address}}
+\index{usb_next_address@{usb\_\-next\_\-address}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-next\_\-address ()}\label{core_8h_c58f28f1c2693257b89945e785403baf}
+
+
+Get next free usb device address. \index{core.h@{core.h}!usb_periodic@{usb\_\-periodic}}
+\index{usb_periodic@{usb\_\-periodic}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-periodic ()}\label{core_8h_56f96c6ef2028c55dce92873a489419d}
+
+
+Call this function periodically for control and transfer management. \index{core.h@{core.h}!usb_probe_driver@{usb\_\-probe\_\-driver}}
+\index{usb_probe_driver@{usb\_\-probe\_\-driver}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-probe\_\-driver ()}\label{core_8h_99cd77f8e4ac64be0d886f31148acb09}
+
+
+Call every probe function from every registered driver, to check if there is a valid driver for the new device. \index{core.h@{core.h}!usb_register_driver@{usb\_\-register\_\-driver}}
+\index{usb_register_driver@{usb\_\-register\_\-driver}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-register\_\-driver ({\bf usb\_\-driver} $\ast$ {\em dev})}\label{core_8h_6dda3b9fd835433080e92265e3678a8b}
+
+
+Register new driver at usb stack. 
+
+first check to find a suitable device (root hub drivers need this call here) \index{core.h@{core.h}!usb_remove_device@{usb\_\-remove\_\-device}}
+\index{usb_remove_device@{usb\_\-remove\_\-device}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-remove\_\-device ({\bf usb\_\-device} $\ast$ {\em dev})}\label{core_8h_750a0d6554fd2aec4459d0e3af2dd6ef}
+
+
+Find currently detached device and remove data structures \index{core.h@{core.h}!usb_remove_irp@{usb\_\-remove\_\-irp}}
+\index{usb_remove_irp@{usb\_\-remove\_\-irp}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-remove\_\-irp ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8h_ddc2d9767934c9943b6e08b8b8125b33}
+
+
+Not implemented. \index{core.h@{core.h}!usb_submit_irp@{usb\_\-submit\_\-irp}}
+\index{usb_submit_irp@{usb\_\-submit\_\-irp}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u16 usb\_\-submit\_\-irp ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8h_265cc39d7b493019e5681b27a4349183}
+
+
+Takes usb\_\-irp and split it into several usb packeges (SETUP,IN,OUT) In the usbstack they are transported with the usb\_\-transfer\_\-descriptor data structure. 
+
+You can see at bit 7 of bm\-Request\-Type if this stage is used, default requests are always 8 byte greate, from host to device. Stage 3 is only neccessary if the request expected datas from the device. bit7 - 1 = from device to host -$>$ yes we need data stage bit7 - 0 = from host to device -$>$ no send zero packet
+
+nach einem setup token kann nur ein IN token in stage 3 folgen nie aber ein OUT. Ein Zero OUT wird nur als Bestaetigung benoetigt.
+
+bit7 = 1 Device to Host\begin{itemize}
+\item es kommen noch Daten mit PID\_\-IN an\item host beendet mit PID\_\-OUT DATA1 Zero bit7 - 0 Host zu Device (wie set address)\item device sendet ein PID\_\-IN DATA1 Zero Packet als bestaetigung\end{itemize}
+
+
+bit7 = 1, host beendet mit PID\_\-OUT DATA1 Zero bit7 = 0, device sendet ein PID\_\-IN DATA1 Zero Packet als bestaetigung 
+
+\subsection{Variable Documentation}
+\index{core.h@{core.h}!core@{core}}
+\index{core@{core}!core.h@{core.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}struct {\bf usb\_\-core\_\-t}  {\bf core}}\label{core_8h_e79ca4bd27b7b91dc5296ab6ada4ba8a}
+
+

@@ -1,0 +1,38 @@
+\section{/home/bene/projects/sl811/usbstack/host/host.h File Reference}
+\label{host_8h}\index{/home/bene/projects/sl811/usbstack/host/host.h@{/home/bene/projects/sl811/usbstack/host/host.h}}
+{\tt \#include \char`\"{}../core/core.h\char`\"{}}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf hcdi\_\-irq} ()
+\item 
+void {\bf hcdi\_\-init} ()
+\item 
+u8 {\bf hcdi\_\-enqueue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\item 
+u8 {\bf hcdi\_\-dequeue} ({\bf usb\_\-transfer\_\-descriptor} $\ast$td)
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{host.h@{host.h}!hcdi_dequeue@{hcdi\_\-dequeue}}
+\index{hcdi_dequeue@{hcdi\_\-dequeue}!host.h@{host.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-dequeue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{host_8h_2937060a6cc3d0d69f04ea1d33d24de1}
+
+
+Remove an transfer descriptor from transfer queue. \index{host.h@{host.h}!hcdi_enqueue@{hcdi\_\-enqueue}}
+\index{hcdi_enqueue@{hcdi\_\-enqueue}!host.h@{host.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 hcdi\_\-enqueue ({\bf usb\_\-transfer\_\-descriptor} $\ast$ {\em td})}\label{host_8h_156486d5382dea364107d54250a29795}
+
+
+hcdi\_\-enqueue takes usb\_\-irp and split it into several usb packeges (SETUP,IN,OUT) In the usbstack they are transported with the usb\_\-transfer\_\-descriptor data structure. \index{host.h@{host.h}!hcdi_init@{hcdi\_\-init}}
+\index{hcdi_init@{hcdi\_\-init}!host.h@{host.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-init ()}\label{host_8h_a5e728976c2dc39c8374ddbea42e9864}
+
+
+Intial host controller and necessary software structures. \index{host.h@{host.h}!hcdi_irq@{hcdi\_\-irq}}
+\index{hcdi_irq@{hcdi\_\-irq}!host.h@{host.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void hcdi\_\-irq ()}\label{host_8h_68ce1031b8a7a610ec829f164d6f33cd}
+
+
+IRQ from host controller. 

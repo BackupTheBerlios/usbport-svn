@@ -1,0 +1,223 @@
+\section{/home/bene/projects/sl811/usbstack/drivers/class/storage.h File Reference}
+\label{storage_8h}\index{/home/bene/projects/sl811/usbstack/drivers/class/storage.h@{/home/bene/projects/sl811/usbstack/drivers/class/storage.h}}
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+struct {\bf usb\_\-storage\_\-cbw\_\-t}
+\item 
+struct {\bf usb\_\-storage\_\-csw\_\-t}
+\end{CompactItemize}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf CSW\_\-CMD\_\-PASSED}~0x00
+\item 
+\#define {\bf CSW\_\-CMD\_\-FAILED}~0x01
+\item 
+\#define {\bf CSW\_\-PHASE\_\-ERROR}~0x02
+\item 
+\#define {\bf SCSI\_\-TEST\_\-UNIT\_\-READY}~0x00
+\item 
+\#define {\bf SCSI\_\-REQUEST\_\-SENSE}~0x03
+\item 
+\#define {\bf SCSI\_\-FORMAT\_\-UNIT}~0x04
+\item 
+\#define {\bf SCSI\_\-INQUIRY}~0x12
+\item 
+\#define {\bf SCSI\_\-MODE\_\-SELECT6}~0x15
+\item 
+\#define {\bf SCSI\_\-MODE\_\-SENSE6}~0x1A
+\item 
+\#define {\bf SCSI\_\-START\_\-STOP\_\-UNIT}~0x1B
+\item 
+\#define {\bf SCSI\_\-MEDIA\_\-REMOVAL}~0x1E
+\item 
+\#define {\bf SCSI\_\-READ\_\-FORMAT\_\-CAPACITIES}~0x23
+\item 
+\#define {\bf SCSI\_\-READ\_\-CAPACITY}~0x25
+\item 
+\#define {\bf SCSI\_\-READ10}~0x28
+\item 
+\#define {\bf SCSI\_\-WRITE10}~0x2A
+\item 
+\#define {\bf SCSI\_\-VERIFY10}~0x2F
+\item 
+\#define {\bf SCSI\_\-MODE\_\-SELECT10}~0x55
+\item 
+\#define {\bf SCSI\_\-MODE\_\-SENSE10}~0x5A
+\end{CompactItemize}
+\subsection*{Typedefs}
+\begin{CompactItemize}
+\item 
+typedef {\bf usb\_\-storage\_\-cbw\_\-t} {\bf usb\_\-storage\_\-cbw}
+\item 
+typedef {\bf usb\_\-storage\_\-csw\_\-t} {\bf usb\_\-storage\_\-csw}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-storage\_\-probe} ()
+\item 
+void {\bf usb\_\-storage\_\-check} ()
+\item 
+void {\bf usb\_\-storage\_\-init} ()
+\item 
+u8 {\bf usb\_\-storage\_\-open} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-read\_\-capacity} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-inquiry} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-read\_\-sector} (u8 device, u32 sector, char $\ast$buf)
+\item 
+u8 {\bf usb\_\-storage\_\-write\_\-sector} (u8 device, u32 sector, char $\ast$buf)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{storage.h@{storage.h}!CSW_CMD_FAILED@{CSW\_\-CMD\_\-FAILED}}
+\index{CSW_CMD_FAILED@{CSW\_\-CMD\_\-FAILED}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define CSW\_\-CMD\_\-FAILED~0x01}\label{storage_8h_23b45004778ff0ce250cb515f18dad5c}
+
+
+\index{storage.h@{storage.h}!CSW_CMD_PASSED@{CSW\_\-CMD\_\-PASSED}}
+\index{CSW_CMD_PASSED@{CSW\_\-CMD\_\-PASSED}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define CSW\_\-CMD\_\-PASSED~0x00}\label{storage_8h_003fe6041f1af12ae0e82bd653294389}
+
+
+\index{storage.h@{storage.h}!CSW_PHASE_ERROR@{CSW\_\-PHASE\_\-ERROR}}
+\index{CSW_PHASE_ERROR@{CSW\_\-PHASE\_\-ERROR}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define CSW\_\-PHASE\_\-ERROR~0x02}\label{storage_8h_608103cbe99dcb4501bf74754adf17dd}
+
+
+\index{storage.h@{storage.h}!SCSI_FORMAT_UNIT@{SCSI\_\-FORMAT\_\-UNIT}}
+\index{SCSI_FORMAT_UNIT@{SCSI\_\-FORMAT\_\-UNIT}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-FORMAT\_\-UNIT~0x04}\label{storage_8h_d699eaa4a55233cd0d8aed810ccb3996}
+
+
+\index{storage.h@{storage.h}!SCSI_INQUIRY@{SCSI\_\-INQUIRY}}
+\index{SCSI_INQUIRY@{SCSI\_\-INQUIRY}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-INQUIRY~0x12}\label{storage_8h_b4c8f5b2d1f25d97b00b9df156ccc283}
+
+
+\index{storage.h@{storage.h}!SCSI_MEDIA_REMOVAL@{SCSI\_\-MEDIA\_\-REMOVAL}}
+\index{SCSI_MEDIA_REMOVAL@{SCSI\_\-MEDIA\_\-REMOVAL}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-MEDIA\_\-REMOVAL~0x1E}\label{storage_8h_daebe7b81c3c81cff86563f4b1bfd7ea}
+
+
+\index{storage.h@{storage.h}!SCSI_MODE_SELECT10@{SCSI\_\-MODE\_\-SELECT10}}
+\index{SCSI_MODE_SELECT10@{SCSI\_\-MODE\_\-SELECT10}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-MODE\_\-SELECT10~0x55}\label{storage_8h_e3bf7ade89179f73ff189241aa7dd48a}
+
+
+\index{storage.h@{storage.h}!SCSI_MODE_SELECT6@{SCSI\_\-MODE\_\-SELECT6}}
+\index{SCSI_MODE_SELECT6@{SCSI\_\-MODE\_\-SELECT6}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-MODE\_\-SELECT6~0x15}\label{storage_8h_8df08cd2d2b645f319615d6ad78e86f0}
+
+
+\index{storage.h@{storage.h}!SCSI_MODE_SENSE10@{SCSI\_\-MODE\_\-SENSE10}}
+\index{SCSI_MODE_SENSE10@{SCSI\_\-MODE\_\-SENSE10}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-MODE\_\-SENSE10~0x5A}\label{storage_8h_c7a3a604d44ff9de57300f4720578fc9}
+
+
+\index{storage.h@{storage.h}!SCSI_MODE_SENSE6@{SCSI\_\-MODE\_\-SENSE6}}
+\index{SCSI_MODE_SENSE6@{SCSI\_\-MODE\_\-SENSE6}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-MODE\_\-SENSE6~0x1A}\label{storage_8h_31b2ec05301e98b1f9ab4e59c59772aa}
+
+
+\index{storage.h@{storage.h}!SCSI_READ10@{SCSI\_\-READ10}}
+\index{SCSI_READ10@{SCSI\_\-READ10}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-READ10~0x28}\label{storage_8h_4f9d424a949ee51924aa88f283afb085}
+
+
+\index{storage.h@{storage.h}!SCSI_READ_CAPACITY@{SCSI\_\-READ\_\-CAPACITY}}
+\index{SCSI_READ_CAPACITY@{SCSI\_\-READ\_\-CAPACITY}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-READ\_\-CAPACITY~0x25}\label{storage_8h_3dc6f7fadac7bfeffb644345a3adc670}
+
+
+\index{storage.h@{storage.h}!SCSI_READ_FORMAT_CAPACITIES@{SCSI\_\-READ\_\-FORMAT\_\-CAPACITIES}}
+\index{SCSI_READ_FORMAT_CAPACITIES@{SCSI\_\-READ\_\-FORMAT\_\-CAPACITIES}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-READ\_\-FORMAT\_\-CAPACITIES~0x23}\label{storage_8h_960cfd4a1fcfa106b2dd51d406732b38}
+
+
+\index{storage.h@{storage.h}!SCSI_REQUEST_SENSE@{SCSI\_\-REQUEST\_\-SENSE}}
+\index{SCSI_REQUEST_SENSE@{SCSI\_\-REQUEST\_\-SENSE}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-REQUEST\_\-SENSE~0x03}\label{storage_8h_c21bf0803bcdb4ade96e2eb6ce4ef847}
+
+
+\index{storage.h@{storage.h}!SCSI_START_STOP_UNIT@{SCSI\_\-START\_\-STOP\_\-UNIT}}
+\index{SCSI_START_STOP_UNIT@{SCSI\_\-START\_\-STOP\_\-UNIT}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-START\_\-STOP\_\-UNIT~0x1B}\label{storage_8h_9dbe602f6f065f56340568451b4a9714}
+
+
+\index{storage.h@{storage.h}!SCSI_TEST_UNIT_READY@{SCSI\_\-TEST\_\-UNIT\_\-READY}}
+\index{SCSI_TEST_UNIT_READY@{SCSI\_\-TEST\_\-UNIT\_\-READY}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-TEST\_\-UNIT\_\-READY~0x00}\label{storage_8h_e9e768d850fcb29e45bab0df02a356d1}
+
+
+\index{storage.h@{storage.h}!SCSI_VERIFY10@{SCSI\_\-VERIFY10}}
+\index{SCSI_VERIFY10@{SCSI\_\-VERIFY10}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-VERIFY10~0x2F}\label{storage_8h_4f799250b498efb9dc2378a7a1baa302}
+
+
+\index{storage.h@{storage.h}!SCSI_WRITE10@{SCSI\_\-WRITE10}}
+\index{SCSI_WRITE10@{SCSI\_\-WRITE10}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define SCSI\_\-WRITE10~0x2A}\label{storage_8h_4a9efd10e4c1670e2c3546f937e9cb34}
+
+
+
+
+\subsection{Typedef Documentation}
+\index{storage.h@{storage.h}!usb_storage_cbw@{usb\_\-storage\_\-cbw}}
+\index{usb_storage_cbw@{usb\_\-storage\_\-cbw}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-storage\_\-cbw\_\-t} {\bf usb\_\-storage\_\-cbw}}\label{storage_8h_00dcca05b811f4b988868c2fe5335fc5}
+
+
+\index{storage.h@{storage.h}!usb_storage_csw@{usb\_\-storage\_\-csw}}
+\index{usb_storage_csw@{usb\_\-storage\_\-csw}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf usb\_\-storage\_\-csw\_\-t} {\bf usb\_\-storage\_\-csw}}\label{storage_8h_a1dd7d076cbff1f64ee876dfc93900ed}
+
+
+
+
+\subsection{Function Documentation}
+\index{storage.h@{storage.h}!usb_storage_check@{usb\_\-storage\_\-check}}
+\index{usb_storage_check@{usb\_\-storage\_\-check}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-check ()}\label{storage_8h_970ba00b5d6db799471427b0a3d3151f}
+
+
+\index{storage.h@{storage.h}!usb_storage_init@{usb\_\-storage\_\-init}}
+\index{usb_storage_init@{usb\_\-storage\_\-init}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-init ()}\label{storage_8h_52045de442f01c1fa8498142802b2677}
+
+
+\index{storage.h@{storage.h}!usb_storage_inquiry@{usb\_\-storage\_\-inquiry}}
+\index{usb_storage_inquiry@{usb\_\-storage\_\-inquiry}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-inquiry (u8 {\em device})}\label{storage_8h_4d0f224bc7398d381944304e85b01cd2}
+
+
+\index{storage.h@{storage.h}!usb_storage_open@{usb\_\-storage\_\-open}}
+\index{usb_storage_open@{usb\_\-storage\_\-open}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-open (u8 {\em device})}\label{storage_8h_9cb488439837f7cc33205637dacd74bd}
+
+
+open connection to an storage device \index{storage.h@{storage.h}!usb_storage_probe@{usb\_\-storage\_\-probe}}
+\index{usb_storage_probe@{usb\_\-storage\_\-probe}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-probe ()}\label{storage_8h_0a6c6c3eb155433864323844b151598f}
+
+
+\index{storage.h@{storage.h}!usb_storage_read_capacity@{usb\_\-storage\_\-read\_\-capacity}}
+\index{usb_storage_read_capacity@{usb\_\-storage\_\-read\_\-capacity}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-read\_\-capacity (u8 {\em device})}\label{storage_8h_2bfcaffcb1a2abc12372dac39bcbdf3b}
+
+
+\index{storage.h@{storage.h}!usb_storage_read_sector@{usb\_\-storage\_\-read\_\-sector}}
+\index{usb_storage_read_sector@{usb\_\-storage\_\-read\_\-sector}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-read\_\-sector (u8 {\em device}, u32 {\em sector}, char $\ast$ {\em buf})}\label{storage_8h_c95fa60ab8bc84aa3c4c9cd7b8337c0d}
+
+
+\index{storage.h@{storage.h}!usb_storage_write_sector@{usb\_\-storage\_\-write\_\-sector}}
+\index{usb_storage_write_sector@{usb\_\-storage\_\-write\_\-sector}!storage.h@{storage.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-write\_\-sector (u8 {\em device}, u32 {\em sector}, char $\ast$ {\em buf})}\label{storage_8h_33504a0f1a785365f956ee06fa97d49d}
+
+

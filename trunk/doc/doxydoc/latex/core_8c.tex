@@ -1,0 +1,104 @@
+\section{/home/bene/projects/sl811/usbstack/core/core.c File Reference}
+\label{core_8c}\index{/home/bene/projects/sl811/usbstack/core/core.c@{/home/bene/projects/sl811/usbstack/core/core.c}}
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include \char`\"{}core.h\char`\"{}}\par
+{\tt \#include $<$host/host.h$>$}\par
+{\tt \#include $<$core/usb.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+{\tt \#include $<$lib/list.h$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-init} ()
+\item 
+u8 {\bf usb\_\-next\_\-address} ()
+\item 
+void {\bf usb\_\-periodic} ()
+\item 
+{\bf usb\_\-device} $\ast$ {\bf usb\_\-add\_\-device} ()
+\item 
+u8 {\bf usb\_\-remove\_\-device} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-register\_\-driver} ({\bf usb\_\-driver} $\ast$dev)
+\item 
+void {\bf usb\_\-probe\_\-driver} ()
+\item 
+{\bf usb\_\-irp} $\ast$ {\bf usb\_\-get\_\-irp} ()
+\item 
+u8 {\bf usb\_\-remove\_\-irp} ({\bf usb\_\-irp} $\ast$irp)
+\item 
+u16 {\bf usb\_\-submit\_\-irp} ({\bf usb\_\-irp} $\ast$irp)
+\item 
+{\bf usb\_\-transfer\_\-descriptor} $\ast$ {\bf usb\_\-create\_\-transfer\_\-descriptor} ({\bf usb\_\-irp} $\ast$irp)
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{core.c@{core.c}!usb_add_device@{usb\_\-add\_\-device}}
+\index{usb_add_device@{usb\_\-add\_\-device}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ usb\_\-add\_\-device ()}\label{core_8c_d25cbf02b3b5e22f22c697193bb87f92}
+
+
+Enumerate new device and create data structures for the core. usb\_\-add\_\-device expected that the device answers to address zero. \index{core.c@{core.c}!usb_create_transfer_descriptor@{usb\_\-create\_\-transfer\_\-descriptor}}
+\index{usb_create_transfer_descriptor@{usb\_\-create\_\-transfer\_\-descriptor}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-transfer\_\-descriptor}$\ast$ usb\_\-create\_\-transfer\_\-descriptor ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8c_7e0bd9c92c1fb753304e6f77c0d6bd2c}
+
+
+Create a transfer descriptor with an parent irp. \index{core.c@{core.c}!usb_get_irp@{usb\_\-get\_\-irp}}
+\index{usb_get_irp@{usb\_\-get\_\-irp}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-irp}$\ast$ usb\_\-get\_\-irp ()}\label{core_8c_b4a317acc71220967da6cf6dd1da7ac9}
+
+
+Not implemented. \index{core.c@{core.c}!usb_init@{usb\_\-init}}
+\index{usb_init@{usb\_\-init}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-init ()}\label{core_8c_60af0d8621d025f018ba0f56bca00a93}
+
+
+Initialize USB stack. \index{core.c@{core.c}!usb_next_address@{usb\_\-next\_\-address}}
+\index{usb_next_address@{usb\_\-next\_\-address}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-next\_\-address ()}\label{core_8c_c58f28f1c2693257b89945e785403baf}
+
+
+Get next free usb device address. \index{core.c@{core.c}!usb_periodic@{usb\_\-periodic}}
+\index{usb_periodic@{usb\_\-periodic}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-periodic ()}\label{core_8c_56f96c6ef2028c55dce92873a489419d}
+
+
+Call this function periodically for control and transfer management. \index{core.c@{core.c}!usb_probe_driver@{usb\_\-probe\_\-driver}}
+\index{usb_probe_driver@{usb\_\-probe\_\-driver}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-probe\_\-driver ()}\label{core_8c_99cd77f8e4ac64be0d886f31148acb09}
+
+
+Call every probe function from every registered driver, to check if there is a valid driver for the new device. \index{core.c@{core.c}!usb_register_driver@{usb\_\-register\_\-driver}}
+\index{usb_register_driver@{usb\_\-register\_\-driver}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-register\_\-driver ({\bf usb\_\-driver} $\ast$ {\em dev})}\label{core_8c_83545d627c3f35ae34e050aab48161ef}
+
+
+Register new driver at usb stack. 
+
+first check to find a suitable device (root hub drivers need this call here) \index{core.c@{core.c}!usb_remove_device@{usb\_\-remove\_\-device}}
+\index{usb_remove_device@{usb\_\-remove\_\-device}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-remove\_\-device ({\bf usb\_\-device} $\ast$ {\em dev})}\label{core_8c_750a0d6554fd2aec4459d0e3af2dd6ef}
+
+
+Find currently detached device and remove data structures \index{core.c@{core.c}!usb_remove_irp@{usb\_\-remove\_\-irp}}
+\index{usb_remove_irp@{usb\_\-remove\_\-irp}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-remove\_\-irp ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8c_ddc2d9767934c9943b6e08b8b8125b33}
+
+
+Not implemented. \index{core.c@{core.c}!usb_submit_irp@{usb\_\-submit\_\-irp}}
+\index{usb_submit_irp@{usb\_\-submit\_\-irp}!core.c@{core.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u16 usb\_\-submit\_\-irp ({\bf usb\_\-irp} $\ast$ {\em irp})}\label{core_8c_265cc39d7b493019e5681b27a4349183}
+
+
+Takes usb\_\-irp and split it into several usb packeges (SETUP,IN,OUT) In the usbstack they are transported with the usb\_\-transfer\_\-descriptor data structure. 
+
+You can see at bit 7 of bm\-Request\-Type if this stage is used, default requests are always 8 byte greate, from host to device. Stage 3 is only neccessary if the request expected datas from the device. bit7 - 1 = from device to host -$>$ yes we need data stage bit7 - 0 = from host to device -$>$ no send zero packet
+
+nach einem setup token kann nur ein IN token in stage 3 folgen nie aber ein OUT. Ein Zero OUT wird nur als Bestaetigung benoetigt.
+
+bit7 = 1 Device to Host\begin{itemize}
+\item es kommen noch Daten mit PID\_\-IN an\item host beendet mit PID\_\-OUT DATA1 Zero bit7 - 0 Host zu Device (wie set address)\item device sendet ein PID\_\-IN DATA1 Zero Packet als bestaetigung\end{itemize}
+
+
+bit7 = 1, host beendet mit PID\_\-OUT DATA1 Zero bit7 = 0, device sendet ein PID\_\-IN DATA1 Zero Packet als bestaetigung 

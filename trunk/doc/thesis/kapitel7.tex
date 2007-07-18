@@ -1,0 +1,192 @@
+
+\chapter{Testplatine und Entwicklungsumgebung}
+\index{Testplatine}
+\index{Entwicklungsumgebung}
+Im Rahmen der Diplomarbeit wurde eine Test- und Entwicklungsplatine für
+die Entwicklung des USB-Stacks entworfen.
+
+\section{Anforderungen an die Schaltung}
+
+Primär dient die Schaltung dazu, die Funktionen des USB-Stacks mit USB-Geräten
+überprüfen zu können. Da die Platine selbst geätzt und bestückt werden sollte, wurde auf
+den Einsatz von SMD-Bauteilen verzichtet.
+\newline\newline
+Folgende Anforderungen wurden an die Platine gestellt:
+
+\begin{itemize}
+\item Eine RS232-Schnittstelle für Statusmeldungen
+\item Einfache Programmiermöglichkeit für den eingesetzten Mikrocontroller
+\item Stromversorgung über ein USB-Kabel
+\item Eine USB-Buchse für den USB-Port des Host-Controllers
+\item Eine Leuchtdiode an einem I/O-Port für optische Statusmeldungen
+\item Eine Layoutvorlage für einseitig beschichtete Platine ohne Durchkontaktierungen
+\end{itemize}
+
+\subsubsection{Eingesetzter Mikrocontroller}
+Als Mikrocontroller wurde ein ATMega32 (8 Bit) der bekannten AVR-Reihe von Atmel gewählt.
+Dieser ist preiswert zu erwerben und hat genügend Ports für die Anbindung eines
+Host-Controllers. Weiterhin gibt es für die AVR-Controller-Reihe viele freie Programme
+für die Softwareentwicklung.
+\newline\newline
+Technische Daten:
+\begin{enumerate}
+\item 32 KB Programmspeicher (Flash)
+\item 2 KB Arbeitsspeicher (RAM) 
+\item 1 KB Datenspeicher (EEPROM) 
+\item Bei 16 MHz bis zu 16 MIPS\footnote{\label{foot:usbdi}\glqq{}Millionen Instruktionen pro Sekunde\grqq{} ist ein Maß für die Leistungsfähigkeit von Prozessoren.}
+\item 20 nach außen geführte I/O-Leitungen
+\item 5 V Betriebs- und I/O-Spannung
+\end{enumerate}
+\subsubsection{Eingesetzter Host-Controller}
+\index{SL811HS}
+Ein einfacher und bewährter USB-Host-Controller ist der SL811HS von Cypress.
+Da der SL811HS speziell für Embedded Systeme entwickelt worden ist,
+kann er über eine einfache Standard-Bus-Schnittstelle angesteuert werden.
+Der Controller kann in den Betriebsarten Host und Slave verwendet werden,
+jedoch  ist für die vorliegende Diplomarbeit nur der Hostbetrieb interessant.
+Den SL811HS gibt es in den Bauformen TQFP und PLCC. Das PLCC-Gehäuse ist ideal
+für Prototypen, da es für diese Bauform Sockel gibt, mit denen man den Controller
+einfach austauschen kann.
+\newline\newline
+Die wichtigsten Eigenschaften des USB-Host-Controllers:
+\begin{enumerate}
+\item Kompatibel zur USB Spezifikation 1.1
+\item Automatische Erkennung von \glqq{}Low-\grqq{} und \glqq{}Full-\grqq{} Speed-Geräten
+\item 8-Bit bidirektionale Port-Schnittstelle
+\item Integrierter Root-Hub
+\item 256 Byte interner Speicher
+\item 5 V-tolerante Portleitungen
+\item Viele automatische Routinen für den USB-Betrieb wie z.B. SOF-Generierung, CRC5-Prüfsummenerstellung, und andere. 
+\end{enumerate}
+\label{kap:sl811}
+
+Das Blockdiagramm in Abbildung \ref{sl811hs} zeigt die interne Struktur im Host-Controller
+Baustein SL811HS. Auf der linken Seite befindet sich der Root-Hub,
+welcher die Schnittstelle zum USB-Kabel zu den Geräten ist. Direkt
+nach dem Root-Hub befindet die SIE (\glqq{}Serial Interface Engine\grqq{})
+welche die Daten entsprechend wie in Kapitel \ref{kap:signal} (Seite \pageref{kap:signal}) verarbeitet.
+Die SIE benötigt für die Abtastung und die Übertragung der Daten einen konstanten Takt von 48 MHz, welcher
+über den Taktgenerator zugeführt wird. Ebenfalls benötigt die SIE noch
+die Information, ob der Baustein als Master oder Slave betrieben wird. Abhängig
+von der gewählten Betriebsart werden desweiteren verschiedene Interrupts vom Interrupt-Controller
+ausgelöst, weshalb eine Verbindung zwischen dem Master/Slave-Controller und dem Interrupt-Controller besteht. 
+Die Prozessorschnittstelle auf der rechten Seite ermöglicht den Zugriff
+auf die internen Register und den internen Speicher des SL811HS-Host-Controllers.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=14cm]{images/sl811hs_block}
+\caption{Blockdiagramm SL811HS}
+\label{sl811hs}
+}
+\end{figure}
+
+\subsubsection{Entwurf der Schaltung}
+Die Schaltung (siehe Abbildung \ref{schaltplan} auf Seite \pageref{schaltplan}) enthält nur die absolut notwendigen Bauteile. Für die Stromversorgung
+wurde die USB-Buchse X1 montiert. Dadurch kann die Testplatine über
+ein einfaches USB-Kabel mit Strom von einem Computer versorgt werden.
+Auf der Platine befinden sich der Host-Controller SL811HS,
+ein RS232-Pegelwandler für Debugausgaben und der Mikrocontroller ATMega32 als Controller,
+der die USB-Stack-Firmware ausführt.
+Da der SL811HS mit 3,3V versorgt werden muss, ist auf der Unterseite der Platine
+ein Spannungsregler angebracht. Als Taktquelle benötigt
+der Host-Controller entweder eine 12 MHz oder 48 MHz Taktquelle.
+In der Schaltung wurde ein
+externer 48 MHz Quarzoszillator eingebaut. Da der SL811HS sowohl
+als Host-Controller als auch als USB-Gerät eingesetzt werden kann, ist darauf
+zu achten, dass die Signalleitung M/S (\glqq{}Pin Master/Slave Select\grqq{}) entsprechend richtig konfiguriert wird.
+Der Mikrocontroller wird ebenfalls mit einem externen 16 MHz Quarz versorgt.
+%Es besteht
+%die Möglichkeit, auch einen internen Oszillator zu aktivieren.
+%Da dieser aber nicht so genau ist, wurde auf einen externen zurückgegriffen.
+\newline\newline
+In Abbildung \ref{bestueckung} ist der Bestückungsplan und das
+Layout der Platine abgedruckt.
+\begin{figure}[hpt]
+{
+\centering
+\includegraphics{images/bestueckung}
+\hfill
+\includegraphics{images/layout}
+\caption{Bestückungsplan und Layout der Platine}
+\label{bestueckung}
+}
+\end{figure}
+
+%\begin{figure}[h]
+%{
+%\centering
+%\includegraphics[height=7cm]{images/bestueckung}
+%\caption{Bestückungsplan der Testplatine}
+%\label{bestueckung}
+%}
+%\end{figure}
+
+%\begin{figure}[h]
+%{
+%\centering
+%\includegraphics[height=7cm]{images/layout}
+%\caption{Layout der Testplatine}
+%\label{layout}
+%}
+%\end{figure}
+%\newpage
+
+
+\section{Entwicklungsumgebung}
+Da die Diplomarbeit ein Open-Source-Projekt werden soll,
+wurde bei der Entwicklung darauf geachtet, dass nur mit
+freien oder zumindest kostenlosen Programmen gearbeitet wurde.
+\newline\newline
+Der Entwicklungsaufbau sah wie in Abbildung \ref{entwicklung} dargestellt aus.
+Der Computer, der als Entwicklungsplattform dient, 
+ist mit der Testplatine über ein RS232- und einem USB-Kabel für die Stromversorgung 
+verbunden. Programmiert wird der Mikrocontroller ATMega32 über einen extra USB-Adapter \cite{usbprog}.
+Der USB-Port ist die Schnittstelle für USB-Geräte für die Treiberentwicklung zum Software-Stack hin.
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=14cm]{images/entwicklung}
+\caption{Entwicklungsumgebung}
+\label{entwicklung}
+}
+\end{figure}
+\newline\newline
+Für die Hardwareentwicklung wurden folgende Programme und Geräte verwendet:
+
+\begin{itemize}
+\item Eagle v. 3.5\cite{eagle}, Freeware, zum Zeichnen des Schaltplans und Setzen des Layouts für die Platine.
+\item avrdude\cite{avrdude}, Open-Source, für die Programmierung des Mikrocontrollers.
+\item usbprog\cite{usbprog}, Open-Source-Hardware, Programmieradapter für AVR Mikrocontroller.
+\end{itemize}
+
+Für die Software kamen folgende Programme zum Einsatz:
+
+\begin{itemize}
+\item GCC für Linux Version 4.1.0\cite{gcc}, Open-Source, freier C Compiler.
+\item Kermit\cite{kermit}, Open-Source, Terminal (wurde für die Debugausgaben über RS232 benötigt).
+\end{itemize}
+
+Die Liste der zur Verfügung stehenden USB-Geräte während des Entwurfs:
+
+\begin{itemize}
+\item \glqq{}Hi-Speed USB 2.0\grqq{} Hub von equip.
+\item \glqq{}USB-Modul UM100 (FT232AM)\grqq{} von ELV.
+\item \glqq{}MP3-Player Lyra\grqq{} von Thomson (als Massenspeicher).
+\item \glqq{}1 GB USB Flash Speicher Stick\grqq{} von PNY.
+\item \glqq{}AVR JTAGICE mk2\grqq{} von Atmel.
+\item \glqq{}E232 Drucker\grqq{} von Lexmark.
+\end{itemize}
+
+Die Vielfalt war vor allem für das Testen der Enumerierung sehr wichtig.
+
+\begin{figure}
+{
+\centering
+\includegraphics[scale=0.7]{schaltplan.ps}
+\caption{Schaltplan der Testplatine}
+\label{schaltplan}
+}
+\end{figure}
+

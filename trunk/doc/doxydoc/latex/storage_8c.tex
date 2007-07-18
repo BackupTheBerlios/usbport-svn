@@ -1,0 +1,126 @@
+\section{/home/bene/projects/sl811/usbstack/drivers/class/storage.c File Reference}
+\label{storage_8c}\index{/home/bene/projects/sl811/usbstack/drivers/class/storage.c@{/home/bene/projects/sl811/usbstack/drivers/class/storage.c}}
+{\tt \#include $<$wait.h$>$}\par
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include $<$core/core.h$>$}\par
+{\tt \#include $<$core/usb.h$>$}\par
+{\tt \#include $<$usbspec/usb11spec.h$>$}\par
+{\tt \#include \char`\"{}storage.h\char`\"{}}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf MAX\_\-DEVICES}~2
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf usb\_\-storage\_\-probe} ()
+\item 
+void {\bf usb\_\-storage\_\-check} ()
+\item 
+void {\bf usb\_\-storage\_\-init} ()
+\item 
+u8 {\bf usb\_\-storage\_\-open} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-inquiry} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-read\_\-capacity} (u8 device)
+\item 
+u8 {\bf usb\_\-storage\_\-read\_\-sector} (u8 device, u32 sector, char $\ast$buf)
+\item 
+u8 {\bf usb\_\-storage\_\-write\_\-sector} (u8 device, u32 sector, char $\ast$buf)
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf massstorage} [MAX\_\-DEVICES]
+\item 
+u16 {\bf sectorsize} [MAX\_\-DEVICES]
+\item 
+u8 {\bf massstorage\_\-in\_\-use}
+\item 
+{\bf usb\_\-driver} {\bf storage}
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{storage.c@{storage.c}!MAX_DEVICES@{MAX\_\-DEVICES}}
+\index{MAX_DEVICES@{MAX\_\-DEVICES}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define MAX\_\-DEVICES~2}\label{storage_8c_4e132cfaa78353e3af1474a86b2dd535}
+
+
+
+
+\subsection{Function Documentation}
+\index{storage.c@{storage.c}!usb_storage_check@{usb\_\-storage\_\-check}}
+\index{usb_storage_check@{usb\_\-storage\_\-check}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-check ()}\label{storage_8c_970ba00b5d6db799471427b0a3d3151f}
+
+
+\index{storage.c@{storage.c}!usb_storage_init@{usb\_\-storage\_\-init}}
+\index{usb_storage_init@{usb\_\-storage\_\-init}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-init ()}\label{storage_8c_52045de442f01c1fa8498142802b2677}
+
+
+\index{storage.c@{storage.c}!usb_storage_inquiry@{usb\_\-storage\_\-inquiry}}
+\index{usb_storage_inquiry@{usb\_\-storage\_\-inquiry}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-inquiry (u8 {\em device})}\label{storage_8c_4d0f224bc7398d381944304e85b01cd2}
+
+
+\index{storage.c@{storage.c}!usb_storage_open@{usb\_\-storage\_\-open}}
+\index{usb_storage_open@{usb\_\-storage\_\-open}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-open (u8 {\em device})}\label{storage_8c_9cb488439837f7cc33205637dacd74bd}
+
+
+open connection to an storage device \index{storage.c@{storage.c}!usb_storage_probe@{usb\_\-storage\_\-probe}}
+\index{usb_storage_probe@{usb\_\-storage\_\-probe}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-storage\_\-probe ()}\label{storage_8c_0a6c6c3eb155433864323844b151598f}
+
+
+\index{storage.c@{storage.c}!usb_storage_read_capacity@{usb\_\-storage\_\-read\_\-capacity}}
+\index{usb_storage_read_capacity@{usb\_\-storage\_\-read\_\-capacity}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-read\_\-capacity (u8 {\em device})}\label{storage_8c_2bfcaffcb1a2abc12372dac39bcbdf3b}
+
+
+\index{storage.c@{storage.c}!usb_storage_read_sector@{usb\_\-storage\_\-read\_\-sector}}
+\index{usb_storage_read_sector@{usb\_\-storage\_\-read\_\-sector}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-read\_\-sector (u8 {\em device}, u32 {\em sector}, char $\ast$ {\em buf})}\label{storage_8c_c95fa60ab8bc84aa3c4c9cd7b8337c0d}
+
+
+\index{storage.c@{storage.c}!usb_storage_write_sector@{usb\_\-storage\_\-write\_\-sector}}
+\index{usb_storage_write_sector@{usb\_\-storage\_\-write\_\-sector}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-storage\_\-write\_\-sector (u8 {\em device}, u32 {\em sector}, char $\ast$ {\em buf})}\label{storage_8c_33504a0f1a785365f956ee06fa97d49d}
+
+
+
+
+\subsection{Variable Documentation}
+\index{storage.c@{storage.c}!massstorage@{massstorage}}
+\index{massstorage@{massstorage}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ {\bf massstorage}[MAX\_\-DEVICES]}\label{storage_8c_4501521348d4e3560df4d6a703e57da0}
+
+
+\index{storage.c@{storage.c}!massstorage_in_use@{massstorage\_\-in\_\-use}}
+\index{massstorage_in_use@{massstorage\_\-in\_\-use}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 {\bf massstorage\_\-in\_\-use}}\label{storage_8c_8ce1f15d6f9717645330318ee1023230}
+
+
+\index{storage.c@{storage.c}!sectorsize@{sectorsize}}
+\index{sectorsize@{sectorsize}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u16 {\bf sectorsize}[MAX\_\-DEVICES]}\label{storage_8c_4b83b9e724e643b04dadfa22ba4a94ae}
+
+
+\index{storage.c@{storage.c}!storage@{storage}}
+\index{storage@{storage}!storage.c@{storage.c}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-driver} {\bf storage}}\label{storage_8c_43d5f58db83c9692fb088be7d46f764b}
+
+
+\textbf{Initial value:}
+
+\begin{Code}\begin{verbatim} {
+  .name   = "storage",
+  .probe  = usb_storage_probe,
+  .check  = usb_storage_check,
+  .data   = NULL
+}
+\end{verbatim}\end{Code}

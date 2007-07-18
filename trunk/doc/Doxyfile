@@ -1,0 +1,6 @@
+PROJECT_NAME     = usbstack
+OUTPUT_DIRECTORY = doxydoc/
+OUTPUT_LANGUAGE  = English
+EXTRACT_ALL	 = YES
+INPUT            = ../core/ ../host ../drivers ../uclibusb  ../usbspec ../drivers/class
+FILE_PATTERNS    = *.h *.c

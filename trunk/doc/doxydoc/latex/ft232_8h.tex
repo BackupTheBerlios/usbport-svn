@@ -1,0 +1,38 @@
+\section{/home/bene/projects/sl811/usbstack/uclibusb/ft232.h File Reference}
+\label{ft232_8h}\index{/home/bene/projects/sl811/usbstack/uclibusb/ft232.h@{/home/bene/projects/sl811/usbstack/uclibusb/ft232.h}}
+{\tt \#include $<$lib/types.h$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+{\bf usb\_\-device} $\ast$ {\bf usb\_\-ft232\_\-open} ()
+\item 
+void {\bf usb\_\-ft232\_\-close} ({\bf usb\_\-device} $\ast$dev)
+\item 
+u8 {\bf usb\_\-ft232\_\-send} ({\bf usb\_\-device} $\ast$dev, char $\ast$bytes, u8 length)
+\item 
+u8 {\bf usb\_\-ft232\_\-receive} ({\bf usb\_\-device} $\ast$dev, char $\ast$bytes, u8 length)
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\index{ft232.h@{ft232.h}!usb_ft232_close@{usb\_\-ft232\_\-close}}
+\index{usb_ft232_close@{usb\_\-ft232\_\-close}!ft232.h@{ft232.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void usb\_\-ft232\_\-close ({\bf usb\_\-device} $\ast$ {\em dev})}\label{ft232_8h_8bde0055ce93f0aa39c74276c0c11228}
+
+
+Close the opened FT232. \index{ft232.h@{ft232.h}!usb_ft232_open@{usb\_\-ft232\_\-open}}
+\index{usb_ft232_open@{usb\_\-ft232\_\-open}!ft232.h@{ft232.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf usb\_\-device}$\ast$ usb\_\-ft232\_\-open ()}\label{ft232_8h_03db6551dfa998017bb0d18fe2a4a48e}
+
+
+Find and open an FT232 on bus. \index{ft232.h@{ft232.h}!usb_ft232_receive@{usb\_\-ft232\_\-receive}}
+\index{usb_ft232_receive@{usb\_\-ft232\_\-receive}!ft232.h@{ft232.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-ft232\_\-receive ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em bytes}, u8 {\em length})}\label{ft232_8h_0cf7d193c90d165c74634239e8c9ecd4}
+
+
+Receive some values. \index{ft232.h@{ft232.h}!usb_ft232_send@{usb\_\-ft232\_\-send}}
+\index{usb_ft232_send@{usb\_\-ft232\_\-send}!ft232.h@{ft232.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}u8 usb\_\-ft232\_\-send ({\bf usb\_\-device} $\ast$ {\em dev}, char $\ast$ {\em bytes}, u8 {\em length})}\label{ft232_8h_15b0b076a221679eb2360844e5a940e4}
+
+
+Send a buffer. 

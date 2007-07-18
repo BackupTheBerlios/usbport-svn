@@ -1,0 +1,288 @@
+\section{/home/bene/projects/sl811/usbstack/host/at90usb1287.h File Reference}
+\label{at90usb1287_8h}\index{/home/bene/projects/sl811/usbstack/host/at90usb1287.h@{/home/bene/projects/sl811/usbstack/host/at90usb1287.h}}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf Set\-Bit}(adr, bit)~(adr $|$=  (1$<$$<$bit))
+\item 
+\#define {\bf Clear\-Bit}(adr, bit)~(adr \&= $\sim$(1$<$$<$bit))
+\item 
+\#define {\bf Bit\-Is\-Set}(adr, bit)~(adr \& (1$<$$<$bit))
+\item 
+\#define {\bf Bit\-Is\-Clear}(adr, bit)~(!(adr \& (1$<$$<$bit)))
+\item 
+\#define {\bf Usb\-Set\-PLL\_\-CPU\_\-Frequency}()~PLLCSR = (\_\-pre\_\-$<$$<$2)
+\item 
+\#define {\bf Usb\-Enable\-PLL}()~Set\-Bit(PLLCSR, PLLE)
+\item 
+\#define {\bf Usb\-Disable\-PLL}()~Clear\-Bit(PLLCSR, PLLE)
+\item 
+\#define {\bf Usb\-Is\-PLL\_\-Locked}()~Bit\-Is\-Set(PLLCSR, PLOCK)
+\item 
+\#define {\bf Usb\-Wait\-PLL\_\-Locked}()~while (!(PLLCSR \& (1$<$$<$PLOCK)));
+\item 
+\#define {\bf Usb\-Enable\-Clock}()~Clear\-Bit(USBCON, FRZCLK)
+\item 
+\#define {\bf Usb\-Set\-Device\-Mode}()~Set\-Bit(UHWCON, UIMOD)
+\item 
+\#define {\bf Usb\-Set\-Host\-Mode}()~Clear\-Bit(UHWCON, UIMOD)
+\item 
+\#define {\bf Usb\-Enable\-UID\_\-Mode\-Selection}()~Set\-Bit(UHWCON, UIDE)
+\item 
+\#define {\bf Usb\-Disable\-UID\_\-Mode\-Selection}()~Clear\-Bit(UHWCON, UIDE)
+\item 
+\#define {\bf Usb\-Enable\-UVCON\_\-Pin\-Control}()~Set\-Bit(UHWCON, UVCONE)
+\item 
+\#define {\bf Usb\-Disable\-UVCON\_\-Pin\-Control}()~Clear\-Bit(UHWCON, UVCONE)
+\item 
+\#define {\bf Usb\-Enable\-Pads\-Regulator}()~Set\-Bit(UHWCON, UVREGE)
+\item 
+\#define {\bf Usb\-Disable\-Pads\-Regulator}()~Clear\-Bit(UHWCON, UVREGE)
+\item 
+\#define {\bf Usb\-Enable\-Controller}()~Set\-Bit(USBCON, USBE)
+\item 
+\#define {\bf Usb\-Disable\-Controller}()~Clear\-Bit(USBCON, USBE)
+\item 
+\#define {\bf Usb\-Is\-Controller\-Enabled}()~Bit\-Is\-Set(USBCON, USBE)
+\item 
+\#define {\bf Usb\-Set\-Host\-Mode\-Reg}()~Set\-Bit(USBCON, HOST)
+\item 
+\#define {\bf Usb\-Set\-Device\-Mode\-Reg}()~Clear\-Bit(USBCON, HOST)
+\item 
+\#define {\bf Usb\-Freeze\-Clock}()~Set\-Bit(USBCON, FRZCLK)
+\item 
+\#define {\bf Usb\-Enable\-Clock}()~Clear\-Bit(USBCON, FRZCLK)
+\item 
+\#define {\bf Usb\-Is\-Clock\-Freezed}()~Bit\-Is\-Set(USBCON, FRZCLK)
+\item 
+\#define {\bf Usb\-Enable\-OTG\_\-Pad}()~Set\-Bit(USBCON, OTGPADE)
+\item 
+\#define {\bf Usb\-Disable\-OTG\_\-Pad}()~Clear\-Bit(USBCON, OTGPADE)
+\item 
+\#define {\bf Usb\-Enable\-ID\_\-Transition\-Int}()~Set\-Bit(USBCON, IDTE)
+\item 
+\#define {\bf Usb\-Disable\-ID\_\-Transition\-Int}()~Clear\-Bit(USBCON, IDTE)
+\item 
+\#define {\bf Usb\-Enable\-VBUS\_\-Transition\-Int}()~Set\-Bit(USBCON, VBUSTE)
+\item 
+\#define {\bf Usb\-Disable\-VBUS\_\-Transition\-Int}()~Clear\-Bit(USBCON, VBUSTE)
+\item 
+\#define {\bf Usb\-Is\-Full\-Speed\-Mode}()~Bit\-Is\-Set(USBSTA, SPEED)
+\item 
+\#define {\bf Usb\-Is\-Low\-Speed\-Mode}()~Bit\-Is\-Clear(USBSTA, SPEED)
+\item 
+\#define {\bf Usb\-Is\-UID\_\-Pin\-High}()~Bit\-Is\-Set(USBSTA, ID)
+\item 
+\#define {\bf Usb\-Is\-VBUS\_\-Pin\-High}()~Bit\-Is\-Set(USBSTA, VBUS)
+\item 
+\#define {\bf Usb\-Is\-IDTI\_\-Flag\-Set}()~Bit\-Is\-Set(USBINT, IDTI)
+\item 
+\#define {\bf Usb\-Clear\-IDTI\_\-Flag}()~Clear\-Bit(USBINT, IDTI)
+\item 
+\#define {\bf Usb\-Is\-VBUSTI\_\-Flag\-Set}()~Bit\-Is\-Set(USBINT, VBUSTI)
+\item 
+\#define {\bf Usb\-Clear\-VBUSTI\_\-Flag}()~Clear\-Bit(USBINT, VBUSTI)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{at90usb1287.h@{at90usb1287.h}!BitIsClear@{BitIsClear}}
+\index{BitIsClear@{BitIsClear}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Bit\-Is\-Clear(adr, bit)~(!(adr \& (1$<$$<$bit)))}\label{at90usb1287_8h_e5ac4a63677734ada817b794e121fefa}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!BitIsSet@{BitIsSet}}
+\index{BitIsSet@{BitIsSet}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Bit\-Is\-Set(adr, bit)~(adr \& (1$<$$<$bit))}\label{at90usb1287_8h_97a2247046a24dadd3cbb21b3f3c1971}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!ClearBit@{ClearBit}}
+\index{ClearBit@{ClearBit}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Clear\-Bit(adr, bit)~(adr \&= $\sim$(1$<$$<$bit))}\label{at90usb1287_8h_bf6927dc822d11d0191cb3c5d962839d}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!SetBit@{SetBit}}
+\index{SetBit@{SetBit}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Set\-Bit(adr, bit)~(adr $|$=  (1$<$$<$bit))}\label{at90usb1287_8h_66c75fe041d39f7198ac5d8a1a8f3f77}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbClearIDTI_Flag@{UsbClearIDTI\_\-Flag}}
+\index{UsbClearIDTI_Flag@{UsbClearIDTI\_\-Flag}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Clear\-IDTI\_\-Flag()~Clear\-Bit(USBINT, IDTI)}\label{at90usb1287_8h_8e63c5c4b3422ed6aa62924cecc9ecd8}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbClearVBUSTI_Flag@{UsbClearVBUSTI\_\-Flag}}
+\index{UsbClearVBUSTI_Flag@{UsbClearVBUSTI\_\-Flag}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Clear\-VBUSTI\_\-Flag()~Clear\-Bit(USBINT, VBUSTI)}\label{at90usb1287_8h_48ab78bc582b9fb0a59bf73cee952690}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableController@{UsbDisableController}}
+\index{UsbDisableController@{UsbDisableController}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-Controller()~Clear\-Bit(USBCON, USBE)}\label{at90usb1287_8h_ecdc04e3a7e0f05a212586a26762757b}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableID_TransitionInt@{UsbDisableID\_\-TransitionInt}}
+\index{UsbDisableID_TransitionInt@{UsbDisableID\_\-TransitionInt}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-ID\_\-Transition\-Int()~Clear\-Bit(USBCON, IDTE)}\label{at90usb1287_8h_e6e62df5204701da60fc0339dfeff474}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableOTG_Pad@{UsbDisableOTG\_\-Pad}}
+\index{UsbDisableOTG_Pad@{UsbDisableOTG\_\-Pad}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-OTG\_\-Pad()~Clear\-Bit(USBCON, OTGPADE)}\label{at90usb1287_8h_7fcf78671ffb50a3a96f463e0f2bad01}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisablePadsRegulator@{UsbDisablePadsRegulator}}
+\index{UsbDisablePadsRegulator@{UsbDisablePadsRegulator}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-Pads\-Regulator()~Clear\-Bit(UHWCON, UVREGE)}\label{at90usb1287_8h_d6011b8832ead5417050acfdff065a24}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisablePLL@{UsbDisablePLL}}
+\index{UsbDisablePLL@{UsbDisablePLL}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-PLL()~Clear\-Bit(PLLCSR, PLLE)}\label{at90usb1287_8h_b74fb663701287cc0ebc5aa38aff6d9d}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableUID_ModeSelection@{UsbDisableUID\_\-ModeSelection}}
+\index{UsbDisableUID_ModeSelection@{UsbDisableUID\_\-ModeSelection}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-UID\_\-Mode\-Selection()~Clear\-Bit(UHWCON, UIDE)}\label{at90usb1287_8h_6dbce2df7363e97acf1a3b0fa1fffd96}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableUVCON_PinControl@{UsbDisableUVCON\_\-PinControl}}
+\index{UsbDisableUVCON_PinControl@{UsbDisableUVCON\_\-PinControl}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-UVCON\_\-Pin\-Control()~Clear\-Bit(UHWCON, UVCONE)}\label{at90usb1287_8h_b243ad708547e8fd98c8cc5d62954955}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbDisableVBUS_TransitionInt@{UsbDisableVBUS\_\-TransitionInt}}
+\index{UsbDisableVBUS_TransitionInt@{UsbDisableVBUS\_\-TransitionInt}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Disable\-VBUS\_\-Transition\-Int()~Clear\-Bit(USBCON, VBUSTE)}\label{at90usb1287_8h_59c2d06da4f4a4086b3ce31f2ccfc91c}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableClock@{UsbEnableClock}}
+\index{UsbEnableClock@{UsbEnableClock}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-Clock()~Clear\-Bit(USBCON, FRZCLK)}\label{at90usb1287_8h_7fff55826a16d37ff120586f647e60be}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableClock@{UsbEnableClock}}
+\index{UsbEnableClock@{UsbEnableClock}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-Clock()~Clear\-Bit(USBCON, FRZCLK)}\label{at90usb1287_8h_7fff55826a16d37ff120586f647e60be}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableController@{UsbEnableController}}
+\index{UsbEnableController@{UsbEnableController}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-Controller()~Set\-Bit(USBCON, USBE)}\label{at90usb1287_8h_d30258b3727c819f50ba618b9f4c0331}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableID_TransitionInt@{UsbEnableID\_\-TransitionInt}}
+\index{UsbEnableID_TransitionInt@{UsbEnableID\_\-TransitionInt}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-ID\_\-Transition\-Int()~Set\-Bit(USBCON, IDTE)}\label{at90usb1287_8h_4475fba351838ccd4c219598e843ad2f}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableOTG_Pad@{UsbEnableOTG\_\-Pad}}
+\index{UsbEnableOTG_Pad@{UsbEnableOTG\_\-Pad}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-OTG\_\-Pad()~Set\-Bit(USBCON, OTGPADE)}\label{at90usb1287_8h_90c696b9a99fc871213613e95403dc9c}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnablePadsRegulator@{UsbEnablePadsRegulator}}
+\index{UsbEnablePadsRegulator@{UsbEnablePadsRegulator}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-Pads\-Regulator()~Set\-Bit(UHWCON, UVREGE)}\label{at90usb1287_8h_0659d6e10d82795daf57a4ebf033f388}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnablePLL@{UsbEnablePLL}}
+\index{UsbEnablePLL@{UsbEnablePLL}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-PLL()~Set\-Bit(PLLCSR, PLLE)}\label{at90usb1287_8h_e4ce2818c094ba7197f7ee3c55ed6975}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableUID_ModeSelection@{UsbEnableUID\_\-ModeSelection}}
+\index{UsbEnableUID_ModeSelection@{UsbEnableUID\_\-ModeSelection}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-UID\_\-Mode\-Selection()~Set\-Bit(UHWCON, UIDE)}\label{at90usb1287_8h_7a4079853629dced7f373de393a5a5f9}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableUVCON_PinControl@{UsbEnableUVCON\_\-PinControl}}
+\index{UsbEnableUVCON_PinControl@{UsbEnableUVCON\_\-PinControl}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-UVCON\_\-Pin\-Control()~Set\-Bit(UHWCON, UVCONE)}\label{at90usb1287_8h_50cf6ab6f0c9878f9a18c9fe183912eb}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbEnableVBUS_TransitionInt@{UsbEnableVBUS\_\-TransitionInt}}
+\index{UsbEnableVBUS_TransitionInt@{UsbEnableVBUS\_\-TransitionInt}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Enable\-VBUS\_\-Transition\-Int()~Set\-Bit(USBCON, VBUSTE)}\label{at90usb1287_8h_501696b65dee917c4a1d46fd1306d62e}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbFreezeClock@{UsbFreezeClock}}
+\index{UsbFreezeClock@{UsbFreezeClock}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Freeze\-Clock()~Set\-Bit(USBCON, FRZCLK)}\label{at90usb1287_8h_d0df5e513f5427a9903eb037ac600fe4}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsClockFreezed@{UsbIsClockFreezed}}
+\index{UsbIsClockFreezed@{UsbIsClockFreezed}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-Clock\-Freezed()~Bit\-Is\-Set(USBCON, FRZCLK)}\label{at90usb1287_8h_2e53291cfe94a16559b3e764a435f20d}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsControllerEnabled@{UsbIsControllerEnabled}}
+\index{UsbIsControllerEnabled@{UsbIsControllerEnabled}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-Controller\-Enabled()~Bit\-Is\-Set(USBCON, USBE)}\label{at90usb1287_8h_330212cd8a2053bd2162048f024dc4f5}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsFullSpeedMode@{UsbIsFullSpeedMode}}
+\index{UsbIsFullSpeedMode@{UsbIsFullSpeedMode}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-Full\-Speed\-Mode()~Bit\-Is\-Set(USBSTA, SPEED)}\label{at90usb1287_8h_127eae50fd60ee77c3ee8ee2517ff93f}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsIDTI_FlagSet@{UsbIsIDTI\_\-FlagSet}}
+\index{UsbIsIDTI_FlagSet@{UsbIsIDTI\_\-FlagSet}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-IDTI\_\-Flag\-Set()~Bit\-Is\-Set(USBINT, IDTI)}\label{at90usb1287_8h_39e7d835684bc48f5d94e0c640435777}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsLowSpeedMode@{UsbIsLowSpeedMode}}
+\index{UsbIsLowSpeedMode@{UsbIsLowSpeedMode}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-Low\-Speed\-Mode()~Bit\-Is\-Clear(USBSTA, SPEED)}\label{at90usb1287_8h_f16928470d4ef6f10899be2ff090e310}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsPLL_Locked@{UsbIsPLL\_\-Locked}}
+\index{UsbIsPLL_Locked@{UsbIsPLL\_\-Locked}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-PLL\_\-Locked()~Bit\-Is\-Set(PLLCSR, PLOCK)}\label{at90usb1287_8h_70ceadcb5d3b15213555e6822c0d9e06}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsUID_PinHigh@{UsbIsUID\_\-PinHigh}}
+\index{UsbIsUID_PinHigh@{UsbIsUID\_\-PinHigh}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-UID\_\-Pin\-High()~Bit\-Is\-Set(USBSTA, ID)}\label{at90usb1287_8h_a148bfc03f31aead10bc5b41f43bbc00}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsVBUS_PinHigh@{UsbIsVBUS\_\-PinHigh}}
+\index{UsbIsVBUS_PinHigh@{UsbIsVBUS\_\-PinHigh}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-VBUS\_\-Pin\-High()~Bit\-Is\-Set(USBSTA, VBUS)}\label{at90usb1287_8h_4f56eb8512f2dd75b80603f7697d9c3a}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbIsVBUSTI_FlagSet@{UsbIsVBUSTI\_\-FlagSet}}
+\index{UsbIsVBUSTI_FlagSet@{UsbIsVBUSTI\_\-FlagSet}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Is\-VBUSTI\_\-Flag\-Set()~Bit\-Is\-Set(USBINT, VBUSTI)}\label{at90usb1287_8h_47b74a292e7a4684eaa7b866c86e8231}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbSetDeviceMode@{UsbSetDeviceMode}}
+\index{UsbSetDeviceMode@{UsbSetDeviceMode}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Set\-Device\-Mode()~Set\-Bit(UHWCON, UIMOD)}\label{at90usb1287_8h_4b5e764f8a0390494ffa735b419a734b}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbSetDeviceModeReg@{UsbSetDeviceModeReg}}
+\index{UsbSetDeviceModeReg@{UsbSetDeviceModeReg}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Set\-Device\-Mode\-Reg()~Clear\-Bit(USBCON, HOST)}\label{at90usb1287_8h_1cf7478c0ad09bd307dba17c50f368ad}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbSetHostMode@{UsbSetHostMode}}
+\index{UsbSetHostMode@{UsbSetHostMode}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Set\-Host\-Mode()~Clear\-Bit(UHWCON, UIMOD)}\label{at90usb1287_8h_d0c2c5bba0e9cdcecaf36bd698b4d6d7}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbSetHostModeReg@{UsbSetHostModeReg}}
+\index{UsbSetHostModeReg@{UsbSetHostModeReg}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Set\-Host\-Mode\-Reg()~Set\-Bit(USBCON, HOST)}\label{at90usb1287_8h_d5db2c8d360299e048bcf29f352711c6}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbSetPLL_CPU_Frequency@{UsbSetPLL\_\-CPU\_\-Frequency}}
+\index{UsbSetPLL_CPU_Frequency@{UsbSetPLL\_\-CPU\_\-Frequency}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Set\-PLL\_\-CPU\_\-Frequency()~PLLCSR = (\_\-pre\_\-$<$$<$2)}\label{at90usb1287_8h_df01ce81a9e439634ef15058b61d8c4e}
+
+
+\index{at90usb1287.h@{at90usb1287.h}!UsbWaitPLL_Locked@{UsbWaitPLL\_\-Locked}}
+\index{UsbWaitPLL_Locked@{UsbWaitPLL\_\-Locked}!at90usb1287.h@{at90usb1287.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define Usb\-Wait\-PLL\_\-Locked()~while (!(PLLCSR \& (1$<$$<$PLOCK)));}\label{at90usb1287_8h_703c1cf94f2c6aa1bb4593e2adc13647}
+
+
