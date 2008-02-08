@@ -1,0 +1,698 @@
+
+\chapter{Grundlagen}
+
+Eine Entwicklung von USB-Programmen ohne ein tiefergehendes Verständnis
+der Funktionsweise des USB-Busses ist nur schwer möglich.
+Daher werden in diesem Kapitel einige USB-Konzepte und -Hintergründe kurz erläutert. Die
+Beschreibung ist im Wesentlichen an die USB-Spezifikation \cite{usb_spec} angelehnt.
+Um einen tieferen Einblick in USB zu bekommen, können die Bücher \cite{kelm2001} und \cite{axelson2001}
+empfohlen werden.
+
+
+\section{Die USB-Geschichte}
+\index{Geschichte}
+
+USB wurde als Standardschnittstelle für den Computer entworfen. 
+Die Entwicklung ist von den Firmen Compaq, Intel, Microsoft und NEC
+im Rahmen der dafür neu gegründeten Organisation
+\glqq{}USB Implementers Forum Inc.\grqq{} \cite{usborg} durchgeführt worden.
+\newline\newline
+Das Besondere an dieser Organisation ist, dass alle Spezifikationen
+kostenlos im Internet erhältlich sind. Begonnen hat die Freigabe damit,
+dass im Januar 1996 die erste Version USB 1.0 nach einer mehrjährigen
+Entwicklung veröffentlicht wurde. Im September 1998 folgte
+die Version 1.1, welche einige Fehler und Unklarheiten aus der vorherigen Version behob.
+\newline\newline
+Der nächste große Schritt für USB war die Version 2.0.
+Das Hauptziel bestand darin, eine Erhöhung der Datenrate und eine vollständige Rückwärtskompabilität  
+zu den vorherigen USB-Versionen. Die USB 2.0 Spezifikation wurde im April 2000 veröffentlicht.
+
+\section{Ziele des USB-Standards}
+
+USB sollte als Nachfolger für bestehende Computerschnittstellen
+entwickelt werden. Aus diesem Grund mussten viele Faktoren und Gegebenheiten
+bei dem Entwurf von USB bedacht werden. 
+\newline\newline
+Die Bedienung für den Nutzer sollte durch \glqq{}Hot Plug and Play\grqq{}, dem
+einheitlichen Steckerverbindungssystem und der integrierten Stromversorgung für Geräte,
+stark vereinfacht werden. Zur Bedienung gehörte auch die Konfiguration
+und Installation, welche für die Nutzer oftmals eine große Hürde bedeuteten.
+Für Standardgeräte wie Maus, Tastatur, Drucker, etc., wurden deshalb USB-Klassen definiert.
+Betriebssysteme können solche USB-Klassen-Geräte erkennen
+und automatisch Standardtreiber für sie laden \cite{usb_class}.
+\newline\newline
+Es ergaben sich nicht nur Vorteile für den Nutzer, sondern auch viele Vorteile
+aus Sicht der Hardware-, Firmware- und Softwareentwickler.
+USB-Geräte benötigen keine eigenen Systemressourcen wie I/O Adressen oder
+Interruptsignale. Der USB-Bus benötigt die Ressourcen lediglich einmal für den sogenannten
+Host-Controller. 
+Durch Hubs entfallen ebenfalls
+Engpässe wie bei konventionellen, parallelen oder seriellen Schnittstellen,
+bei denen meist nur der Anschluss eines Gerätes erlaubt ist.
+\newline\newline
+Mit USB sollten nicht nur neue Geräte erstellt werden, sondern auch bestehende Schnittstellen
+ersetzt werden. Dass dies erfolgreich war, sieht man an den Beispielen von RS-232, Gameport, der Centronics-Schnittstelle und der PS/2-Schnittstelle
+für Tastaturen bzw. Mäuse, die schon oft an neuen Computern nicht mehr vorhanden sind.
+
+Die Eigenschaften für die USB-Schnittstelle wurden vor ca. zehn Jahren definiert und sie sind immer noch aktuell. Das wiederum zeigt,
+dass USB noch sehr viel Potenzial im Computer und in Embedded Systemen hat.
+
+\section{Die USB-Topologie} \label{kap:topologie}
+
+\index{Topologie}
+\index{Physikalische Struktur}
+\index{Logische Struktur}
+
+Topologisch existieren für den USB-Bus zwei Modelle. Das physikalische,
+welches die Struktur als Baum darstellt (Abbildung \ref{bus}), und das logische, welches
+die Struktur als Stern-Architektur (Abbildung \ref{stern}) abbildet.
+\newline\newline
+Beim physikalischen Modell bildet der Host den Stamm des Baumes. Die Verzweigungsknoten stellen Hubs dar
+und die Äste entsprechen den Kabeln. Am Ende der Äste befinden sich die Blattknoten,
+welche die Endgeräte repräsentieren.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=10cm]{images/bus}
+\caption{Physikalische Baumstruktur von USB}
+\label{bus}
+}
+\end{figure}
+
+Im logischen Modell bildet der Host den zentralen Mittelpunkt, an dem jedes
+Endgerät direkt angeschlossen ist. 
+Da es sich bei USB um einen
+\glqq{}Single Master Bus\grqq\footnote{\label{foot:1}\glqq{}Single Master Bus\grqq{} bedeutet, es gibt nur einen Teilnehmer auf dem Bus, der jeglichen Datenverkehr initiieren darf.}
+handelt, muss der Host jegliche Kommunikation initiieren und steuern.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=10cm]{images/stern}
+\caption{Logische Stern-Architektur von USB}
+\label{stern}
+}
+\end{figure}
+
+Ausgehend von der Topologie werden im nächsten Abschnitt
+die einzelnen Hardwarekomponenten beschrieben.
+
+\section{Übersicht der USB-Komponenten}
+
+\index{USB-Komponenten}
+
+Grundlage für den USB-Bus bilden die einzelnen Hardwarekomponenten (siehe Abbildung \ref{komponenten}),
+welche im Verbund die Kommunikation erst ermöglichen.
+Im Folgenden werden die wichtigsten Komponenten kurz vorgestellt.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=8cm]{images/komponenten}
+\caption{Übersicht der USB-Komponenten}
+\label{komponenten}
+}
+\end{figure}
+
+\index{USB-Function}
+
+Der Host-Controller ist für die Codierung, Übertragung und dem Empfang der Datenströme
+von und zu den Endgeräten zuständig. 
+\newline\newline
+Ein USB-Hub ist ein USB-Gerät genauso wie beispielsweise eine Maus, ein Drucker etc.
+Die Aufgabe des Hubs besteht darin, alle ankommenden USB-Signale an zusätzliche Ports zum Anschluss von weiteren Geräten weiterzuleiten.
+Hubs können Strom aus dem Bus beziehen, oder selbst Strom in den USB-Bus einspeisen.
+\newline\newline
+Der Root-Hub ist ein USB-Hub, der sich direkt hinter dem Host-Controller befindet. 
+Der größte Unterschied zu einem \glqq{}echten\grqq{} USB-Hub ist der, dass die Statusänderungen an den Ports
+des Hubs nicht über eine USB-Verbindung abgefragt werden, sondern über interne Signale (Interrupts) und Register
+signalisiert werden.
+\newline\newline
+Das Endgerät, welches in der Spezifikation als \glqq{}Function\grqq{} bezeichnet wird,
+ist das eigentliche Peripheriegerät und dient meist als Drucker, Scanner, Festspeicher, Kamera, etc.
+\newline\newline
+Die Aufgaben und die Struktur von USB-Endgeräten werden im nächsten Abschnitt näher beschrieben.
+
+
+%**********************************************************************
+
+\section{Aufgaben und Struktur von USB-Geräten}
+\index{USB-Gerät}
+
+Zu den Aufgaben, für die ein Gerät gebaut worden ist, wie z.B. eine Maus für die Ermittlung von X-Y Koordinaten,
+eine Soundkarte für die Ausgabe von Audio-Dateien, etc., muss das Gerät noch zusätzliche USB-Verwaltungsarbeiten unterstützen.
+\newline\newline
+\textbf{Erkennen einer Kommunikation: }
+Das USB-Gerät muss erkennen, wenn Daten vom Host angefordert werden.
+\newline\newline
+\textbf{Antworten auf Standardanfragen: }
+Über die sogenannten Standardanfragen kann ein Betriebssystem, Treiber, Programm, etc.
+Informationen direkt beim Gerät selbst abholen. Mehr dazu in Kapitel \ref{kap:anfragen} auf Seite \pageref{kap:anfragen}. 
+\newline\newline
+\textbf{Fehlerprüfung: }
+Die ankommenden Datenströme müssen auf Fehler überprüft und gegebenenfalls 
+neu angefordert werden.
+\newline\newline
+\textbf{Power-Management: }
+Ein Gerät kann sich in verschiedenen Stromverbrauchszuständen befinden. Um nicht unnötig
+Strom zu verbrauchen, kann zum Beispiel der Host ein Gerät oder ein Gerät sich selbst in den Standby-Modus versetzen.
+\newline\newline
+\textbf{Datenaustausch mit dem Host: }
+Für die Kommunikation mit dem Host müssen Möglichkeiten (Pufferspeicher, Status-Register, etc.)
+bereitstehen.
+\newline\newline
+Da diese Aufgaben sehr aufwändig sind, gibt es dafür spezielle USB-Geräte-Bausteine (engl. \glqq{}USB-Device-Controller\grqq{}).
+Mit welchem Anteil der USB-Controller das USB-Protokoll 
+per Hardware ausführt, hängt ganz vom Hersteller und dessen Zielgruppe
+ab. Es gibt eine große Vielfalt an USB-Bausteinen (siehe Tabelle \ref{usb_bausteine}) auf dem Markt.
+Grundsätzlich muss ein USB-Geräte-Baustein aber mindestens
+die folgenden fünf typischen Teilkomponenten (Abbildung \ref{function}) enthalten.
+\newline
+
+\index{SIE}
+\index{Transceiver}
+\index{FIFO}
+\index{Mikrocontroller}
+\index{State-Machine}
+\index{USBN9604}
+\index{AN2131}
+\index{MAX34xx}
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=13cm]{images/function}
+\caption{Architektur eines USB-Geräte-Bausteins}
+\label{function}
+}
+\end{figure}
+
+\begin{description}
+\item [USB-I/O-Treiber (\glqq{}Transceiver\grqq{}):]
+Der USB-I/O-Treiber stellt die physikalische Verbindung zum USB-Bus her. Bis auf ein
+paar Ausnahmen muss der USB-I/O-Treiber die seriellen Signale von der \glqq{}SIE\grqq{} (\glqq{}Serial Interface Engine\grqq{})
+differentiell übertragen und empfangene differentielle Signale wieder in ein serielles Signal zurückwandeln.
+Auf dem Bus werden bestimmte Signale wie EOP (\glqq{}End-Of-Packet\grqq{}), USB-Reset, etc. \cite{kelm2001} nicht differentiell übertragen.
+Diese Zustände muss der Treiber erkennen können. Mehr dazu in Kapitel \ref{kap:signal} auf Seite \pageref{kap:signal}.
+
+\item [Serial Interface Engine (\glqq{}SIE\grqq{}):]
+Die SIE ist für die Decodierung und Codierung des seriellen Datenstroms zuständig. Mehr dazu in Kapitel \ref{kap:signal} auf Seite \pageref{kap:signal}.
+
+\item [SIE/FIFO-Control-Einheit:]
+Die SIE/FIFO-Control-Einheit ist ein endlicher Automat der die SIE, die FIFOS und den USB-Treiber entsprechend
+den ankommenden Anfragen vom Host ansteuert.
+
+\item [FIFO(s):]
+Für die ankommenden und abgehenden Daten werden FIFO-Speicher als Zwischenpuffer eingesetzt. Sie dienen
+meist dem Embedded System als Schnittstelle für die Datenübertragung.
+
+\item [Mikrocontroller oder State-Machine:]
+Um die Standardanfragen beantworten und weitere Verwaltungsaufgaben erledigen zu können, wird ein Mikrocontroller
+oder Zustandsautomat benötigt.
+\end{description}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Baustein &  Transceiver & SIE & FIFOs & State Machine & interne CPU\\ \hline
+USBN9604 \cite{national} &  x & x & x & x & \\ \hline
+AN2131 \cite{cypress} &  x & x & x & x & x\\ \hline
+MAX34xx \cite{maxim} &  x &  &  &  & \\ \hline
+\end{tabular}
+\caption{USB-Bausteine}
+\label{usb_bausteine}
+\end{table}
+
+
+
+Im nächsten Abschnitt
+wird der Datenfluss zwischen dem USB-Host-Controller und dem USB-Geräte-Baustein beschrieben.
+
+
+\section{Datenfluss auf dem USB-Bus}
+
+\index{NRZI}
+\index{DPLL}
+\index{Bitstuffer}
+
+Wie bereits in Kapitel \ref{kap:topologie} erwähnt, handelt es sich bei USB um einen
+\glqq{}Single Master Bus\grqq{}. Das heißt, dass nur der Host eine Kommunikation
+initiieren kann. USB-Geräte dürfen ohne Anforderung durch den Host 
+nicht senden. 
+\newline\newline
+Während einer Kommunikation werden auf dem Bus Datenpakete übertragen.
+Mit speziellen Datenpaketen kann eine Adresse für den Empfänger des
+folgenden Datenstroms angegeben werden. Die Daten werden dann dennoch im Broadcast-Modus
+an alle Teilnehmer im Netz geschickt, und nur das Gerät, das seine Adresse
+im Paket entdeckt, nimmt die Daten an und antwortet.
+\newline\newline
+In der USB-Spezifikation wird von \glqq{}Downstream\grqq{} gesprochen,
+wenn der Host Daten sendet und von \glqq{}Upstream\grqq{},
+wenn Daten von einem Gerät zum Host übermittelt werden.
+
+
+\section{Signalleitungen/Datenkodierung} \label{kap:signal}
+\index{Signalleitungen}
+\index{Datenkodierung}
+Ein USB-Kabel (siehe Abbildung \ref{kabel} auf Seite \pageref{kabel}) besteht aus vier Leitungen.
+D+ und D-, welche bis auf ein paar Ausnahmen differentiell getrieben werden,
+dienen der Datenübertragung. Vcc und GND sind für die Stromversorgung der Endgeräte da. \cite{kelm2001}
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/kabel}
+\caption{Querschnitt USB-Kabel}
+\label{kabel}
+}
+\end{figure}
+\newline\newline
+Auf den Datenleitungen werden ausschließlich codierte Daten übertragen. Das hat zum Ersten den Grund,
+dass eine erhöhte Datensicherheit für die Übertragung gewährleistet ist. Zum Zweiten
+kann der Empfänger den Takt, mit denen die Daten versendet worden sind anhand der empfangenen Daten zurückgewinnen.
+Technisch läuft die Codierung wie in Abbildung \ref{nrzi} dargestellt ab.
+\newline\newline
+Die Daten werden über ein Schieberegister serialisiert und anschließend
+in ein \glqq{}Bitstuffer\grqq{} geschoben. Der \glqq{}Bitstuffer\grqq{} fügt nach jedem sechsten Bit
+eine Null ein. Dies wird für den nächsten Schritt der NRZI-Codierung benötigt.
+NRZI steht für Non-Return-to-Zero-Inverted und ist ein oft verwendetes Codierungsverfahren.
+Wird im Eingansdatenstrom eine 0 entdeckt, so findet ein Polaritätswechsel statt, bei 
+einer 1 bleibt der Datenstrom unverändert. Der Empfänger kann sich so mit einer DPLL \cite{dpll}
+synchronisieren und den Takt dadurch zurückgewinnen.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/nrzi}
+\caption{Datenfluss der Low-Level-Datencodierung}
+\label{nrzi}
+}
+\end{figure}
+
+
+\section{Paketformate und Zeitrahmen} \label{kap:pakzei}
+
+Wie bereits erwähnt, werden auf dem USB-Bus einzelne Pakete (\glqq{}USB-Packets\grqq{}) übertragen.
+In der Tabelle \ref{usb_pid} sind alle verschiedenen Typen von USB-Paketen aufgelistet.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+PID Name & Gruppe & Beschreibung\\ \hline
+SOF & Token-Paket & Framesignalisierung (jede ms) für Geräte\\ \hline
+SETUP & Token-Paket & Ankündigung einer Standardanfrage\\ \hline
+IN & Token-Paket & Host will Daten empfangen\\ \hline
+OUT & Token-Paket & Host will Daten senden\\ \hline
+DATA0 & Data-Paket & Datenpaket ohne gesetztem Togl-Bit\\ \hline
+DATA1 & Data-Paket & Datenpaket mit gesetztem Togl-Bit\\ \hline
+ACK & Handshake-Paket & Bestätigungspaket\\ \hline
+NAK & Handshake-Paket & Übertragung fehlerhaft - Übertragung wiederholen\\ \hline
+STALL & Handshake-Paket & grösserer Fehler beim Empfangen - Abbruch\\ \hline
+PRE & Special-Paket & kündigt Datenempfang bei Low-Speed an\\ \hline
+\end{tabular}
+\caption{Codierung der USB-Token-Pakete}
+\label{usb_pid}
+\end{table}
+
+Die Grundstruktur eines USB-Pakets sieht wie in Abbildung \ref{packet} aus.
+Jedes Paket beginnt mit
+einem 8-Bit langen \textbf{SYNC}-Feld. Dieses
+besteht aus 7 Nullen und einer Eins am Ende. Die aufeinander folgenden Nullen
+bewirken bei der NRZI-Codierung einen regelmäßigen Polaritätswechsel.
+Im Anschluss folgt das 8-Bit breite \textbf{PID}-Feld. Dort steht ein Paket-Typ aus der Tabelle \ref{usb_pid}.
+Nach dem PID-Feld folgen abhängig vom Paket-Typ paketspezifische Daten. Die \textbf{CRC5}-Prüfsumme
+dient dem Kommunikationspartner zum Überprüfen der Daten auf Korrektheit, mit \textbf{EOP} (\glqq{}End-of-Paket\grqq{})
+wird das Ende des Paketes markiert.
+
+%sync, paket, parameter, crc5, eop
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/packet}
+\caption{Aufbau der \glqq{}USB-Pakete\grqq{}}
+\label{packet}
+}
+\end{figure}
+
+
+\index{SNYC}
+\index{CRC5}
+\index{EOP}
+\index{PID}
+
+
+Der Host versendet jede Millisekunde ein SOF-Paket (\glqq{}Start-of-Frame\grqq{}). Dieses SOF-Paket teilt
+den gesamten Bus in einzelne Zeitabschnitte (sogenannte \glqq{}Frames\grqq{}) ein.
+Full-Speed und High-Speed Geräte können über dieses SOF-Paket die Frame-Einteilung erkennen.
+Low-Speed Geräte müssen aber wegen ihrer geringen Speicher- und Rechenkapazitäten vor SOF-Paketen geschützt werden,
+da sie sonst ausschließlich mit dem Decodieren der SOF-Pakete beschäftigt wären und keine
+anderen Pakete mehr annehmen könnten. Daher müssen Hubs an den Ports, an denen sich Low-Speed Geräte
+befinden, die SOF-Pakete wegfiltern.
+Dass Low-Speed Geräte dennoch die Einteilung der Frames auf dem USB-Bus erkennen, muss
+der letzte Hub oder Root-Hub vor dem Gerät EOP-Signale auf dem Bus erzeugen.
+Ein EOP-Signal ist eines von drei speziellen Signalen (siehe Tabelle \ref{speziellsignal}), die nicht differentiell
+auf dem USB-Bus übertragen werden, und ist daher mit viel geringerem Aufwand dekodierbar.
+\newline\newline
+Zurück zu den Aufgaben des SOF-Pakets. Ein SOF-Paket hat noch einen zweiten Nutzen, es dient als Ankündigung
+für weitere Daten-Pakete. Denn nur direkt nach einem SOF-Paket können Daten-Pakete gesendet werden (siehe Abbildung \ref{zeittakt}).
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/zeittakt}
+\caption{Zeittakt des USB}
+\label{zeittakt}
+}
+\end{figure}
+Da Low-Speed Geräte jedoch keine SOF-Pakete empfangen können, wird ein Low-Speed Datentransfer mit einem
+PRE-Paket (\glqq{}Spezial Token\grqq{}) angekündigt.
+
+Im Datenbereich eines SETUP-, IN- oder OUT-Pakets ist eine Geräteadresse und ein Endpunkt angeben.
+Danach können Daten, verpackt in DATA0- und DATA1-Pakete, für das angegebene Gerät folgen.
+Die restlichen Pakete ACK, NAK und STALL dienen zur Flusskontrolle und damit
+indirekt zur Umsetzung der verschiedenen Transferarten, die über USB angeboten werden.
+
+\index{ACK}
+\index{NAK}
+\index{STALL}
+\index{DATA0,DATA1}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Signal & Beschreibung \\ \hline 
+EOP & Signalisiert Ende eines Paketes \\ \hline 
+Reset & USB-Gerät in Reset Zustand zwingen \\ \hline 
+Connect & Neues USB-Gerät wurde angeschlossen\\ \hline
+Disconnect & USB-Gerät wurde entfernt\\ \hline
+\end{tabular} \caption{Nicht-differentielle Signale} \label{speziellsignal}
+\end{table}
+
+\index{Nicht-differentiellen Signale}
+
+\index{Transferarten}
+\index{Control-Transfer}
+\index{Bulk-Transfer}
+\index{Interrupt-Transfer}
+\index{Isochronous-Transfer}
+
+\section{Transferarten}
+Um die unterschiedlichen Geräte und Anwendungen zu unterstützen, sind in der USB-Spezifikation
+vier verschiedene Transferarten definiert:
+\begin{description}
+\item[Bulk-Transfer]
+Der Bulk-Transfer wird am meisten genutzt. Es können große und zeitunkritische Datenmengen übertragen werden. Für den Bulk-Transfer ist keine feste Bandbreite auf dem Bus reserviert. Er wird nach allen zeitkristischen Transfers durchgeführt. Zusätzlich überprüft dieser Transfer stets die Korrektheit der übertragenen Daten. 
+\item[Interrupt-Transfer]
+Diese Übertragungsart darf nicht wörtlich genommen werden, denn USB ist ein Single Master Bus. Das bedeutet, nur der Master darf jegliche Kommunikation initiieren. Kein Gerät kann sich beim Master selbst anmelden und ihm mitteilen, dass es Daten übertragen will. Der Master muss zyklisch alle Geräte nach neuen Daten abfragen. Im Grunde ist der Interrupt-Transfer nichts anderes als der Bulk-Transfer mit dem Unterschied, dass die Interrupt-Endpunkte eine höhere Priorität und daher mehr Bandbreite bekommen. Auf diese Weise kann der Master immer zu dem gewünschten Zeitpunkt auf das Gerät zugreifen, selbst dann, wenn gerade viel Datenverkehr auf dem Bus ist.
+\item[Isochronous-Transfer]
+Mit dem Isochronen Modus können Daten übertragen werden, die eine konstante Bandbreite erfordern. Typische Anwendungsbeispiele sind die Übertragung von Audio- oder Videosignalen. Geht hier ein Bit oder Byte verloren, äußert sich das im Signal nur mit einem \glqq{}Knacken\grqq{} oder \glqq{}Rauschen\grqq{}. Würden die Daten aber verzögert ankommen, wäre die Sprache oder das Bild völlig verzerrt und daher unbrauchbar.
+Es muss ebenso wie beim Interrupt-Transfer das Pollingintervall angegeben werden.
+\item[Control-Transfer]
+Der Control-Transfer ist an dieser Stelle noch zu erwähnen. Er wird ausschliesslich beim sogenannten Endpunkt 0 für
+Standard-, Hersteller-, und Klassenanfragen eingesetzt. Für andere Endpunkte
+kann dieser Transfer nicht verwendet werden. Mehr dazu in Kapitel \ref{kap:anfragen} auf Seite \pageref{kap:anfragen}.
+\end{description}
+
+%USB unterscheidet zwischen zwei verschiedenen Pipe-Konzepten: Message-Pipes und Stream-Pipes.
+%Daten die über eine Message Pipe übertragen werden, besitzen eine fest vorgegebene Datenstruktur
+%durch die USB-Spezifikation. Mit Stream-Pipes können frei definierte Datenströme übertragen werden.
+%Da nur die Anfragen für Endpunkt 0 in der USB Spezifikation festgelet sind, ist dies auch der
+%einzige Endpunkt der mit dem Message-Pipe Konzept arbeitet. Ebenfalls kann eine Message-Pipe
+%nur über einen Control-Transfer Endpunkt realisiert werden, welcher wiederrum nur für Endpunkt 0 zugelassen ist.
+%Daher arbeitet man bei der Übertragung von eigenen Daten immer mit Stream-Pipes die mittels
+%Bulk-, Isochronous- oder Interrupt-Transfers realisiert werden.
+
+
+\section{Endpunkte für die Datenkommunikation}
+
+\index{Endpunkte}
+\index{Pipe}
+
+Die Datenkommunikation des USB geschieht über die sogenannten Endpunkte.
+Jedes USB-Gerät kann bis zu 16 Endpunkte haben.
+Physikalisch gesehen ist ein Endpunkt ein FIFO mit einer festgelegten Tiefe, über
+den Daten gesendet oder empfangen werden können.
+Will ein Anwendungsprogramm oder Treiber Daten empfangen oder senden,
+so kann dies über eine Anfrage, die die Geräteadresse, 
+den Endpunkt inklusive der gewünschten Richtung und die Transferart enthält, geschehen.
+\newline\newline
+In modernen USB-Bausteinen, welche für den Einsatz in USB-Geräten bestimmt sind,
+hat man meist ein paar frei definierbare FIFO-Speicher zur Verfügung. Über 
+vorgesehene Tabellen können diese eigenen Endpunkten zugeordnet werden.
+Dieses Konzept erlaubt die Implementierung von mehreren logisch unabhängigen
+Geräten in einem physikalischen Gerät. Mehrere Endpunkte können
+in einem Interface gebündelt werden, dazu aber mehr in Abschnitt \ref{kap:interfaces}
+auf Seite \pageref{kap:interfaces}.
+Ist ein Endpunkt komplett mit allen Parametern eingerichtet, dann spricht man von einer \glqq{}Pipe\grqq{}.
+\newline\newline
+Alle Endpunkte bis auf einen, den sogenannten EP0, können frei definiert werden.
+Der Endpunkt 0 wird vom Host benötigt,
+um das Gerät zu konfigurieren. Er ist
+der einzige bidirektionale Endpunkt, d.h. über ihn können Daten empfangen und gesendet werden.
+\newline\newline
+Mit folgenden Parametern kann ein Endpunkt beschrieben werden:
+\newline\newline
+\textbf{Endpunktadresse:}
+Sie definiert die Adresse für den gegebenen Endpunkt. In der Endpunktadresse
+ist die Übertragungsrichtung ebenfalls durch Bit 7 codiert. Befindet sich eine 1 an Bit 7,
+so bedeutet dies, dass der Host von dem Endpunkt lesen kann. Bei einer 0 kann der Endpunkt
+Daten vom Host entgegennehmen.
+\newline\newline
+\textbf{Max. Paketgröße:}
+Die maximale Paketgröße wird meist durch die Tiefe des dahinter liegenden FIFO-Speichers bestimmt.
+Für den Host bedeutet dies, dass er die Pakete vor dem Transfer in die gegebene Größe segmentieren muss.
+\newline\newline
+\textbf{Transferart:}
+Die Transferart, die für die Übertragung der Daten genutzt werden soll.
+\newline\newline
+\textbf{Polling-Intervall:}
+Das Polling-Intervall bestimmt bei Endpunkten für Interrupt- und Isochronen-Transfer, wie oft 
+der Host Daten lesen oder senden muss.
+\newline\newline
+Die eben genannten Parameter werden in sogenannten Endpunkt-Deskriptoren angegeben. Im nächsten Kapitel wird
+beschrieben, was Deskriptoren sind.
+
+\section{Deskriptoren}
+
+Deskriptoren sind kleine Informationsblöcke, die im USB-Gerät gespeichert sind.
+Angeordnet sind diese Blöcke wie in Abbildung \ref{deskriptoren} zu sehen ist.
+Betriebssysteme, Treiber oder Programme können diese Deskriptoren über USB 
+abfragen. Dadurch ist echtes \glqq{}Plug and Play\grqq{}\footnote{\label{foot:1} engl. \glqq{}anschließen und loslegen\grqq{}, bezeichnet
+eine Eigenschaft für Hardware, wenn diese ohne Treiberinstallation direkt nach dem Anstecken betrieben werden kann.} möglich.
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=13.5cm]{images/deskriptoren}
+\caption{Hierarchie der Standard-Deskriptoren}
+\label{deskriptoren}
+}
+\end{figure}
+\index{Deskriptoren}
+
+An der Spitze des Hierarchiebaums der Standard-Deskriptoren steht der Geräte-Deskriptor (\glqq{}Device-Descriptor\grqq{}).
+Im Geräte-Deskriptor, den es nur einmal pro Gerät geben kann, befinden sich alle allgemeinen Informationen zu dem Gerät.
+In den Konfigurations-Deskriptoren (\glqq{}Configuration-Descriptor\grqq{}) kann das Stromprofil eingestellt werden.
+Die Konfigurations-Deskriptoren können in einem Gerät mehrfach vorhanden sein.
+Der Vorteil von mehren Konfigurationen
+ist, dass über USB direkt zwischen den Konfigurationen hin und her geschaltet werden kann. Die Firmware im Gerät
+bekommt diese Umschaltanfrage mit und kann so z.B. den Strom von einem externen Netzteil beziehen oder die Akkus laden,
+je nachdem welche Konfiguration aktiviert worden ist.
+\newline\newline
+Eine Ebene tiefer befinden sich die Interface-Deskriptoren (\glqq{}Interface-Descriptors\grqq{}). Von ihnen kann es ebenfalls mehrere geben,
+wobei mindestens einer vorhanden sein muss. Mit einem Interface können logische Schnittstellen erstellt werden,
+da ein Interface immer ein Bündel von Endpunkten ist. Mehr dazu aber im Kapitel \ref{kap:interfaces}
+auf Seite \pageref{kap:interfaces}.
+\newline\newline
+Auf der letzten Ebene befinden sich die Endpunkt-Deskriptoren (\glqq{}Endpoint-Descriptors\grqq{}). Wie im vorherigen Kapitel erwähnt,
+beschreibt ein Endpunkt alle wichtigen Parameter für einen möglichen Datenübertragungskanal (\glqq{}Pipe\grqq{}).
+
+
+
+
+\section{Geräte-Deskriptoren}
+
+\index{Deskriptoren}
+\index{Geräte-Deskriptoren}
+
+Der Geräte-Deskriptor muss in jedem Gerät vorhanden sein. Hier sind folgende Parameter definiert:
+\newline\newline
+\textbf{USB-Version:}
+USB-Version, die das Gerät unterstützt (z.B. 1.1).
+\newline\newline
+\textbf{Klassen- / Subklassen- / Protokoll-Code:}
+Das USB-Konsortium hat nicht nur den USB-Bus definiert, sondern gibt auch Beschreibungen für Geräte heraus. So können Betriebssysteme Standardtreiber anbieten. Mehr zu dieser Technik ist in Kapitel 6 zu finden.
+\newline\newline
+\textbf{FIFO Tiefe von EP0:}
+Tiefe des Endpunkt 0 FIFO in Byte. Bei USB 1.1 ist er meist 8 Byte und bei USB 2.0 64 Byte tief.
+\newline\newline
+\textbf{Herstellernummer:}
+Jeder Hersteller von USB-Geräten muss sich beim USB-Forum \cite{usborg} registrieren. 
+Dafür bekommt er eine eindeutige Nummer, die für die Treibersuche des Betriebssystems von Bedeutung ist.
+\newline\newline
+\textbf{Produktnummer:}
+Die Produktnummer wird (wenn sie definiert ist) vom Treiber verwendet, um das Gerät eindeutig zu identifizieren. 
+\newline\newline
+\textbf{Versionsnummer:}
+Versionsnummer für das Gerät.
+\newline\newline
+\textbf{String Index für Hersteller-, Produkt- und Seriennummer:}
+Im Gerätedeskriptor wird nicht direkt der Name für Hersteller-, Produkt- oder Seriennummer gespeichert, sondern nur ein Index für einen sogenannten String-Deskriptor. 
+\newline\newline
+\textbf{Anzahl der Konfigurationen:}
+Die Anzahl der vorhandenen Konfigurationen für das Gerät. Ein Gerät muss mindestens eine Konfiguration haben.
+
+\section{Powermanagement mit Konfigurationen}
+Ebenso wie mehrere Interfaces kann ein Gerät mehrere Konfigurationen haben. Hier geht es um die elektrischen Eigenschaften. Bei USB können die Geräte direkt über das USB-Kabel mit Strom versorgt werden. So kann man von einem Bus maximal 500 mA bei 5 V Spannung beziehen. Bevor ein Gerät den Strom nutzen kann, muss es beim Master anfragen, ob noch genügend freie Kapazitäten vorhanden sind.
+
+In einer Konfiguration müssen folgende Parameter definiert sein:
+
+\begin{enumerate}
+\item Stromaufnahme in 2 mA Einheiten.
+\item Attribute (z.B. Bus-Powered, Remote-Wakeup-Support).
+\item Anzahl der Interfaces unter dieser Konfiguration.
+\end{enumerate}
+
+\section{Interfaces zum Bündeln von Endpunkten} \label{kap:interfaces}
+Interfaces sind zum Bündeln von Endpunkten da. 
+Ein Gerät kann mehrere Interfaces anbieten. So ist es möglich, dass eine Soundkarte ein Interface für den Mono- und eines für den Stereobetrieb anbietet. Das Interface für den Monobetrieb hat einen Endpunkt für die Steuerkommandos und einen weiteren für die Daten, die über einen Lautsprecher ausgegeben werden. Das Interface für den Stereobetrieb hat ebenfalls einen Endpunkt für Steuerkommandos, jedoch zwei für die Signalausgabe (linker und rechter Kanal). Die Software auf dem PC kann jederzeit zwischen den Interfaces hin- und herschalten. 
+\newline\newline
+Im gleichen Zug mit Interfaces liest man oft den Begriff \glqq{}Alternate-Interface\grqq{}. Dieses Interface kann parallel zu einem anderen Interface definiert werden. Definiert man ein normales Interface, so gibt man dort die Endpunkte an, die zu ihm gehören. Entsprechend der FIFO-Grösse eines Endpunktes wird die entsprechende Bandbreite auf dem USB-Bus reserviert.
+Die Bandbreite wäre auf diese Weise sehr schnell aufgebraucht, auch ohne dass Kommunikation auf dem Bus stattfindet. Würde man jedoch die benötigte Bandbreite immer nur kurz vor dem Senden oder Empfangen reservieren, könnte man viel mehr Geräte über einen Bus bedienen. Daher wurde das Alternate-Interface erfunden. Zu jedem Interface kann es also ein alternatives Interface geben. Die Endpunktstruktur sollte genauso aussehen, wie die vom normalen Interface. Der einzige Unterschied ist der, dass überall als FIFO-Grösse 0 Byte angegeben ist. Gibt es nun ein Alternate-Interface, aktiviert das Betriebsystem beim Einstecken erst dieses, und nimmt so nicht voreilig anderen USB-Geräten die Bandbreite weg. Kurz vor dem Senden und Empfangen wird dann auf das eigentliche Interface gewechselt. 
+
+
+
+\section{Standard-, Hersteller- und Klassenanfrage} \label{kap:anfragen}
+\index{Vendor-Requests}
+\index{Class-Requests}
+\index{Default-Requests}
+\index{Herstelleranfragen}
+\index{Standardanfragen}
+\index{Klassenanfragen}
+In vorherigen Kapitel wurde bereits erwähnt, dass die Deskriptoren eines USB-Gerätes jederzeit abgefragt werden können.
+Dafür wird der Endpunkt 0 und der darauf basierende Control-Transfer benötigt. In der USB-Spezifikation
+wurden Standardanfragen, die jedes USB-Gerät beantworten muss, definiert. Abbildung \ref{abfrage} soll
+veranschaulichen, wie solch eine Abfrage aussieht. 
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=13.5cm]{images/abfrage}
+\caption{Abfrage Geräte-Deskriptor}
+\label{abfrage}
+}
+\end{figure}
+
+\begin{enumerate}
+\item Der Host sendet über den Endpunkt 0 die Anfrage für den Geräte-Deskriptor an das USB-Gerät.
+\item Das USB-Gerät empfängt die Anfrage und wertet diese aus.
+\item Das USB-Gerät legt den Geräte-Deskriptor in den FIFO des Endpunktes 0.
+\item Der USB-Host holt den Geräte-Deskriptor über den Endpunkt 0 vom FIFO ab.
+\end{enumerate}
+
+Zwischen den einzelnen Schritten werden zusätzlich Pakete für die Flusskontrolle 
+versendet und ausgewertet. So bestätigt das USB-Gerät immer mit einem ACK-Paket,
+dass eine Anfrage erfolgreich entgegengenommen wurde. Gab es Störungen beim Empfang,
+so kann das USB-Gerät das letzte Paket nochmals mit einem NAK-Paket neu anfordern.
+\newline\newline
+Die \glqq{}GetDescriptor\grqq{}-Anfrage ist nur eine von insgesamt elf verschiedenen Anfragen,
+die ein USB-Gerät beantworten können muss. Eine Auflistung ist in Tabelle \ref{usb_desc} gegeben.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Anfrage & Beschreibung \\ \hline 
+GetStatus & Abfrage des Stromverbrauchszustands \\ \hline 
+ClearFeature & Vordefinierte Eigenschaften ausschalten \\ \hline 
+SetFeature & Eigenschaft einschalten (z.B.Gerät aus dem Standby wecken) \\ \hline 
+SetAddress & Adresse zuweisen \\ \hline 
+GetDescriptor & Deskriptor anfordern \\ \hline 
+SetDescriptor & Ändern von Deskriptoren (z.B. Seriennummer) \\ \hline 
+GetConfiguration & Aktuelle Konfiguration abfragen \\ \hline 
+SetConfiguration & Auf eine andere Konfiguration wechseln \\ \hline 
+GetInterface & Aktives \glqq{}Alternate-Inferface\grqq{} detektieren \\ \hline 
+SetInterface & \glqq{}Alternate-Interface\grqq{} für ein Interface aktivieren \\ \hline 
+SynchFrame & Zum Synchronisieren von isochronen Endpunkten\\ \hline 
+\end{tabular} \caption{Die Standardanfragen} \label{usb_desc}
+\end{table}
+
+Einige dieser Anfragen werden bei der Enumeration\footnote{\label{foot:1} Aktivierung eines
+neu erkannten Gerätes am USB-Bus} benötigt. Wie die Enumeration genau aussieht,
+wird im folgenden Kapitel beschrieben.
+\newline\newline
+\large{\textbf{Hersteller- und Klassenanfragen}}\normalsize
+\newline\newline
+Zusätzlich zu den Standardanfragen können Hersteller- und Klassenanfragen über
+die Endpunkt-0-Pipe übertragen werden. Sie dienen genauso
+wie die Standardanfragen der Konfiguration des Gerätes.
+
+\section{Enumeration}
+
+Bevor eine Anwendung mit einem USB-Gerät kommunizieren kann,
+muss der Host erst feststellen, um was für ein Gerät es sich handelt, und welcher Treiber
+gegebenenfalls geladen werden muss. Dies geschieht über die Standardanfragen,
+die der Endpunkt 0 unterstützen muss. Während dieses Vorgangs, der als Enumeration
+bezeichnet wird, durchläuft das USB-Gerät vier von sechs möglichen Zuständen (siehe Abbildung \ref{devzustand}): Powered, Default,
+Address und Configured. Die anderen beiden Zustände Attached und Suspended werden während
+der Enumeration nicht durchlaufen. Der Übergang von einem Zustand in den anderen
+kann nur durch bestimmte Ereignisse ausgelöst werden. 
+\newline\newline
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=8cm]{images/devzustand}
+\caption{Gerätezustandsdiagramm}
+\label{devzustand}
+}
+\end{figure}
+\index{Enmumerierung}
+
+\textbf{1. USB-Gerät wird angesteckt (Attached):}
+Das USB-Gerät wird angesteckt oder der Strom wird beim Systemstart eingeschaltet.
+\newline\newline
+\textbf{2. Gerät wird erkannt (Powered, Suspended):}
+Der Root-Hub oder ein anderer Hub meldet dem Host das neu gefundene Gerät.
+\newline\newline
+\textbf{3. Reset des Geräts wird vorgenommen (Default):}
+Der Host veranlasst entweder über den Root-Hub oder den Hub einen Reset des neuen Geräts. Durch
+diesen Reset wird das Gerät gezwungen, die Adresse 0 anzunehmen. Dadurch
+kann der Host nach dem Reset das Gerät über die Adresse 0 ansprechen.
+\newline\newline
+\textbf{4. Ermitteln der maximalen Paketgröße für die Standard-Pipe (Default):}
+Um die Größe des Endpunkt 0 herauszubekommen, sendet der Host eine \glqq{}GetDescriptor\grqq{}-Anfrage
+für den Geräte-Deskriptor an das Gerät. Das USB-Gerät antwortet mit den ersten acht Byte 
+des Geräte-Deskriptors. Da das achte Byte die Größe des Endpunkt 0 FIFOs enthält, stoppt
+der Host die Antwort des USB-Gerätes.
+\newline\newline
+\textbf{5. Gerät bekommt eine Adresse zugewiesen (Address):}
+Da der USB-Host nun die genaue Paketgröße für den Enpunkt 0 kennt, kann
+er die Pakete in der richtigen Größe an das USB-Gerät schicken. Die erste
+Anfrage ist \glqq{}SetAddress\grqq{}, mit der dem Gerät eine endgültige Adresse zugewiesen wird.
+\newline\newline
+\textbf{6. Informationen vom Gerät werden abgefragt (Address):}
+Anschließend fragt der Host über die neue Adresse alle Geräteinformationen ab.
+\newline\newline
+%\item[Treiber werden geladen:]
+%Anhand der Geräteinformationen kann das Betriebssystem einen geeigneten Treiber laden.
+\textbf{7. Konfiguration wird gewählt (Configured):}
+Um mit dem Gerät Daten austauschen zu können, muss eine Konfiguration aktiviert werden.
+\newline\newline
+
+Mit dem Beispiel aus Abbildung \ref{beispiel} soll verdeutlicht werden, wie die Deskriptoren zusammenhängen und angeordnet sein müssen.
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/beispiel}
+\caption{Beispiel-Deskriptoren}
+\label{beispiel}
+}
+\end{figure}
+
+

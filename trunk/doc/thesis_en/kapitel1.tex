@@ -1,0 +1,188 @@
+\chapter{USB für Embedded Systeme}
+
+\section{Einleitung}
+
+\index{System on Chip}
+\index{R232}
+\index{Parallelport}
+\index{Gameport}
+
+\glqq{}Universal Serial Bus\grqq{} - kurz USB - ist speziell mit dem Ziel entwickelt worden,
+die damals technisch veralteten Schnittstellen wie RS232, Parallelport, Gameport, usw. abzulösen.
+Mit USB sollten Kosten reduziert werden, der Anschluss und die Konfiguration
+für den Nutzer vereinfacht und viele technische Probleme
+von bereits existierenden Schnittstellen gelöst werden können.
+\newline\newline
+Zu Beginn von USB gab es nur Controller,
+die fest im Chipsatz von Computern integriert waren. Es gab keine einzelnen
+USB-Bausteine, mit denen man über einen
+beliebigen Mikrocontroller USB-Geräte hätte ansteuern können.
+Mittlerweile gibt es aber eine Vielzahl an USB-Bausteinen
+für Embedded Systeme. Oft ist USB sogar schon ein fester Bestandteil
+moderner \glqq{}System on Chip\grqq{}\footnote{\label{foot:1}Bei einem \glqq{}System on Chip\grqq{} sind im Silizium, neben dem Prozessor, RAM, ROM, Schnittstellenlogiken, uvm. integriert.} Einheiten.
+Dadurch steht einem Embedded System mit einer USB-Schnittstelle nun die ganze Welt der USB-Peripherie zur Verfügung.
+\newline\newline
+Ein Nachteil von USB ist jedoch,
+dass die Spezifikation durch die vielen Anforderungen
+zu einem sehr umfangreichen Text geworden ist.
+Dadurch ist es schwierig, ohne tiefere Kenntnisse
+eine Kommunikation mit einem Gerät über USB
+zu programmieren. Als Basis gibt es von vielen Anbietern
+eigene kleine Bibliotheken, mit denen demonstriert wird,
+wie der eingesetzte Baustein angewendet werden kann.
+Doch oft stehen diese Bibliotheken unter nicht freien
+Lizenzen und zeigen meist nur typische Standardaufgaben, wie z.B. die Anbindung
+eines Massenspeichers oder Ähnliches. Will man auf andere
+Geräte zugreifen, steht man wieder vor dem Problem,
+dass man sich erst tief in die USB-Materie einarbeiten muss.
+\newline\newline
+Das Ziel der vorliegenden Diplomarbeit ist es, einen freien, portablen und
+erweiterbaren USB-Host-Stack für Embedded Systeme zu entwerfen und zu implementieren.
+Die Software soll als Basis für viele unterschiedliche USB-Host-Bausteine dienen.
+Durch eine Aufteilung der Software in mehrere
+Ebenen ist ein hoher Grad an Wiederverwendbarkeit gegeben. Wie dies im Einzelnen aussieht,
+wird in den Kapiteln der Diplomarbeit wie folgt beschrieben.
+\newline\newline
+Begonnen wird in Kapitel 1 mit der Betrachtung der Aufgaben,
+den Anforderungen und Einsatzgebieten von USB-Host-Stacks.
+Im Anschluss werden in Kapitel 2 die Grundlagen des USB-Busses
+beschrieben. Dies soll dem Leser helfen, besser zu verstehen,
+was beim Entwurf des USB-Host-Stacks zu beachten ist.
+Aufbauend darauf werden in Kapitel 3 die Komponenten und ihre
+Aufgaben im USB-Host-Stack diskutiert. Die Implementierung der 
+einzelnen Ebenen des USB-Host-Stacks werden anschliessend in 
+Kapitel 4, 5 und 6 beschrieben. In Kapitel 7 wird
+die im Rahmen der Diplomarbeit entworfenen Testplatine vorgestellt.
+Zuletzt wird in Kapitel 8 ein Ausblick auf zukünftige Arbeiten
+und ein Fazit über die getane Arbeit gegeben.
+
+%\chapter{USB für Embedded Systeme}
+
+%Das folgende Kapitel soll einen groben Überblick über die wesentlichen
+%Aufgaben, Anforderungen und Einsatzgebiete von USB-Host-Stacks geben.
+
+\section{Aufgaben eines USB-Host-Stacks}
+\index{USB-Host-Stack}
+\index{USB-Stack}
+\index{Treiberstack}
+\index{Aufgaben des USB-Stacks}
+
+Ein USB-Host-Stack\footnote{\label{foot:1} Ein Stack ist in der Informatik eine konzeptuelle Architektur von Software, die für die Datenübertragung zuständig ist.} steuert als einzige Softwarekomponente des USB-Busses
+alle Hardwarekomponenten. Oft wird diese Software auch USB-Host-Stack, USB-Host, USB-Subsystem oder
+USB-Stack genannt. In dieser Diplomarbeit wird die Softwarekomponente als USB-Stack bezeichnet.
+\newline
+
+\index{USB-Bus}
+Der USB-Bus ist ein höchst flexibler, erweiterbarer und aufwändiger Bus.
+Jederzeit ist es möglich, neue Geräte während der Laufzeit hinzuzufügen und zu entfernen.
+Parallel dazu können entweder viele verschiedene Übertragungen stattfinden, oder
+Geräte müssen entsprechend ihrer Aktivitäten in den Standby Zustand versetzt
+und bei Bedarf wieder aktiviert werden. Alle diese Aufgaben müssen
+rechtzeitig und geordnet vom USB-Stack erledigt werden.
+\newline
+
+Um unabhängig vom
+eingesetzten Bausteinen einen hohen Grad an Wiederverwendbarkeit
+zu erreichen, ist der USB-Stack in mehrere
+Treiber\footnote{\label{foot:1} In der USB-Spezifikation werden alle Teilmodule, inklusive der Verwaltungseinheiten, als Treiber
+bezeichnet.} aufgeteilt. Daten
+werden von Treiber zu Treiber weitergereicht, daher auch der Name USB-Stack (deutsch: Stapel).
+Der USB-Stack muss Funktionen anbieten, um die Treiber in den Datenfluss integrieren zu können.
+\newline
+\newline
+Die Hauptarbeit des USB-Stacks besteht in der Verwaltung und Steuerung der Treiber und der angeschlossenen Geräte.
+Im Einzelnen fallen darunter die folgenden Aufgaben:
+
+\begin{itemize}
+\item das Erkennen von neuen Geräten
+\item die Generierung von Standardanfragen
+\item die Verwaltung des Datenflusses
+\item die Bandbreitenverteilung
+\item das Laden und Entladen von Treibern
+\item die Fehlerprüfung
+\item die Stromversorgung und das \glqq{}Power Management\grqq{}
+\item der Datenaustausch mit den Peripheriegeräten
+\end{itemize}
+
+
+\section{Spezielle Anforderungen an Embedded Systeme}
+\index{Programmiersprache C}
+\index{Portierbarkeit}
+
+Ursprünglich wurde USB so geplant, dass der USB-Stack auf einem Computer
+mit einem modernen Prozessor und ausreichend Arbeitsspeicher arbeitet. In einem
+PC-USB-Stack wird daher immer der komplette Status des Busses, mit allen Möglichkeiten
+der Konfigurationen und Einstellungen für jedes USB-Gerät, in einer 
+internen Datenstruktur im Arbeitsspeicher gehalten. 
+In kleinen Embedded Systemen ist meist nur wenig Arbeitsspeicher vorhanden, was bedeutet,
+dass hier viel Platz eingespart werden muss.
+\newline\newline
+Wie beim Arbeitsspeicher, trifft dies auch auf die Programmgröße zu.
+Würden alle Funktionen wie die eines USB-Stacks für Computer-Betriebssysteme realisiert werden, 
+so hätte das eigentliche Programm auf sehr kleinen Embedded Systemen wahrscheinlich keinen Platz mehr.
+Daher muss sich der Stack flexibel mit den nur absolut notwendigen
+Komponenten zusammenstellen lassen können, um ihn auf vielen verschiedenen Embedded Systemen
+einsetzbar zu machen.
+\newline\newline
+Für die Portierbarkeit spielt nicht nur die Anforderung von Arbeitsspeicher
+und Programmcode eine wichtige Rolle, sondern auch die
+Verbreitung und Unterstützung der Programmiersprache, in der der Stack geschrieben
+ist. Aus diesem Grund wurde der USB-Stack in ANSI C geschrieben.
+
+\section{Einsatzgebiete}
+
+Der Einsatz von USB in Embedded Systemen gewinnt zunehmend an Bedeutung.
+Im Bereich der USB-Geräte finden sich sehr viele Lösungen, die früher oft
+als Spezialentwicklungen über verschiedenste Busse bzw. Ports mit
+eigenen Steckverbindungen realisiert worden sind. Allerdings ist dies durch den
+großen USB-Markt nicht mehr nötig. Es können erhebliche Entwicklungskosten
+eingespart werden, wenn fertige USB-Geräte wie Kameras, Festspeicher, Festplatten, Soundkarten, Netzwerkkarten, etc.
+in Embedded Systeme eingesetzt werden.
+
+\section{Marktübersicht}
+
+\index{kommerzielle USB-Stacks}
+\index{Marktübersicht}
+\index{USB-Stacks}
+
+Wie in der folgenden Marktübersicht zu sehen ist, gibt es bereits einige USB-Stacks für Embedded Systeme.
+Bei der Recherche wurde jedoch kein freier USB-Stack gefunden. Für kommerzielle
+Versionen ist es keine Seltenheit, dass Lizenzen bis zu einigen tausend Euro kosten.
+\newline\newline
+
+\textbf{USBware\texttrademark{} von Jungo Ltd. (http://www.jungo.com/)} \newline
+Mit USBware\texttrademark{} bietet Jungo einen vollständigen
+USB-Stack an, für den es eine Vielzahl von Geräte- und Host-Controller-Treibern gibt.
+Es werden alle
+Transferarten und Geschwindigkeitsklassen unterstützt.
+Der Stack ist komplett in C geschrieben und lässt sich mit jedem 32-Bit C-Compiler
+übersetzen. 
+\newline\newline
+
+\textbf{USB-Software-Stack von Mentor Graphics Corp. (http://www.mentor.com/)} \newline
+Mentor Graphics bietet IP Modelle\footnote{\label{foot:1} von engl. \textit{Intellectual Property} $-$ \glqq{}Geistiges Eigentum\grqq{}, elektronische Designs von Schaltungen.} für USB-Host und -Device-Controller
+an. Für diese Modelle hat Mentor Graphics das Produkt \glqq{}USB Software Stack\grqq{} entwickelt. Der Stack stellt alle Funktionen eines USB 2.0 Hosts bereit.
+Außerdem wird der OTG-Standard\footnote{\label{foot:1} USB-Standard für die Punkt-zu-Punkt Vernetzung von USB-Geräten.} ebenfalls unterstützt.
+Der Quelltext ist in C geschrieben und daher auf viele Prozessoren portierbar.
+\newline\newline
+
+\textbf{$µ$C$/$USB-Host von Micrium (http://www.micrium.com/)} \newline
+Der USB-Stack von Micrium unterstützt den kompletten USB 2.0 Standard. Für die Kommunikation
+mit USB-Geräten werden Klassentreiber für Massenspeicher, HID-Geräte\footnote{\label{foot:3} Human-Interface-Devices, Eingabegeräte für den Computer.} 
+und CDC-Geräte-Treiber\footnote{\label{foot:4} Geräteklasse für Kommunikationsgeräte wie Netzwerkkarten, RS232 Schnittstellen, etc.} angeboten.
+Der Stack kann mit verschiedenen Host-Controllern arbeiten.
+\newline\newline
+
+\textbf{Vinculum von Future Technology Devices International (http://www.vinculum.com/)} \newline
+FTDI bietet mit dem Produkt Vinculum einen programmierbaren Controller an, der ohne viel
+Aufwand mit fertigen Binärprogrammen programmiert werden kann und auf diese Weise 
+USB mit bekannten Schnittstellen wie RS232, SPI, etc. verbindet.
+Die Binärprogramme können, mit einem eigens dafür entwickelten Programm von FTDI in den Vinculum Chip geladen werden.
+\newline\newline
+
+\textbf{Thesycon (http://www.thesycon.de/)} \newline
+Mit dem Produkt \glqq{}Embedded USB Host Stack\grqq{} bietet die Firma Thesycon einen
+nach eigenen Angaben industrietauglichen, standardkonformen USB-Host-Stack an.
+Aktuell werden die Host-Controller NXP ISP1362, NXP1160/61 und OHCI unterstützt.
+Für die USB-Geräte-Kommunikation gibt es Klassentreiber für HID, Massenspeicher
+und Drucker.

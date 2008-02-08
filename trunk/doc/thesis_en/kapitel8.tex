@@ -1,0 +1,128 @@
+\chapter{Fazit und Ausblick}
+\section{Fazit}
+Ziel der Diplomarbeit war es, einen freien, portablen
+und erweiterbaren USB-Host-Stack für Embedded-Systeme zu entwickeln.
+Um einen einfach einsetzbaren und vollständigen USB-Host-Stack
+erstellen zu können, musste viel Arbeit in das Design der Softwarestruktur investiert werden.
+Denn nur mit einer klaren und übersichtlichen Struktur können andere
+Entwickler dafür begeistert werden, diesen USB-Stack zu nutzen.
+Die klare Struktur wurde mit einer Aufteilung in einzelne Komponenten
+und Treiber erreicht. Für den USB-Host-Stack wurden in der Diplomarbeit
+ein Host-Controller-Treiber für den Baustein SL811HS von Cypress, 
+ein USB-Gerätetreiber für den USB zu RS232 Wandler FT232 von FTDI Inc.
+und USB-Klassentreiber für Massenspeicher, Hub- und HID-Geräte entwickelt.
+\newline\newline
+Mit Hilfe von Beispielanwendungen wird dem Anwender
+der Einstieg erleichtert. Desweiteren
+wurde viel Wert auf die Kommentierung des Quelltextes gelegt, um
+die Lesbarkeit für interessierte Entwickler zu erhöhen.
+Die nächsten Arbeiten an diesem Projekt werden erstrangig
+die Veröffentlichung als Open-Source-Projekt und die Entwicklung von weiteren Host-Controller-Treibern
+sein. 
+\newline\newline
+Der USB-Stack hat gemessen an den implementierten und noch geplanten
+Features das Potenzial, eine echte Konkurrenz zu den kommerziell verfügbaren USB-Stacks
+zu werden. 
+
+
+
+\section{Ausblick}
+
+Im letzten Kapitel der Diplomarbeit soll
+ein Ausblick auf mögliche weitere Entwicklungen gegeben werden.
+Dabei interessiert speziell die Funktionsweise des neuesten USB Standards OTG.
+Dieser Standard wird nicht von der aktuellen
+Version des USB-Stacks der Diplomarbeit unterstützt,
+soll aber, nachdem das Projekt als Open-Source-Projekt freigegeben wurde,
+integriert werden. Zum Abschluss der Arbeit wird ein kleiner Blick
+in die Zukunft gewagt, um zu sehen, wie eine weitere Entwicklung aussehen könnte.
+
+\subsubsection{USB-OTG-Standard}
+\index{OTG}
+\index{USB-OTG-Standard}
+\index{Host-Negotiation-Protcol}
+\index{Session-Request-Protocol}
+Wie in den vorangegangenen Kapiteln aufgeführt, werden für
+die Kommunikation stets ein fester Host-Controller 
+und dedizierte USB-Geräte benötigt. Sollen 
+Daten zwischen zwei Geräten ausgetauscht werden,
+muss dies immer über den Host-Controller geschehen.
+\newline\newline
+Mit dem USB-OTG-Standard (\glqq{}On-The-Go\grqq{}) wurde eine Möglichkeit geschaffen,
+Daten direkt zwischen zwei Geräten auszutauschen.
+Beispielsweise kann eine Digitalkamera Daten ohne zwischengeschalteten Computer an einen Drucker senden.
+\newline\newline
+Bereits wie beim Übergang von der Version USB 1.1 auf 2.0 wurde
+der Übergang zum OTG-Standard ebenfalls so umgesetzt, dass alle Geräte rückwärtskompatibel
+zu den vorangegangenen Versionen sind. Für die OTG-Funktionalität
+wurden hauptsächlich zwei neue Protokolle
+eingeführt - das \glqq{}Host-Negotiation-Protocol\grqq{} (HNP)
+und das \glqq{}Session-Request-Protocol\grqq{} (SRP).
+\newline\newline
+\textbf{Host-Negotiation-Protocol (HNP)}\newline\newline
+Das besondere an USB-OTG
+ist, dass ein Gerät keine feste Rolle hat, sondern
+diese erst beim Verbinden mit anderen Geräten in Abhängigkeit von der Anwendung 
+ausgehandelt wird (entweder Host oder Slave).
+\newline\newline
+Dass ein Gerät keine feste Rolle hat, ist aber nicht ganz korrekt,
+denn in der OTG-Spezifikation wird immer
+von einem A-Gerät und B-Gerät gesprochen, welche 
+unterschiedliche USB-Buchsen haben.
+Da USB-Kabel ebenfalls auf der einen Seite immer einen A-Stecker und auf der anderen einen B-Stecker
+haben, kann man immer nur ein A-Gerät mit einem B-Gerät verbinden.
+Zu Beginn jeder Kommunikation ist das A-Gerät immer der Host und das B-Gerät
+das klassische USB-Gerät.
+\newline\newline
+Der Ablauf nach dem Anstecken sieht im Groben wie folgt aus:
+
+\begin{enumerate}
+\item Das A-Gerät arbeitet als Host und das B-Gerät als USB-Funktion.
+\item Das A-Gerät generiert SOF, Bus Reset, etc. und enumeriert das B-Gerät.
+\item Das A-Gerät fragt während der Enumeration den OTG-Deskriptor ab.
+\item Dem OTG-Deskriptor kann entnommen werden, welche OTG-Unterstützungen das B-Gerät hat.
+\item Wenn das B-Gerät Host werden soll, sendet das A-Gerät die Standardanfrage SetFeature mit 
+der gewünschten Eigenschaft ab.
+\item Das B-Gerät hat nun die Möglichkeit, den Bus zu übernehmen, denn das A-Gerät stoppt und
+löst die Verbindung zum Bus für mindestens 3 ms.
+\end{enumerate}
+
+Der genaue Ablauf kann der USB-On-the-go-Spezifikation entnommen werden \cite{onthego}.
+\newline\newline
+\textbf{Session-Request-Protocol (SRP)}\newline\newline
+Durch das \glqq{}Session Request Protocol\grqq{} können die Geräte
+aushandeln, welches Gerät den USB-Bus mit Strom versorgt. Hierfür
+werden Mechanismen benötigt, so dass jedes Gerät in den Standby-Modus 
+umschalten und wieder vom Kommunikationspartner aufgeweckt werden
+kann. 
+Das Protokoll wird über verschiedene elektrische Signale
+auf den Leitungen umgesetzt, z.B. dienen regelmäßige Signale (Impulse)
+oder verschiedene Spannungsgrenzen als Signalisierung für bestimmte Zustände.
+
+\subsubsection{Zukünftige Entwicklungen}
+
+Die Entwicklung des USB-Stacks soll nach der Abgabe der Diplomarbeit als
+Open Source Projekt weitergehen. Die Ideenliste für weitere Entwicklungen
+ist noch lang.
+\begin{itemize}
+\item Weitere Host-Controller-Treiber entwickeln (AT90USB, ISP1161, etc.)
+\item Mehr Gerätetreiber anbieten (WLAN-Sticks, Bluetooth, GPS, etc.)
+\item Neue Klassentreiber schreiben (Netzwerkkarten, Drucker, etc.)
+\item Einen USB-Device-Stack integrieren
+\item Den neuen Standard OTG implementieren
+\item Für höhere Übertragungsraten USB 2.0 High-Speed-Support hinzufügen
+\item Einen freien USB-Sniffer entwerfen
+%Da die Enwicklung von Host-Controller-Treibern ohne sogenannte \glqq{}USB-Sniffer\grqq{}\footnote{\label{foot:1 ein Gerät, das zwischen
+%eine USB-Verbdinung eingehängt werden kann um die Pakete auf dem USB Bus mit aufzuzeichnen
+%sehr mühsälig ist, wurden bereits mit ersten Tests begonnne, wie man so einen
+%Sniffer ganz einfach aufbauen könnte, und so nicht einige Hundert Euro ausgeben muss.
+\item einen IP-Host-Controller in VHDL oder Verilog inkl. passendem Treiber hinzufügen
+\item USB-Stack als Kommunikationsstack in ein Echtzeitbetriebssystem für eingebettete Systeme integrieren
+\end{itemize}
+
+
+
+
+
+
+

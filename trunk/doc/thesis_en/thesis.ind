@@ -1,0 +1,183 @@
+\begin{theindex}
+
+  \item ACK, 15
+  \item AN2131, 11
+  \item API, 39
+  \item Audio-Device-Class, 56
+  \item Aufgaben des USB-Stacks, 2
+
+  \indexspace
+
+  \item Bandbreite, 28
+  \item Beispielprogramm, 48
+  \item Bibliotheken, 53
+  \item Bitstuffer, 12
+  \item Bulk-Transfer, 15, 33
+
+  \indexspace
+
+  \item Class-Requests, 20
+  \item Communication-Class-Device, 56
+  \item Control-Transfer, 15
+  \item core.h, 43, 44
+  \item CRC5, 14
+
+  \indexspace
+
+  \item DATA0,DATA1, 15
+  \item Datenkodierung, 13
+  \item Datenübertragung, 30
+  \item Datenübertragungsrate, 33
+  \item Default-Requests, 20
+  \item Deskriptoren, 17, 19
+  \item DPLL, 12
+
+  \indexspace
+
+  \item EHCI, 30
+  \item Endpunkte, 16
+  \item Enmumerierung, 22
+  \item Entwicklungsumgebung, 61
+  \item EOP, 14
+
+  \indexspace
+
+  \item FIFO, 11
+  \item FT232, 54
+
+  \indexspace
+
+  \item Gameport, 1
+  \item Geräte-Deskriptoren, 19
+  \item Gerätetreiber, 38, 43, 56
+  \item Geräteverwaltung, 43
+  \item Geschichte, 7
+
+  \indexspace
+
+  \item Herstelleranfragen, 20
+  \item HID-Treiber, 57
+  \item hid.h, 58
+  \item Host-Controller, 25, 29
+  \item Host-Controller-Driver-Interface, 25
+  \item Host-Controller-Treiber, 25, 38, 40
+  \item Host-Negotiation-Protcol, 65
+  \item host.h, 40
+  \item Hub-Treiber, 58
+  \item Human-Interface-Devices, 56
+
+  \indexspace
+
+  \item I/O-Request-Paket, 26, 30, 44
+  \item Interrupt-Transfer, 15
+  \item Isochronous-Transfer, 15
+
+  \indexspace
+
+  \item Klassenanfragen, 20
+  \item Klassentreiber, 38, 43, 56
+  \item kommerzielle USB-Stacks, 4
+
+  \indexspace
+
+  \item Logische Struktur, 8
+
+  \indexspace
+
+  \item Marktübersicht, 4
+  \item Mass-Storage-Device-Class, 56
+  \item Massenspeicher-Treiber, 59
+  \item MAX34xx, 11
+  \item Mikrocontroller, 11
+  \item Module, 38
+
+  \indexspace
+
+  \item NAK, 15
+  \item Nicht-differentiellen Signale, 15
+  \item NRZI, 12
+
+  \indexspace
+
+  \item OHCI, 30
+  \item OTG, 65
+
+  \indexspace
+
+  \item Parallelport, 1
+  \item Physikalische Struktur, 8
+  \item PID, 14
+  \item Pipe, 16
+  \item Portierbarkeit, 3
+  \item Printer-Device-Class, 56
+  \item Programmiersprache C, 3
+  \item Protokoll-Stack, 25
+
+  \indexspace
+
+  \item R232, 1
+  \item Root-Hub, 29
+  \item Root-Hub-Treiber, 51
+  \item RS232, 54
+
+  \indexspace
+
+  \item Session-Request-Protocol, 65
+  \item SIE, 11, 29
+  \item Signalleitungen, 13
+  \item SL811HS, 49, 62
+  \item SNYC, 14
+  \item STALL, 15
+  \item Standardanfragen, 20
+  \item State-Machine, 11
+  \item Statusüberwachung, 28
+  \item storage.h, 59
+  \item System on Chip, 1
+
+  \indexspace
+
+  \item Testplatine, 61
+  \item Topologie, 8
+  \item Transceiver, 11
+  \item Transfer-Deskriptor, 30, 45, 51
+  \item Transfer-Deskriptoren, 26
+  \item Transferarten, 15
+  \item Treiberstack, 2
+  \item Treiberverwaltung, 43
+
+  \indexspace
+
+  \item UHCI, 30
+  \item USB zu RS232-Wandler, 54
+  \item USB-Bus, 2
+  \item USB-Bustreiber, 25
+  \item USB-Bustreiber-Interface, 25
+  \item USB-Bustreiber-Schnittstelle, 41
+  \item USB-Function, 9
+  \item USB-Gerät, 10
+  \item USB-Geräte-Treiber, 41
+  \item USB-Host-Stack, 2
+  \item USB-Komponenten, 9
+  \item USB-Nachricht, 26, 30
+  \item USB-OTG-Standard, 65
+  \item USB-Pakete, 26
+  \item USB-Stack, 2, 37
+  \item USB-Stacks, 4
+  \item usb.h, 42
+  \item USBDI, 41
+  \item USBN9604, 11
+
+  \indexspace
+
+  \item Vendor-Requests, 20
+  \item Verzeichnisse, 39
+
+  \indexspace
+
+  \item Zugriffsfunktionen für SL811HS, 50
+
+  \indexspace
+
+  \item Übertragungsrate, 35
+
+\end{theindex}

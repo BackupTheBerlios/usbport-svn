@@ -1,0 +1,502 @@
+
+\chapter{Die Komponenten und ihre Aufgaben im USB-Host-Stack}
+
+
+Ein guter Entwurf der Struktur des USB-Stacks ist eine wichtige Basis für
+die Stabilität und die Leistungsfähigkeit der gesamten Software. In diesem Kapitel werden die wichtigsten 
+Komponenten des USB-Stacks und deren Aufgaben beschrieben.
+Es wird ausschließlich auf die theoretischen Hintergründe
+eingegangen und erst später im nächsten Kapitel wird die Struktur und
+die Umsetzung in Quelltext erklärt.
+
+\section{Host-Stack}
+
+Der USB-Stack wurde, soweit es möglich und machbar war
+nach der USB-Spezifikation implementiert. 
+Da die USB-Spezifikation für einen Softwarestack auf einem 
+PC geschrieben wurde, musste bei der Realisierung des Host-Stack für 
+ein Embedded System Nutzen und Aufwand in Einklang gebracht werden.
+
+\subsection{Übersicht des Protokoll-Stacks}
+
+\index{Protokoll-Stack}
+
+Der USB-Stack beinhaltet vom Hardwaretreiber bis hin zu den verschiedenen Gerätetreibern alle Softwarekomponenten (siehe Abbildung \ref{struktur}), 
+die für den USB-Betrieb nötig sind.
+Für die
+einzelnen Aufgaben wurden jeweils gesonderte Module entwickelt, welche ihre Dienste
+über definierte Schnittstellen anbieten. 
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=11.5cm]{images/struktur}
+\caption{Architektur des USB-Stacks}
+\label{struktur}
+}
+\end{figure}
+
+\index{Host-Controller}
+\index{Host-Controller-Treiber}
+\index{USB-Bustreiber}
+\index{Host-Controller-Driver-Interface}
+\index{USB-Bustreiber-Interface}
+
+Auf diese Weise kann der Stack flexibel erweitert und in Anwendungen
+integriert werden. Unterstützt der Stack eine bestimmte Aufgabe oder einen gewissen
+Baustein nicht, so muss nur die fehlende Funktionalität nachprogrammiert und in 
+das bestehende System eingebunden werden. 
+\newline\newline
+Im folgenden Abschnitt werden die wichtigen Bezeichnungen aus der Abbildung \ref{struktur} 
+zur besseren Übersicht durch Fettdruck hervorgehoben.
+\newline\newline
+Der Softwarestack bietet für die Datenübertragung verschiedene Ebenen an, die die Nachrichten über
+USB durchlaufen müssen. Die unterste Ebene beinhaltet die physikalische Verbindung auf den USB-Bus.
+Realisiert wird diese mittels des \textbf{Host-Controllers (Hardware)}. Für den Host-Controller
+wird ein Treiber benötigt, der die Kommunikation mit dem Baustein ermöglicht. Dies ist bereits die Aufgabe
+der zweiten Ebene des \textbf{Host-Controller-Treibers (HCD)}.
+Die notwendige Verbindung vom Host-Controller-Treiber zum \textbf{USB-Bustreiber (USBD)}, der eine Ebene
+über dem HCD liegt, wird \textbf{Host-Controller-Driver-Interface (HCDI)} genannt.
+Das HCDI bietet für den USB-Bustreiber allgemeine Funktionen für die Kommunikation mit einem beliebigen Host-Controller an.
+Soll ein neuer Host-Controller in den Stack integriert werden, 
+so müssen nur die Funktionen des HCDI für den neuen Controller programmiert werden.
+\newline\newline
+Auf der dritten Ebene befindet sich der USB-Bustreiber. Er bildet die zentrale Verwaltungs- und
+Steuerungskomponente. In dieser Ebene werden Geräte bzw. Treiber verwaltet und Datenströme verteilt.
+Der USB-Bustreiber bietet seine Funktionen (Datenkommunikation, Geräte- und Treiberverwaltung) 
+über das \textbf{USB-Bustreiber-Interface (USBDI)}
+den darüber liegenden Schichten an. Die Geräte bzw. die Treiber aus den darüber liegenden Schichten können nie direkt mit
+dem Host-Controller kommunizieren, sondern müssen immer über das USBDI gehen.
+\newline\newline
+Zu guter Letzt können die \textbf{Anwendungen} die Dienste über die entsprechenden
+Treiberschnittstellen der \textbf{Geräte- und Klassentreiber} nutzen.
+
+\subsection{Datenfluss einer USB-Nachricht}
+\index{USB-Nachricht}
+\index{USB-Pakete}
+\index{Transfer-Deskriptoren}
+\index{I/O-Request-Paket}
+
+In diesem Abschnitt wird der Verlauf einer USB-Nachricht
+im USB-Stack betrachtet. 
+\newline\newline
+Eine USB-Nachricht ist eine Anfrage einer Anwendung bzw. eines Treibers, die über
+das USBDI \footnote{\label{foot:usbdi} \glqq{}USB-Bustreiber-Interface\grqq{} enthält alle Funktionen für den Datenaustausch mit Geräten.} 
+abgesendet werden kann. Eine USB-Nachricht enthält entweder Daten für
+das Gerät, oder eine Anfrage für Daten vom Gerät. 
+Die Nachricht muss immer mit der entsprechenden Transferfunktion aus dem USBDI mit
+der Transferart des Zielendpunktes übertragen werden.
+\newline\newline
+Eine USB-Nachricht sieht, unabhängig von der Transferart, strukturell
+immer gleich aus. Es muss die Geräteadresse, der Endpunkt, die Transferart, die Übertragungsrichtung,
+eine Anzahl und ein Puffer für die zu sendenden oder zu empfangenden Daten angegeben werden.
+In der USB-Spezifikation wird diese Datenstruktur \glqq{}I/O-Request-Packet (IRP)\grqq{} genannt.
+Möchte eine Anwendung oder ein Treiber Daten versenden, so muss solch eine Anfrage erzeugt
+und dem USB-Bustreiber übergeben werden. 
+\newline\newline
+Wie bereits erwähnt, werden auf dem USB-Bus aber nur USB-Pakete übertragen. Dies bedeutet
+für den Host, dass er die vorliegende USB-Nachricht in einzelne Pakete aufteilen muss (siehe Abbildung \ref{irp}).
+Abhängig von der Transferart werden SETUP-, IN-, OUT-, DATA0- oder DATA1-Pakete generiert. Diese einzelnen
+Pakete werden in einer Datenstruktur, die Transfer-Deskriptor genannt wird, gepackt. Ein Transfer-Deskriptor
+enthält die kleinste USB-Einheit, die mit einem Host-Controller übertragen werden kann - ein USB-Paket.
+\newline\newline
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=11.5cm]{images/irp}
+\caption{Aufteilung der I/O-Request-Pakete in Transfer-Deskriptoren}
+\label{irp}
+}
+\end{figure}
+Die Aufteilung ist unter anderem dafür notwendig, dass die am Bus angeschlossenen
+Geräte mit gleicher Priorität behandelt werden können.
+Mehr dazu im nächsten Absatz \glqq{}Verteilung der Bandbreite\grqq{}.
+
+\subsection{Verteilung der Bandbreite}
+\index{Bandbreite}
+Würde ein Treiber zum Beispiel 1 MB Daten an ein Gerät senden, wäre der
+Bus theoretisch bei 12 MBit/s für 1,5 s belegt. Betreibt man parallel am Bus
+zusätzlich eine USB-Maus, so könnte in dieser Zeit die Maus nicht erreicht und somit
+der Mauszeiger nicht aktualisiert werden.
+Daher ist es notwendig, dass USB-Nachrichten
+durch Segmentierung in einzelne USB-Pakete (\glqq{}Transfer-Deskriptoren\grqq{}) aufgeteilt werden
+und einzeln nach und nach abwechselnd mit Paketen von anderen Nachrichten versendet werden. 
+Dadurch kann der Host in einer Zeitspanne,
+die durch Frames aufgeteilt ist (siehe Kapitel 3.8), mehrere Geräte ansprechen.
+\newline\newline
+Mit welcher Strategie die zur Verfügung stehende Zeit verteilt werden muss, ist in der USB-Spezifikation nicht beschrieben.
+Die USB Spezifikation gibt nur an, wieviel Zeit für welche Transferart reserviert sein muss (siehe Tabelle \ref{usb_zeiten}).
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Transferart & Bandbreite \\ \hline
+Control & max. 10\% garantiert \\ \hline
+Interrupt und Isochron & max. 90\% garantiert \\ \hline
+Bulk & nur bei verfügbarer Bandbreite \\ \hline
+\end{tabular} \caption{Garantierte Bandbreiten der Transferarten} \label{usb_zeiten}
+\end{table}
+
+\subsection{Statusüberwachung}
+\index{Statusüberwachung}
+Da der USB-Bustreiber alle wichtigen Komponenten verbindet, bietet er sich ideal
+für die Überwachung des Busses an. Die Auslastung auf dem Bus kann z.B. anhand 
+der Anzahl der übertragenen Pakete ermittelt werden oder auch die korrekte Arbeitsweise der
+USB-Geräte und des Host-Controllers mit speziellen Funktionen der Treiber.
+In der USB-Spezifikation ist nicht definiert, welche Informationen überwacht werden sollen,
+es wird nur angeregt, dies an der gerade genannten Stelle im USB-Bustreiber zu integrieren.
+\newpage
+
+%Sogenannte USB Debug Monitor, die den Datentransfer für eine Analyse
+%des Datenstroms aufzeichnen bieten sich ebenfalls an dieser Stelle zu integrieren.
+
+\section{Host-Controller}
+\index{Host-Controller}
+Der Host-Controller ist verantwortlich für die Generierung 
+der Übertragungen der einzelnen USB-Pakete, eingepackt in die
+Transfer-Deskriptoren.
+
+\subsection{Aufbau und Struktur}
+
+In allen Implementierungen führen Host-Controller die gleichen grundlegenden Aufgaben 
+hinsichtlich des USB-Busses und seiner verbundenen Geräte durch. In der USB-Spezifikation
+werden die einzelnen Teilkomponenten (Abbildung \ref{host}), die dafür notwendig
+sind, beschrieben.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/host}
+\caption{Host-Controller Strukturdiagramm}
+\label{host}
+}
+\end{figure}
+
+
+\index{SIE}
+\index{Root-Hub}
+
+\begin{description}
+\item[Zustandsbehandlung:] 
+Der Host-Controller kann viele Ereignisse und Zustände vom USB-Bus
+über interne Register und Signale anzeigen. Diese Zustände
+werden vom USB-Stack für den Betrieb des USB-Busses benötigt.
+
+\item[Serialisierer und Deserialisierer (\glqq{}SIE\grqq{}):] 
+Um die Daten übertragen und empfangen zu können, muss der Host-Controller,
+wie in Kapitel \ref{kap:signal} auf Seite \pageref{kap:signal} beschrieben, die Daten zum Senden serialisieren und codieren
+und beim Empfangen wieder decodieren und parallelisieren.
+
+
+\item[Rahmenerzeugung (\glqq{}Frame Generation\grqq{}):] 
+Der Host-Controller ist zuständig für die Einteilung des Busses in die einzelnen Frames.
+Dafür muss jede Millisekunde ein Start-of-Frame Paket (SOF) mit einer fortlaufenden
+Nummer versendet werden.
+Über interne Zeitgeber kann der Host-Controller dies automatisch erledigen.
+
+
+\item[Datenverarbeitung:] 
+Der Host-Controller ist für das Empfangen
+und das Senden von Daten (USB-Paketen) verantwortlich. 
+
+\item[Protokoll:]
+Die passenden Protokollinformationen für ausgehende Anfragen müssen zusammengesetzt werden und
+eingehende Anfragen zerlegt und interpretiert werden.
+
+\item[Fehlerbehandlung bei der Übertragung]
+Der Host-Controller muss Datentransportfehler erkennen können. In
+der USB-Spezifikation sind die folgenden Fehlerarten beschrieben:
+
+\begin{itemize}
+\item \glqq{}Timeout-Fehler\grqq{} nach Datentransfer. Diese treten auf, wenn die
+Endpunktadresse nicht existiert, oder die zu übertragenden Daten so
+fehlerhaft sind, dass diese vom USB-Gerät nicht interpretiert werden können.
+\item Fehlende oder fehlerhafte Daten:
+
+\begin{itemize}
+\item Der Host-Controller sendet oder empfängt ein zu kurzes Paket.
+\item Ein empfangenes Paket enthält eine ungültige CRC Prüfsumme.
+\end{itemize}
+
+\item Protokollfehler:
+\begin{itemize}
+\item Ein ungültiges \glqq{}Handshake-Packet\grqq{}.
+\item Ein falsches \glqq{}End-of-Packet (EOP)\grqq{}.
+\item Ein Bitstuffing-Fehler.
+\end{itemize}
+\end{itemize}
+
+\item[Entferntes Aufwecken (\glqq{}Wakeup\grqq{}):] 
+Das USB-System kann den Bus jederzeit in den Zustand Standby versetzen
+und anschließend wieder aufwecken.
+Dafür muss der Host-Controller entsprechende Vorrichtungen anbieten.
+
+\item[Root-Hub:] 
+Der Root-Hub stellt die Verbindung zwischen dem Host-Controller
+und den Anschlussports für Geräte her. Die Arbeitsweise
+ist gleich dem Hub (siehe Seite \pageref{kap:hub}). Der einzige Unterschied
+besteht in der Anbindung an das System. So ist ein Root-Hub
+im Gegensatz zum Hub, der über USB angesprochen wird
+über interne Signale mit dem Host-Controller verbunden.
+
+\item[Host-System-Schnittstelle:] 
+Die Schnittstelle für den Datenaustausch zwischen dem Host-Controller
+und dem Prozessor, auf dem der USB-Stack läuft.
+\end{description}
+
+\subsection{Datenübertragung mit Host-Controllern} \label{kap:datenuebertragung}
+\index{Datenübertragung}
+\index{OHCI}
+\index{EHCI}
+\index{UHCI}
+\index{USB-Nachricht}
+\index{Transfer-Deskriptor}
+\index{I/O-Request-Paket}
+Im vorherigen Abschnitt wurden alle Funktionen,
+die ein Host-Controller anbieten muss, kurz beschrieben. Für die Implementierung
+des USB-Stacks in dieser Diplomarbeit soll die Funktionsweise der
+Datenübertragung, speziell für Host-Controller in Embedded Systeme, genauer betrachtet werden.
+\newline\newline
+Wie die Übertragung auf dem Host-Controller genau
+funktioniert, ist in dem Hauptdokument der USB-Spezifikation nicht beschrieben.
+Dies war die Aufgabe der Host-Controller Hersteller. Für USB 1.1 wurden
+zwei Standards entwickelt, das UHCI (\glqq{}Universal-Host-Controller-Interface\grqq{})  und das
+OHCI (\glqq{}Open-Host-Controller-Interface\grqq{}). UHCI kompatible Bausteine
+kommen mit weniger Transistoren aus, da dort ein Großteil
+der Steuerung mit Software erledigt wird. OHCI im Gegenzug verlagert
+viele der Verwaltungsaufgaben in die Hardware und bietet daher eine einfachere
+Schnittstelle an. UHCI wurde von Intel, und  OHCI
+gemeinsam von Compaq, Microsoft und National Semiconductor entwickelt.
+Für USB 2.0 wurde von allen beteiligten Firmen ein gemeinsamer Standard EHCI (Enhanced-Host-Controller-Interface) definiert.
+\newline\newline
+Obwohl sich alle drei Standards doch sehr unterscheiden, gibt es trotzdem eine gemeinsame Eigenschaft - bedingt dadurch, dass
+alle Controller für den Einsatz im Computer entwickelt worden sind -
+nämlich die Übergabe der kompletten Transfer-Deskriptoren über einen gemeinsamen Arbeitsspeicherbereich
+zwischen dem Prozessor und dem Host-Controller. 
+\newline\newline
+Sendet ein Treiber oder eine Anwendung eine USB-Nachricht ab, so wird direkt ein Speicherbereich
+aus dem gemeinsamen Arbeitsspeicher zwischen Prozessor und Host-Controller für die Kommunikation genutzt (siehe Abbildung \ref{cpu2host}). Die Software
+muss lediglich die Datenstruktur richtig aufbauen, so dass die Hardware die 
+einzelnen Transfer-Deskriptoren erreichen kann. Wird der letzte Transfer-Deskriptor
+eines I/O-Request-Paketes erfolgreich abgearbeitet, so muss
+dies die Hardware nur noch der Software signalisieren, welche dann wiederum dem
+Treiber oder der Anwendung meldet, dass die Daten in dem zuvor reservierten
+Speicher eingetroffen sind.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=15cm]{images/cpu2host}
+\caption{Gemeinsamer Speicher von Prozessor und Host-Controller}
+\label{cpu2host}
+}
+\end{figure}
+
+Bei Mikroprozessoren hingegen muss die Übergabe aber oft über I/O-Zugriffe oder spezielle Schnittstellen realisiert
+werden, da es dort häufig nicht möglich ist, mit Peripherie Speicherbereiche zu teilen.
+Das bedeutet, dass jede übergebene Transaktion sofort ausgeführt werden muss und ein Ergebnis für
+die weitere Verarbeitung des USB-Pakete-Datenstroms erforderlich ist.
+\newline\newline
+Damit alle Host-Controller-Typen im USB-Stack genutzt werden können,
+übergibt der USB-Bustreiber dem Host-Controller-Treiber immer
+einzelne Transfer-Deskriptoren. In den Transfer-Deskriptoren
+befindet sich aber wiederum ein Zeiger auf das darüber liegende
+I/O-Request-Paket (siehe Abbildung \ref{td2irp}).
+So kann in den Treibern abhängig vom Baustein
+entschieden werden, wie die Abarbeitung stattfinden soll.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=8cm]{images/td2irp}
+\caption{Verkettung der Datenstrukturen IRP und TD}
+\label{td2irp}
+}
+\end{figure}
+
+%\subsection{OHCI kompatibler Controller}
+%Das OHCI (Open-Host-Controller-Interface) stammt von Compaq, Microsoft
+%und National Semiconductor. Implementiert ist OHCI typischerweise in dedizierten Chipsätzen.
+%
+%\subsubsection{Übertragungsreihenfolge}
+%\begin{figure}[h]
+%{
+%\centering
+%\includegraphics[width=14cm]{images/ohci_zeit}
+%\caption{Übertragungsreihenfolge OHCI}
+%\label{ohci_zeit}
+%}
+%\end{figure}
+%\subsubsection{Transfermechanismus}
+%\begin{figure}[h]
+%{
+%\centering
+%\includegraphics[width=11cm]{images/ohci}
+%\caption{Transfermechanismus OHCI}
+%\label{ohci}
+%}
+%\end{figure}
+%\subsubsection{Enpunkt-Deskriptoren}
+%\subsubsection{Transfer-Deskriptoren}
+%\subsubsection{OHCI Register}
+%\subsection{UHCI kompatibler Controller}
+%Die UHCI (Universal-Host-Controler-Interface) Spezifikation wurde von Intel erstellt.
+%Das Interface ist ebenfalls wie das OHCI meist in Chipsätzen integriert. Die Komplexität
+%des UHCI wird von Intel mit etwa 10K Gates angegeben.
+%\subsubsection{Übertragungsreihenfolge}
+%\subsubsection{Frame-Listen}
+%\subsubsection{Transfer-Mechanismus}
+%\subsubsection{Transfer-Deskriptoren}
+%\subsubsection{Queue-Heads}
+%\subsubsection{UHCI Register}
+%
+%\subsection{EHCI kompatibler Controller}
+%
+%Mit der Spezifikation USB 2.0 wurde gleich ein Standard Host-Controller veröffentlicht,
+%welcher die Erweiterungen zum High-Speed Modus beinhaltet und gleichzeitig Abwärtskompabilität gewährleisten
+%soll.
+%
+%
+%\subsubsection{Architektur}
+%\subsubsection{Host-Controller-Routing-Strategie}
+%\subsubsection{Datenstrukturen}
+%
+%\subsection{Phillips kompatible Controller}
+%
+%Es gibt auch Controller die diesem Standard nicht entprechen. Vorallem im Embedded Bereich,
+%denn hier hat man selten einen gemeinsamen speicherbereich. Meistens eine
+%Port oder eine andere schnittstelle
+%
+%beispiel phillips mach beides mit den PTD
+
+%\section{Integrierter Root-Hub-Controller}
+
+%Die Aufgabe eines USB Hubs ist das Anzeigen des aktuellen Status der Ports
+%und Änderungen an ihnen. Aufgrund dieser Informationen kann der Hub Treiber
+%den Host über Änderungen informieren, und der Host kann entsprechend
+%eine Enumeration oder mit dem Entfernen von Datenstrukturen für ein
+%entferntes Gerät beginnen. 
+%\newline\newline
+%Da ein Host-Controller für die Signalisierung von Änderungen an dem
+%abgehenden USB-Ports meistens Interrupt Signale und interne Status Register hat,
+%welche für die Aufgaben des Root-Hubs notwendig sind,
+%simuliert man dort einen echten USB-Hub, so dass man die Host-Ports über
+%den gleichen Hubtreiber wie die für ein USB-Hub ansteuern kann und sich doppelte Arbeit spart.
+
+\newpage
+\section{Bandbreitenabschätzung}
+\index{Datenübertragungsrate}
+\index{Bulk-Transfer}
+Bei der Konzeption von USB-Geräten ist die Frage der maximalen
+Datenübertragungsrate oft von Interesse. Daher wird in diesem Abschnitt
+eine Beispielrechnung vorgeführt, um zu zeigen, auf welche
+Faktoren und Parameter geachtet werden muss, um die Kapazitäten
+des USB-Busses vollständig auszunutzen.
+\newline\newline
+In der USB-Spezifikation sind die drei Geräteklassen
+Low-Speed-Geräte (bis 1,5 MBit/s), Full-Speed-Geräte (bis 12 MBit/s)
+und High-Speed-Geräte (bis 480 MBits/s ab USB Version 2.0) definiert.
+Diese Angabe bezieht sich aber auf die physikalische maximale Übertragungsrate.
+Soll die tatsächliche Datenrate ermittelt werden, müssen einige Parameter beachtet werden.
+Im folgenden Beispiel wird eine Rechnung für einen Bulk-Transfer mit einem Full-Speed-Gerät (12 MBit/s)
+durchgeführt.
+\newline\newline
+In Kapitel \ref{pakzei} (Seite \pageref{pakzei}) wurde bereits beschrieben, dass Daten nach dem Start-of-Frame-Paket (SOF) versendet werden. 
+Da das SOF-Paket jede Millisekunde vom Host generiert wird, bedeutet dies bei Full-Speed-Geräten (12 MBit/s),
+dass maximal 12000 Bit (je Bit 83,33 ns) pro Millisekunde übertragen werden können.
+Die Größe der Daten-Pakete ist wiederum abhängig von der maximalen Endpunkt-Tiefe (siehe Taballe \ref{usb_bandbreite_full} und \ref{usb_bandbreite_high}), welche 
+durch die Transferart bestimmt wird. Bei dem gewählten Bulk-Transfer mit Full-Speed-Geräten
+kann ein Endpunkt-FIFO maximal 64 Byte (= 512 Bit) groß sein. 
+Ein weiterer Faktor für die Ermittlung der maximalen Datenübertragungsrate ist der Overhead (Protokoll-Overhead und Bit-Stuffing),
+der für ein Daten-Paket benötigt wird. Für einen Bulk-Endpunkt ist dieser 13 Byte (= 104 Bit) groß.
+\newline\newline
+Der entscheidendste Faktor ist aber der, wie oft ein Daten-Paket während einer Millisekunde an einen Endpunkt
+gesendet werden kann.
+Aus den Tabellen \ref{usb_bandbreite_full} und \ref{usb_bandbreite_high} kann entnommen werden, dass ein Bulk-Endpunkt bis zu 19 mal pro Frame angesprochen werden kann.
+Wie dieser Wert zustande kommt, wird mit der nachstehenden Rechnung gezeigt:
+
+\begin{eqnarray}
+\text{max. Übertragungen} & = & \frac{\text{max. Anzahl Bits pro ms}}{\text{Overhead + max. FIFO-Tiefe}} \\[5mm]
+\text{max. Übertragungen} & = & \frac{12000\text{ Bit}}{104\text{ Bit} + 512\text{ Bit}} \\[5mm]
+& = & 19,48 \text{ Übertragungen pro Millisekunde}
+\label{max_datenrate}
+\end{eqnarray}
+
+Mit der maximalen Anzahl an Übertragungen pro Frame kann im nächsten Schritt die Berechnung der maximalen Übertragungsrate
+durchgeführt werden.
+
+\begin{eqnarray}
+\text{max. Übertragungsrate} & = & \text{max. Übertragungen} * \text{max. FIFO-Tiefe}\\[5mm]
+\text{max. Übertragungsrate} & = & 19 \text{ pro ms} * 512\text{ Bit} \\[5mm]
+& = & 9,728\text{ MBit/s}
+\end{eqnarray}
+
+Mit 19 Paketen kann man also eine Übertragungsrate von ca. 9,7 MBit/s erreichen.
+Die angenommenen 19 Pakete sind die theoretisch maximal Möglichen.
+Ob alle Pakete innerhalb eines Frames auch versendet werden können,
+hängt von dem eingesetzten Host-Controller ab. Wie bereits erwähnt,
+werden die Daten immer nach den SOF-Paketen, welche meist von den Host-Controllern
+automatisch generiert werden, versendet.
+Oft kann man sich das Absenden durch einen Interrupt signalisieren lassen.
+Liegen  die Daten zu dem Zeitpunkt des Signalisierens bereits im Speicher, den der Host zum Versenden benutzt,
+werden die ersten 64 Byte Daten plus Overhead für das erste Paket sofort versendet.
+\newline\newline
+Der weitere Verlauf ist abhängig von der Art des Host-Controllers.
+Wie in Kapitel \ref{kap:datenuebertragung} auf Seite \pageref{kap:datenuebertragung} beschrieben, gibt es prinzipiell zwei Arten.
+Die einen, bei den Pakete direkt aus einem gemeinsamen Speicher mit dem Prozessor übertragen werden können,
+und die anderen, bei denen jedes Paket über eine I/O-Schnittstelle übergeben werden muss. 
+Für die Ermittlung der Datenrate werden beide Fälle für den weiteren Verlauf beschrieben.
+\newline\newline
+\textbf{1. Fall: Host nutzt gemeinsamen Speicher mit dem Prozessor: }
+Wenn alle Pakete im Speicher bereit liegen, kann der Host-Controller nacheinander alle
+Daten versenden.
+\newline\newline
+\textbf{2. Fall: Dem Host werden die Pakete über eine I/O-Schnittstelle übergeben: }
+Viele Host-Controller dieser Art bieten zwei Speicherbereiche für die Datenübertragung an.
+Dadurch kann, während der Inhalt des einen Speichers übertragen wird, der zweite mit Daten gefüllt werden.
+Dies wechselt sich immer ab, bis der Transfer beendet ist. Für die I/O-Schnittstelle bedeutet dies aber, dass innerhalb
+von min. 43 $\mu$s (512*83,33 ns) 64 Byte übertragen werden müssen, damit die Daten rechtzeitig
+in dem zweiten Speicher bereitstehen. Bei einem 8-Bit breiten I/O-Bus benötigt man
+so, wenn man für den Verwaltungs-Overhead den Faktor 3 annimmt (Lese-, Schreib- und Adresssignale setzen), 
+eine I/O-Geschwindigkeit von mindestens 5 MHz. 
+\newline\newline
+Angenommen, der Host-Controller hat nur einen Speicherbereich zum Übertragen der Daten,
+so entsteht immer eine kleine Pause zwischen zwei Paketen, das ist wiederum die Zeit, die für das Auffüllen des Speichers notwendig 
+ist.
+%\newline\newline
+%Die komplett verfügbare Bandbreite kann nur genutzt werden wenn alle diese Parameter
+%bedacht werden. 
+\index{Übertragungsrate}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|L{2cm}|L{3cm}|L{3cm}|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Transferart & Overhead\newline(Byte) & max. FIFO-Tiefe (Byte) & Transfers pro Frame (Byte) & Bandbreite \\ \hline
+Control (OHCI) & 45 & 64& max. 13 & 6,6 MBit/s\\ \hline
+Control (UHCI) & 45 & 64& 1 & 512 KBit/s\\ \hline
+Interrupt & 13 & 64& 1 & 512 KBit/s \\ \hline
+Bulk & 13 & 64 & max. 19 & 9,7 MBit/s \\ \hline
+Isochron & 9 & 1023 & 1 & 8,2 MBit/s \\ \hline
+\end{tabular} \caption{Maximale Datenrate für Full-Speed-Geräte} \label{usb_bandbreite_full}
+\end{table}
+
+
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|L{2cm}|L{3cm}|L{3cm}|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Transferart & Overhead\newline(Byte) & max. FIFO-Tiefe (Byte) & Transfers pro Frame (Byte) & Bandbreite \\ \hline
+Control (EHCI) & 45 & 64& 1 & 4,0 MBit/s\\ \hline
+Interrupt & 13 & 3x1024 & 1 & 192 MBit/s \\ \hline
+Bulk & 13 & 512 & max. 12 & 384 MBit/s \\ \hline
+Isochron & 9 & 3x1024 & 1 & 192 MBit/s \\ \hline
+\end{tabular} \caption{Maximale Datenrate für High-Speed-Geräte} \label{usb_bandbreite_high}
+\end{table}
+

@@ -1,0 +1,257 @@
+\documentclass[a4paper,BCOR7mm,12pt,headsepline,pointlessnumbers,bibtotoc]{scrbook}
+% Standard-Dokument mit
+%   Papierformat A4
+%   Binderand 7 mm
+%   Schrift 12-Punkt
+%   Linie unter der Kopfzeile
+%   Nummern ohne Punkt am Ende
+%   Literaturverzeichnis mit Nummer im Inhaltverzeichnis
+
+% bunte tabellen
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
+\definecolor{Gray}{gray}{0.9}
+\definecolor{hellgrau}{gray}{0.55}
+
+\let\ttfamilyorg\ttfamily
+\renewcommand\ttfamily{\small\ttfamilyorg}
+
+
+% Define German as thesis language
+%\usepackage{german}
+
+\usepackage{tabularx}
+\newcolumntype{L}[1]{>{\arraybackslash}p{#1}}
+
+%\usepackage{ngerman}
+\usepackage[ngerman]{babel}
+
+% Codierung
+\usepackage[latin1]{inputenc}
+
+% kein einrueckungen
+\parindent 0pt
+
+% zusaetzliche Symbole
+\usepackage{textcomp, latexsym}
+
+% Grafiken
+% \usepackage{graphicx, psfrag}
+%\usepackage[dvips]{graphics}
+\usepackage{graphicx}
+
+% "H"-Option für Gleitumgebungen
+\usepackage{float}
+
+% Gleitumgebungen nach Referenz platzieren
+% \usepackage{flafter}
+
+%\usepackage{attachfile}
+
+% lange Tabellen
+\usepackage{longtable}
+
+% Quellcode
+\usepackage{listings}
+
+\makeindex
+
+
+%Mathematik
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\DeclareMathSizes{9}{18}{12}{8}   % For size 10 text 
+
+\usepackage{index}
+\newindex{default}{idx}{ind}{Index}
+
+% neue deutsche Rechtschreibung
+%\usepackage{german}
+
+% nummerierungs tiefe
+\setcounter{secnumdepth}{2}
+
+% Absatzabstand etwas groesser
+% \addtolength{\parskip}{1.3ex}
+
+% Blocksatz erzwingen
+\sloppy
+
+% Abstand zweier Listenelemente kleiner
+\setlength{\itemsep}{0ex plus0.2ex}
+
+% "Rahmenabstand" für gerahmte Gleichungen
+\setlength{\fboxsep}{10pt}
+
+
+%\usepackage[english]{babel} %language selection
+%\selectlanguage{english}
+
+\pagenumbering{arabic}
+
+%\usepackage{hyperref}
+%\hypersetup{colorlinks, 
+%citecolor=black,
+%filecolor=black,
+%linkcolor=black,
+%urlcolor=black,
+%bookmarksopen=true,
+%pdftex}
+
+\hfuzz = .6pt % avoid black boxes
+
+% Befehle zum setzen des Arbeitstyps, Titels, etc...
+\newcommand{\selectedthesistype}{}
+\newcommand{\thesistype}[1]{\renewcommand{\selectedthesistype}{#1}}
+\newcommand{\selectedthesistitle}{}
+\newcommand{\thesistitle}[1]{\renewcommand{\selectedthesistitle}{#1}}
+\newcommand{\selectedthesisauthor}{}
+\newcommand{\thesisauthor}[1]{\renewcommand{\selectedthesisauthor}{#1}}
+\newcommand{\selectedthesisdate}{}
+\newcommand{\thesisdate}[1]{\renewcommand{\selectedthesisdate}{#1}}
+\newcommand{\selectedthesisadvisor}{}
+\newcommand{\thesisadvisor}[1]{\renewcommand{\selectedthesisadvisor}{#1}}
+\newcommand{\selectedthesisstart}{}
+\newcommand{\thesisstart}[1]{\renewcommand{\selectedthesisstart}{#1}}
+\newcommand{\selectedthesisend}{}
+\newcommand{\thesisend}[1]{\renewcommand{\selectedthesisend}{#1}}
+
+% Leere gerade Seiten sollen keinen Header haben --------------------
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+  \hbox{}
+  \thispagestyle{empty}
+  \newpage
+  \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+% -------------------------------------------------------------------
+
+% Trennungsausnahmen-------------------------------------------------
+% \hyphenation{}
+
+%
+% Und hier geht es los
+\begin{document}
+
+    \frontmatter % mit kleinen roemischen Seitenzahlen
+% ==========================================================
+% Deckblatt erstellen
+% ==========================================================
+\begin{titlepage}
+	\setlength{\topmargin}{-35mm}
+	\setlength{\marginparsep}{-55mm}
+	\setlength{\marginparwidth}{-55mm}
+	\setlength{\textheight}{290mm}
+	\setlength{\textwidth}{200mm}
+	\enlargethispage{290mm}
+	%\setlength{\footskip}{0mm}
+	%\setlength{\footheight}{0mm}
+		\begin{flushright}
+			\begin{tabular}{>{\LARGE}m{120mm}m{45cm}}
+				\textbf{\Huge{\textcolor{hellgrau}{Diplomarbeit}}}
+				&	
+				\includegraphics{fha_dpl_ct_logo} \\
+				Studienrichtung
+			 	& \\
+				\vspace{0.5cm}
+				Informatik
+				& \\
+				\vspace{2cm}
+				\textbf{Benedikt Sauter} \\
+				& \\
+				USB-Stack for Embedded-Systems
+				& \\
+			\end{tabular}
+		\end{flushright}
+		\begin{tabular}{>{\LARGE}m{130mm}>{\scriptsize}m{50mm}}
+			First Examiner: Prof. Dr. Hubert Högl \newline
+			Second Examiner: Prof. Dr. Gundolf Kiefer \newline
+			Abgabe der Arbeit: 16.07.2007					
+			& 
+			Verfasser der Diplomarbeit: \newline
+			Benedikt Sauter \newline
+			Kettengässchen 6 \newline
+			86152 Augsburg \newline
+			sauter@ixbat.de \newline
+			\newline
+			Fakultät \newline
+			Informatik \newline
+			Telefon: +49 821 5586-450 \newline
+			Fax:       +49 821 5586-499 \newline
+			\newline
+			Fachhochschule Augsburg \newline
+			University of Applied Sciences \newline
+			Baumgartnerstraße 16 \newline
+			D 86161 Augsburg \newline
+			\newline				
+			Telefon +49 821 5586-0 \newline
+			Fax +49 821 5586-222 \newline
+			www.fh-augsburg.de \newline
+			poststelle@fh-augsburg.de \newline
+		\end{tabular}
+\end{titlepage}
+
+
+    %\maketitle
+    \input{decls_de}
+    \input{gfdl_short}
+
+
+    
+    % Inhalts-/Tabellen-/Abbildungsverzeichnis
+    \tableofcontents
+    
+    % der eigentliche Text
+    \mainmatter
+    
+    %Hier kommen die Kapitel hin
+	\include{kapitel1}
+	\include{kapitel2}
+	\include{kapitel3}
+	\include{kapitel4}
+	\include{kapitel5}
+	\include{kapitel6}
+	\include{kapitel7}
+	\include{kapitel8}
+	%\include{kapitel9}
+    % Anhang
+    \begin{appendix}
+      % hier kommen die Abschnitte des Anhangs hin
+      \include{abbrev}
+      %\include{schaltplan}
+      \include{source_code}
+      \include{fdl}
+    \end{appendix}
+
+       
+    % Literaturverzeichnis
+    % alle Literaturquellen einbinden
+    \nocite{*}
+    %\bibliographystyle{plain}
+    \bibliographystyle{plaindin}
+    %\bibliographystyle{abbrvdin}
+    \bibliography{thesis}
+
+    % Verzeichnis der enthaltenen Listings 
+    %\lstlistoflistings.
+    
+    \newpage
+    \renewcommand{\indexname}{Tabellenverzeichnis}
+    \addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+    \listoftables
+    
+    \newpage
+    \renewcommand{\indexname}{Abbildungsverzeichnis}
+    \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+
+    \listoffigures
+
+
+    \newpage
+    \renewcommand{\indexname}{Index}
+    \addcontentsline{toc}{chapter}{Index}
+    \printindex
+
+
+\end{document}

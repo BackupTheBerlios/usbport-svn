@@ -1,0 +1,443 @@
+\chapter{Implementierung des USB-Host-Controller-Treibers für den SL811HS}
+
+Ziel dieses Kapitels ist es, den Entwurfsprozess eines Host-Treibers
+anhand des eingesetzten Bausteins SL811HS zu erläutern.
+
+\section{Der Baustein SL811HS}
+
+\index{SL811HS}
+Die Struktur und die technischen Daten über den SL811HS können 
+in Kapitel \ref{kap:sl811} auf Seite \pageref{kap:sl811} nachgelesen werden.
+In diesem Abschnitt werden die Details, 
+die für die Programmierung des Treibers wichtig sind, angesprochen.
+
+\subsubsection{Interrupt-Controller}
+
+Der SL811HS \index{SL811HS} Interrupt-Controller verfügt über eine
+nach außen geführte Interrupt-Leitung (INTRQ), die bei verschiedenen
+Ereignissen über interne Register aktiviert werden kann.
+Über ein Statusregister kann ermittelt werden, welche
+Ereignisse ausgelöst worden sind.
+Das Statusregister kann zurückgesetzt werden,
+indem ein schreibender Zugriff auf das Register
+ausgeführt wird.
+
+\subsubsection{Speicher- und Registerübersicht}
+
+Der SL811HS enthält 256 Bytes internen Speicher (siehe Abbildung \ref{sl811hs_ram}) für
+den USB-Datenspeicher und die Control- bzw. Statusregister.
+Im Host-Modus werden die ersten 16 Byte als Register
+und die restlichen 240 Byte für die USB-Datenübertragung
+genutzt. Angesprochen wird der Speicher direkt
+über die 8-Bit breite Busschnittstelle.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=5cm]{images/sl811hs_ram}
+\caption{Speicherkarte des SL811HS}
+\label{sl811hs_ram}
+}
+\end{figure}
+
+\section{Anbindung an einen Mikrocontroller}
+
+Um den Treiber flexibel und unabhängig von den verbundenen I/O Leitungen an den verschiedensten Mikrocontrollern
+einsetzen zu können,
+wurde eine extra Ebene (siehe Abbildung \ref{sl811hs_io}) dafür eingeführt. 
+Die Funktionen (siehe Tabelle \ref{sl811hs_func}) der zusätzlichen Ebene
+befinden sich in den Dateien \textbf{sl811hs-io.c} und \textbf{sl811hs-io.h},
+welche 
+sich absichtlich nicht im Host-Ordner, sondern in dem Ordner
+der Anwendung, die den Stack nutzt, befinden.
+Die Konfiguration ist von der Anwendung und der Plattform, auf der entwickelt wird, abhängig.
+
+\begin{figure}[h]
+{
+\centering
+\includegraphics[width=10cm]{images/sl811hs_io}
+\caption{Zugriffsfunktionen für SL811HS}
+\label{sl811hs_io}
+}
+\end{figure}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Funktion & Aufgabe\\ \hline
+void sl811\_init() & Initialisierung der I/O-Leitungen\\ \hline
+void sl811\_reset() & Reset des SL811HS durchführen\\ \hline
+void sl811\_write(u8 addr, u8 data) & Byte an angegebene Adresse schreiben\\ \hline
+u8 sl811\_read(u8 addr) & Byte an angegebener Adresse lesen\\ \hline
+void sl811\_write\_burst(u8 data) & Bytes hintereinander schreiben\\ \hline
+u8 sl811\_read\_burst() & Bytes hintereinander lesen\\ \hline
+void sl811\_write\_buf(u8 addr, char *buf, u16 size) & Speicherbereich schreiben\\ \hline
+void sl811\_read\_buf(u8 addr, char *buf, u16 size) & Speicherbereich lesen\\ \hline
+\end{tabular}
+\caption{Zugriffsfunktionen für SL811HS [sl811hs-io.h]}
+\label{sl811hs_func}
+\end{table}
+\index{Zugriffsfunktionen für SL811HS}
+\newpage
+\section{Root-Hub-Treiber} \label{kap:roothub}
+\index{Root-Hub-Treiber}
+Die Funktionen für den Root-Hub-Treiber befinden sich mit unter in der Datei \textit{sl811hs-hcd.c}.
+In den folgenden Listings wird auf die Implementierung der Funktionen eingegangen.
+Der komplette Quelltext befindet sich im Host-Verzeichnis des USB-Stack-Archivs.
+\newline\newline
+Bekanntermaßen ist der Root-Hub kein eigenes physikalisches USB-Gerät,
+sondern eine feste Einheit im Host-Controller. Im Gegensatz zu einem
+externen USB-Hub wird der Status über die angesteckten USB-Geräte am Hub
+nicht über Endpunkte signalisiert, sondern über interne Register und Signale.
+Dies sind die Aufgaben der Funktionen des Root-Hub-Treibers. Es müssen
+die entsprechenden Register und Signale beobachtet und
+neue und entfernte Geräte dem USB-Stack gemeldet werden. 
+\newline\newline
+Wie jeder Geräte- bzw. Klassen-Treiber benötigt auch der Root-Hub eine USB-Treiberdatenstrukur,
+um sich am USB-Stack registrieren zu können.
+\vskip 10pt  
+\lstset{language=C}
+\begin{lstlisting}[caption={SL811-Host-Controller-Treiber, sl811hs-hcd.c},label={sl811hs_rh},
+name=roothub,
+captionpos=b,
+numbers=left,
+firstline=1,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+/* Treiberdatenstruktur */
+usb_driver sl811_roothub = {
+  .name   = "sl811_roothub",
+  .probe  = sl811_roothub_probe,
+  .check  = sl811_roothub_check,
+  .data   = NULL,
+};
+\end{lstlisting}
+\vskip 10pt  
+Die \textit{probe} Funktion eines Treibers wird jedesmal
+vom USB-Stack aufgerufen, wenn ein neues Gerät am Bus
+gefunden worden ist. In ihr wird überprüft, ob das neue Gerät von dem Treiber aus
+angesteuert werden kann. Der Root-Hub-Treiber muss
+diese Überprüfung nicht durchführen, da der Host-Controller
+einen Schritt zuvor schon ermittelt hat, ob der SL811-Baustein
+verfügbar ist. Ist dies der Fall, so ist
+der Root-Hub ebenso verfügbar, da er wie bereits beschrieben
+eine feste Einheit im Host-Controller ist. Daher kann 
+die Funktion \textit{sl811\_roothub\_probe} leer bleiben.
+\vskip 10pt  
+\begin{lstlisting}[caption={sl811\_roothub\_probe(), sl811hs-hcd.c},label={sl811hs_rh},
+captionpos=b,
+numbers=left,
+name=roothub,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+void sl811_roothub_probe()
+{
+  /* Root-Hub wurde bereits vom Host-Controller-Treiber erkannt */
+}
+\end{lstlisting}
+\vskip 10pt  
+
+Die Überwachung des abgehenden Ports am SL811-Host-Controller
+wird in der Funktion \textit{sl811\_roothub\_check} vollzogen.
+Die Funktionsweise wurde einem echten USB-Hub nachempfunden.
+Bei einem USB-Hub existieren im Wesentlichen zwei Register. Im Ersten wird
+der aktuelle Status angezeigt, d.h. ob sich im Moment ein Gerät
+an einem Port befindet. Im Zweiten ist ersichtlich,
+ob ein Gerät entfernt oder neu angesteckt wurde.
+Mit Hilfe der Variable \textit{port\_change},
+wird das Register für die Änderungen an dem Port nachgebildet.
+Der Funktionsaufruf aus Zeile 19 entspricht dem ersten Register,
+da hier der aktuelle Status des Ports abgefragt wird.
+
+
+\vskip 10pt  
+\begin{lstlisting}[caption={sl811\_roothub\_check(), sl811hs-hcd.c},label={sl811hs_rh},
+captionpos=b,
+numbers=left,
+name=roothub,
+showstringspaces=false,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+void sl811_roothub_check()
+{
+  /* Ports überwachen */
+  // check for new device
+  u16 *port_change = (u16*)sl811_roothub.data;
+
+  // Status des Ports abfragen
+  u8 status = sl811_read(SL811_ISR);
+  // Signale zurücksetzten
+  sl811_write(SL811_ISR,SL811_ISR_DATA | SL811_ISR_SOFTIMER);
+
+  // Entferne Gerät gegebenenfalls
+  if((status & SL811_ISR_RESET)) {  
+    if(device_on_downstream!=NULL){
+      #if USBMON
+      core.stdout("Remove Device!\r\n");
+      #endif
+      usb_remove_device(device_on_downstream);
+      device_on_downstream=NULL;
+    }
+    sl811_write(SL811_ISR,SL811_ISR_RESET);
+  } 
+\end{lstlisting}
+\vskip 10pt  
+
+Meldet der Root-Hub ein neues Gerät, so 
+wird der Port für den USB-Betrieb konfiguriert.
+Es wird unteranderem die Generierung der SOF-Pakete
+gestartet, das Gerät mit Hilfe des Resetsignals
+dazu veranlasst die Adresse 0 anzunehmen 
+und zum Schluss die Enumerierung für das
+USB-Gerät gestartet. Mit dem Aufruf der
+Funktion \textit{usb\_add\_device} aus Zeile 56
+wird das neue Gerät desweiteren am USB-Stack angemeldet.
+\vskip 10pt  
+\begin{lstlisting}[caption={Root-Hub Funktionalität, sl811hs-hcd.c},label={sl811hs_rh},
+captionpos=b,
+numbers=left,
+name=roothub,
+showstringspaces=false,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+  else {
+    if((port_change[0] & HUB_PORTSTATUS_C_PORT_CONNECTION)){
+      #if USBMON
+      core.stdout("Find new Device!\r\n");
+      #endif
+
+      /* init sof currently for fullspeed  (datasheet page 11)*/
+      sl811_write(SL811_CSOF,0xAE);
+      sl811_write(SL811_DATA,0xE0);
+
+      /* reset device that function can answer to address 0 */
+      sl811_write(SL811_IER,0x00);
+      sl811_write(SL811_CTRL,SL811_CTRL_ENABLESOF|SL811_CTRL_RESETENGINE);
+      sl811_write(SL811_ISR,0xff);
+      wait_ms(20);
+
+      /* start SOF generation */
+      sl811_write(SL811_CTRL,SL811_CTRL_ENABLESOF);
+      sl811_write(SL811_ISR,0xff);
+      sl811_write(SL811_E0BASE,SL811_EPCTRL_ARM);
+      wait_ms(50);
+
+      device_on_downstream = usb_add_device();
+      port_change[0]=0x00;
+    }
+  }
+\end{lstlisting}
+\vskip 10pt  
+
+In den Zeilen 60-63 wird die Variable \textit{port\_change} für die Änderungen
+abhängig vom abgefragten Ergebnis der Register des SL811HS
+neu gesetzt.
+
+\vskip 10pt  
+\begin{lstlisting}[caption={port\_change, sl811hs-hcd.c},label={sl811hs_rh},
+captionpos=b,
+numbers=left,
+name=roothub,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+  if((status & SL811_ISR_INSERT)){
+    port_change[0] |= HUB_PORTSTATUS_C_PORT_CONNECTION;
+    sl811_write(SL811_ISR,SL811_ISR_INSERT);
+  }
+}
+\end{lstlisting}
+\vskip 10pt  
+
+
+\section{Transfer-Deskriptoren-Übertragungsstrategie}
+\index{Transfer-Deskriptor}
+
+
+Der SL811HS bietet alle Control- und Statusregister (siehe Tabelle \ref{sl811hs_register} auf Seite \pageref{sl811hs_register}) für
+die Übertragung von USB-Paketen doppelt (Registerset A und B) an.
+Dadurch kann die Bandbreite der USB-Verbindung
+besser genutzt werden. Ist eine Transaktion
+abgeschlossen wird über das Interruptstatusregister angezeigt,
+welches Registerset wieder bereit für ein neues Paket ist.
+\newline\newline
+Im folgenden wird auf den Quelltext der Funktion \textit{sl811\_start\_transfer} eingegangen,
+welche für die Übertragung der einzelnen Transfer-Deskriptoren zuständig ist.
+Im Rahmen der Diplomarbeit wurde eine einfache Version ausgearbeitet,
+in der nur ein Registerset ohne Interruptbetrieb genutzt wird. Dieser 
+Modus wird auch Bibliotheksmodus (\glqq{}LIBMODE\grqq{}) genannt,
+da man so den USB-Stack wie eine einfache Funktionssammlung nutzen
+kann, ohne ihn fester in die eigene Anwendung integrieren zu müssen.
+\newline\newline
+Beginnend wird in Zeile 3 ein Zeiger auf einen Transferdeskriptor erstellt,
+mit dem im weiteren Verlauf der Funktion gearbeitet werden kann.
+In Zeile 6 erhält der Zeiger die Adresse auf den nächsten zu übertragende Transferdeskriptor. 
+\vskip 10pt  
+\begin{lstlisting}[caption={SL811 Übertragungsfunktion für Transferdeskriporen, sl811hs-hcd.c},label={sl811hs_td},
+captionpos=b,
+numbers=left,
+name=transfer,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+void sl811_start_transfer()
+{
+  usb_transfer_descriptor * td;
+  #if LIBMODE
+  /* Wähle nächsten Transferdeskriptor */
+  td = td_usba;
+  /* Interruptsignale abschalten (im LIBMODUS) */
+  sl811_write(SL811_IER,0x00);
+  #endif
+\end{lstlisting}
+\vskip 10pt  
+Unabhängig vom Pakettyp, welcher im Transferdeskriptor angegeben ist,  muss für die Übertragung die
+Adresse des USB-Gerätes, die Anzahl der zu übertragenden
+Bytes und die Startadresse der Daten angegeben werden.
+\vskip 10pt  
+\begin{lstlisting}[caption={Transfer unahängige Einstellungen},label={sl811hs_td},
+captionpos=b,
+numbers=left,
+name=transfer,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+  sl811_write(SL811_E0CONT,td->devaddress); /* Geräteadresse */
+  sl811_write(SL811_E0LEN,td->actlen);      /* Anzahl der Bytes */
+  sl811_write(SL811_E0ADDR,cMemStart);      /* Adresse für Daten */
+\end{lstlisting}
+\vskip 10pt  
+Im folgenden muss abhängig vom Pakettyp unterschiedlich vorgegangen werden.
+Differenziert wird hier zwischen SETUP-, IN- und OUT-Paket. Wobei Daten
+immer nach einem IN oder OUT Paket folgen. Handelt es sich um ein SETUP-Paket,
+wird zuerst die Anfrage (Standard-, Hersteller- oder Klassenanfrage) in
+den internen Speicher des SL811HS-Host-Controllers kopiert (Zeile 17).
+In Zeile 20 und 23 wird der Paket-Typ, die Endpunktnummer und der Datenpakettyp
+dem Host-Controller mitgeteilt. Anschliessend wird der Transfer gestartet
+und der Transferdeskriptor als versendet markiert.
+\vskip 10pt  
+\begin{lstlisting}[caption={PID-Setup, sl811hs-hcd.c},label={sl811hs_td},
+captionpos=b,
+numbers=left,
+name=transfer,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+  switch(td->pid) {
+    case USB_PID_SETUP:
+
+      /* Kopiere Anfrage in internen SL811HS RAM */
+      sl811_write_buf(cMemStart,(unsigned char *)td->buffer,td->actlen);
+
+      /* set pid and ep */
+      sl811_write(SL811_E0STAT,PID_SETUP|td->endpoint); 
+
+      /* Sende Setup-Paket mit DATA0 */
+      sl811_write(SL811_E0CTRL,DATA0_WR); 
+
+      /* Warte auf ACK */
+      #if LIBMODE
+      while((sl811_read(SL811_ISR)&SL811_ISR_USBA)==0);
+      #endif
+      td->state = USB_TRANSFER_DESCR_SEND;
+
+    break;
+\end{lstlisting}
+\vskip 10pt  
+Werden Daten von einem USB-Gerät empfangen, müssen IN-Pakete versendet werden.
+Als Antwort auf ein IN-Paket erhält der Host-Controller die Daten vom USB-Gerät.
+In Zeile 35 wird dem Host-Controller der Pakettyp und die Endpunktadresse mitgeteilt.
+Zusätzlich muss das Togl-Bit entsprechend gesetzt werden, um den Datenfluss
+zu ermöglichen.
+\vskip 10pt  
+\begin{lstlisting}[caption={PID-IN, sl811hs-hcd.c},label={sl811hs_td},
+captionpos=b,
+numbers=left,
+name=transfer,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+    case USB_PID_IN:
+      
+      /* Pakettyp und Endpunkt setzten */
+      sl811_write(SL811_E0STAT,PID_IN|td->endpoint); 
+      sl811_write(SL811_ISR,0xff);
+
+      /* DATA0 oder DATA1 */
+      if(td->togl)
+	sl811_write(SL811_E0CTRL,DATA1_RD); 
+      else
+	sl811_write(SL811_E0CTRL,DATA0_RD);
+
+      td->state = USB_TRANSFER_DESCR_SEND;
+
+      /* Warte auf ACK */
+      #if LIBMODE
+      while((sl811_read(SL811_ISR)&SL811_ISR_USBA)==0);
+
+      /* Empfangene Daten vom internen SL811HS-RAM lesen */
+      sl811_read_buf(cMemStart,(unsigned char *)td->buffer,td->actlen);
+      #endif
+
+    break;
+\end{lstlisting}
+\vskip 10pt  
+Ausgehende Daten werden mit OUT-Paketen an USB-Geräte gesendet.
+Der Ablauf zu den anderen Pakettypen unterscheidet
+sich nur darin, dass zuvor die zu übertragenden Daten
+in den internen Speicher des SL811HS geschrieben werden müssen.
+\vskip 10pt  
+\begin{lstlisting}[caption={PID-OUT, sl811hs-hcd.c},label={sl811hs_td},
+captionpos=b,
+numbers=left,
+name=transfer,
+basicstyle=\ttfamily\fontsize{10}{12}\selectfont,
+commentstyle=\fontsize{10}{12}\selectfont]
+    case USB_PID_OUT:
+      /* Schreibe zu übertragende Daten in SL811HS-RAM */
+      if(td->actlen>0)
+	sl811_write_buf(cMemStart,(unsigned char *)td->buffer,td->actlen);
+     
+      /* Pakettyp und Endpunktadresse */
+      sl811_write(SL811_E0STAT,PID_OUT|td->endpoint);
+      
+      /* DATA0 oder DATA1 */
+      if(td->togl)
+	sl811_write(SL811_E0CTRL,DATA1_WR);
+      else
+	sl811_write(SL811_E0CTRL,DATA0_WR);
+
+      td->state = USB_TRANSFER_DESCR_SEND;
+
+      /* Warte auf ACK */
+      #if LIBMODE
+      while((sl811_read(SL811_ISR)&SL811_ISR_USBA)==0);
+      #endif
+    break;
+  }    
+}
+\end{lstlisting}
+
+\begin{table}[h]
+\center
+\begin{tabular}{|c|l|l|}
+\hline
+\rowcolor{Gray}[0.9\tabcolsep]
+Adr. & Schreibzugriff & Lesezugriff\\ \hline\hline
+0x00 & USB-A Control & USB-A Control\\ \hline
+0x01 & USB-A Address & USB-A Address\\ \hline
+0x02 & USB-A Length & USB-A Length\\ \hline
+0x03 & USB-A PID/EP & USB-A Status\\ \hline
+0x04 & USB-A Address & USB-A Count\\ \hline\hline
+0x05 & Ctrl1 & Ctrl1\\ \hline
+0x06 & Int. Enable & Int. Enable\\ \hline\hline
+0x08 & USB-B Control & USB-B Control\\ \hline
+0x09 & USB-B Address & USB-B Address\\ \hline
+0x0A & USB-B Length & USB-B Length\\ \hline
+0x0B & USB-B PID/EP & USB-B Status\\ \hline
+0x0C & USB-B Address & USB-B Count\\ \hline\hline
+0x0D & Int. Status & Int. Status \\ \hline
+0x0E & SOF Low & HW Revision \\ \hline
+0x0F & SOF High/Ctr2  & SOF High/Ctr2 \\ \hline
+\end{tabular}
+\caption{SL811HS Registerübersicht}
+\label{sl811hs_register}
+\end{table}
+
